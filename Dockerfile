@@ -22,7 +22,7 @@ FROM nginx:alpine
 # 8. React의 빌드 결과물을 Nginx가 서비스할 디렉토리로 복사
 COPY --from=0 /app/build /usr/share/nginx/html
 
-# 9. Nginx 컨테이너에서 80 포트 오픈
+# 9. Nginx 컨테이너에서 4000 포트 오픈
 EXPOSE 4000
 
 # 10. Nginx 실행 (데몬 모드 해제)
