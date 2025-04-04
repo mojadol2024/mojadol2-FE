@@ -17,7 +17,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST_PBL2 }}
           username: ${{ secrets.SSH_USERNAME_PBL2 }}
-          key: ${{ secrets.SSH_PRIVATE_KEY_PBL2 }}
+          password: ${{ secrets.SSH_PASSWORD_PBL2 }}
           port: ${{ secrets.SSH_PORT_PBL2 }}
           script: |
             set -ex
@@ -29,7 +29,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST_PBL2 }}
           username: ${{ secrets.SSH_USERNAME_PBL2 }}
-          key: ${{ secrets.SSH_PRIVATE_KEY_PBL2 }}
+          password: ${{ secrets.SSH_PASSWORD_PBL2 }}
           port: ${{ secrets.SSH_PORT_PBL2 }}
           source: "./build/*"
           target: "/home/bgt/pbl2/fe"
@@ -39,7 +39,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST_PBL2 }}
           username: ${{ secrets.SSH_USERNAME_PBL2 }}
-          key: ${{ secrets.SSH_PRIVATE_KEY_PBL2 }}
+          password: ${{ secrets.SSH_PASSWORD_PBL2 }}
           port: ${{ secrets.SSH_PORT_PBL2 }}
           script: |
             set -ex
