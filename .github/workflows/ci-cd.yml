@@ -26,8 +26,8 @@ jobs:
           username: ${{ secrets.SSH_USERNAME_PBL2 }}
           password: ${{ secrets.SSH_PASSWORD_PBL2 }}
           port: ${{ secrets.SSH_PORT_PBL2 }}
-          source: "build/*"
-          target: "/home/bgt/pbl2/fe/build"
+          source: "build"
+          target: "/home/bgt/pbl2/fe"
 
       - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@v1.0.0
