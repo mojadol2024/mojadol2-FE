@@ -16,8 +16,6 @@ jobs:
 
       - name: Install Dependencies & Build Frontend
         run: |
-          cd
-          cd /home/bgt/pbl2/fe
           npm install
           npm run build
 
@@ -28,7 +26,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME_PBL2 }}
           password: ${{ secrets.SSH_PASSWORD_PBL2 }}
           port: ${{ secrets.SSH_PORT_PBL2 }}
-          source: "fe/build/*"
+          source: "build/*"
           target: "/home/bgt/pbl2/fe/build"
 
       - name: Deploy to Server via SSH
@@ -43,7 +41,6 @@ jobs:
           debug: true
           script: |
             set -ex
-            cd /home/bgt/pbl2/fe
 
             # Nginx 컨테이너에 복사 후 재시작
             docker cp /home/bgt/pbl2/fe/build/. pbl2-nginx:/usr/share/nginx/html/
