@@ -14,22 +14,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install Dependencies & Build Frontend
         run: |
-          npm install
+          npm ci
           npm run build
 
-      - name: Send Build Files to Server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST_PBL2 }}
-          username: ${{ secrets.SSH_USERNAME_PBL2 }}
-          password: ${{ secrets.SSH_PASSWORD_PBL2 }}
-          port: ${{ secrets.SSH_PORT_PBL2 }}
-          source: "build"
-          target: "/home/bgt/pbl2/fe"
-
-      - name: Deploy to Server via SSH
+      - name: Deploy to Server via SSH & Rsync
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST_PBL2 }}
@@ -38,13 +36,15 @@ jobs:
           port: ${{ secrets.SSH_PORT_PBL2 }}
           timeout: 600s
           command_timeout: 600s
-          debug: true
           script: |
             set -ex
 
-            # Nginx 컨테이너에 복사 후 재시작
-            docker cp /home/bgt/pbl2/fe/build/. pbl2-nginx:/usr/share/nginx/html/
+            # 최신 빌드 파일 전송
+            rsync -avz --delete ./build/ ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/pbl2/fe/
+
+            # Docker 컨테이너 재시작
             docker restart pbl2-nginx
 
+            # 로그 확인
             docker ps -a
             docker logs --tail=50 pbl2-nginx
