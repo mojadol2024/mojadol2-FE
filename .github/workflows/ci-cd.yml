@@ -19,6 +19,19 @@ jobs:
         with:
           node-version: 22  # React 빌드를 위한 Node.js 버전
 
+
+      - name: npm build
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_PBL2 }}
+          username: ${{ secrets.SSH_USERNAME_PBL2 }}
+          password: ${{ secrets.SSH_PASSWORD_PBL2 }}
+          port: ${{ secrets.SSH_PORT_PBL2 }}
+          script: |
+            cd /home/bgt/pbl2
+            npm install
+            npm run build
+
       - name: Copy Build Files to Nginx Container
         uses: appleboy/scp-action@master
         with:
@@ -26,7 +39,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME_PBL2 }}
           password: ${{ secrets.SSH_PASSWORD_PBL2 }}
           port: ${{ secrets.SSH_PORT_PBL2 }}
-          source: "frontend/build/*"
+          source: "/home/bgt/pbl2/build/*"
           target: "/home/bgt/pbl2/frontend-build/"
           strip_components: 2
 
@@ -38,8 +51,5 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD_PBL2 }}
           port: ${{ secrets.SSH_PORT_PBL2 }}
           script: |
-            cd /home/bgt/pbl2
-            npm install
-            npm run build
             docker cp /home/bgt/pbl2/frontend-build/. pbl2-nginx:/usr/share/nginx/html/
             docker exec pbl2-nginx nginx -s reload
