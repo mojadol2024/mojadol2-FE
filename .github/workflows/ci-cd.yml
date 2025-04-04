@@ -39,12 +39,7 @@ jobs:
           script: |
             set -ex
 
-            # 파일 전송 (scp 사용)
-            scp -P ${{ secrets.SSH_PORT_PBL2 }} -r ./build/* ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/pbl2/fe/
-            
-            # Docker 컨테이너 재시작
-            docker restart pbl2-nginx
-
-            # 로그 확인
-            docker ps -a
-            docker logs --tail=50 pbl2-nginx
+            cd /home/bgt/pbl2/fe
+            git pull origin main  # 최신 코드 가져오기
+            docker restart pbl2-nginx  # 컨테이너 재시작
+            docker logs --tail=50 pbl2-nginx  # 로그 확인
