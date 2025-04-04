@@ -50,15 +50,16 @@ jobs:
           command_timeout: 600s
           debug: true
           script: |
-            set -ex  # 에러 발생 시 즉시 종료 + 실행된 명령어 로그 출력
+            set -ex
             docker stop pbl2-fe || true
             docker rm pbl2-fe || true
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-fe:latest
             docker network ls | grep -w "mojadol-network" || docker network create mojadol-network
-            docker run -d -p 4000:80 --name pbl2-fe --network mojadol-network ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-fe:latest
-            
-            docker cp pbl2-fe:/app/build/. pbl2-nginx:/usr/share/nginx/html/
+            docker run --name pbl2-fe ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-fe:latest
+            docker cp pbl2-fe:/app/build ./build
+            docker cp ./build/. pbl2-nginx:/usr/share/nginx/html/
+            docker rm -f pbl2-fe
+            rm -rf ./build
+            docker ps -a
+            docker logs --tail=50 pbl2-nginx
 
-            docker exec pbl2-nginx nginx -s reload
-
-            docker logs --tail=50 pbl2-fe
