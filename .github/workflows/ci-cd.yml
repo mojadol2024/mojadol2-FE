@@ -1,60 +1,50 @@
-name: ci/cd pbl2
+name: ci/cd pbl2 frontend
 
 on:
   push:
     branches:
       - "main"
+    paths:
+      - "frontend/**"  # 프론트엔드 코드 변경 시 실행
 
   workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'
-        required: false
-        default: 'warning'
-      tags:
-        description: 'dispatch'
 
 jobs:
-  cicd:
+  deploy-frontend:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          node-version: 18  # React 빌드를 위한 Node.js 버전
 
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile
-          platforms: linux/amd64
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-fe:latest
+      - name: Build React App
+        run: |
+          cd frontend
+          npm install
+          npm run build
 
-      - name: Deploy to Server via SSH
-        uses: appleboy/ssh-action@v1.0.0
+      - name: Copy Build Files to Nginx Container
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST_PBL2 }}
           username: ${{ secrets.SSH_USERNAME_PBL2 }}
           password: ${{ secrets.SSH_PASSWORD_PBL2 }}
           port: ${{ secrets.SSH_PORT_PBL2 }}
-          timeout: 600s
-          command_timeout: 600s
-          debug: true
+          source: "frontend/build/*"
+          target: "/home/${{ secrets.SSH_USERNAME_PBL2 }}/frontend-build/"
+          strip_components: 2
+
+      - name: Restart Nginx Docker Container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_PBL2 }}
+          username: ${{ secrets.SSH_USERNAME_PBL2 }}
+          password: ${{ secrets.SSH_PASSWORD_PBL2 }}
+          port: ${{ secrets.SSH_PORT_PBL2 }}
           script: |
-            set -ex  # 에러 발생 시 즉시 종료 + 실행된 명령어 로그 출력
-            docker stop pbl2-fe || true
-            docker rm pbl2-fe || true
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-fe:latest
-            docker network ls | grep -w "mojadol-network" || docker network create mojadol-network
-            docker run -d -p 80:80 --name pbl2-fe --network mojadol-network ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-fe:latest
-            docker ps -a
-            docker logs --tail=50 pbl2-fe
+            docker cp /home/${{ secrets.SSH_USERNAME_PBL2 }}/frontend-build/. pbl2-nginx:/usr/share/nginx/html/
+            docker exec pbl2-nginx nginx -s reload
