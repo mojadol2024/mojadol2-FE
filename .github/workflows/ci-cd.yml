@@ -40,8 +40,8 @@ jobs:
             set -ex
 
             # 최신 빌드 파일 전송
-            rsync -avz --delete -e "ssh -p ${{ secrets.SSH_PORT_PBL2 }}" ./build/ ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/pbl2/fe/
-
+            rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT_PBL2 }}" ./build/ ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/pbl2/fe/
+            
             # Docker 컨테이너 재시작
             docker restart pbl2-nginx
 
