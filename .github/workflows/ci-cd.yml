@@ -47,11 +47,11 @@ jobs:
             npm install
             npm run build
 
-            docker exec nginx-pbl2 rm -rf /usr/share/nginx/html/*
+            docker exec pbl2-nginx rm -rf /usr/share/nginx/html/*
             
-            docker cp build/. nginx-pbl2:/usr/share/nginx/html/
+            docker cp build/. pbl2-nginx:/usr/share/nginx/html/
             
-            docker restart nginx-pbl2
+            docker restart pbl2-nginx
 
             # 5️⃣ 적용 확인
-            docker exec nginx-pbl2 ls -al /usr/share/nginx/html/
+            docker exec pbl2-nginx ls -al /usr/share/nginx/html/
