@@ -17,7 +17,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 22  # React 빌드를 위한 Node.js 버전
+          node-version: 18  # React 빌드를 위한 Node.js 버전
 
 
       - name: npm build
@@ -28,7 +28,6 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD_PBL2 }}
           port: ${{ secrets.SSH_PORT_PBL2 }}
           script: |
-            cd /home/bgt/pbl2
             npm install
             npm run build
 
