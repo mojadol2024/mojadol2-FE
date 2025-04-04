@@ -4,9 +4,7 @@ on:
   push:
     branches:
       - "main"
-    paths:
-      - "frontend/**"  # 프론트엔드 코드 변경 시 실행
-
+      
   workflow_dispatch:
 
 jobs:
