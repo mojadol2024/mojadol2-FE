@@ -10,10 +10,10 @@ RUN npm run build
 # 2. Nginx 기반 컨테이너
 FROM nginx:alpine
 
-# 🔥 Nginx 설정 파일 복사
-COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+# Nginx 설정 파일 복사
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
-# 🔥 React 빌드 파일 복사
+# React 빌드 파일 복사
 COPY --from=builder /app/build /usr/share/nginx/html
 
 EXPOSE 80
