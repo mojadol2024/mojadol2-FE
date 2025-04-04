@@ -17,11 +17,11 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18  # React 빌드를 위한 Node.js 버전
+          node-version: 22  # React 빌드를 위한 Node.js 버전
 
       - name: Build React App
         run: |
-          cd frontend
+          cd /home/bgt/pbl2
           npm install
           npm run build
 
@@ -33,7 +33,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD_PBL2 }}
           port: ${{ secrets.SSH_PORT_PBL2 }}
           source: "frontend/build/*"
-          target: "/home/${{ secrets.SSH_USERNAME_PBL2 }}/frontend-build/"
+          target: "/home/bgt/pbl2/frontend-build/"
           strip_components: 2
 
       - name: Restart Nginx Docker Container
@@ -44,5 +44,5 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD_PBL2 }}
           port: ${{ secrets.SSH_PORT_PBL2 }}
           script: |
-            docker cp /home/${{ secrets.SSH_USERNAME_PBL2 }}/frontend-build/. pbl2-nginx:/usr/share/nginx/html/
+            docker cp /home/bgt/pbl2/frontend-build/. pbl2-nginx:/usr/share/nginx/html/
             docker exec pbl2-nginx nginx -s reload
