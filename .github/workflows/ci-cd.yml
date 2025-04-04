@@ -55,6 +55,6 @@ jobs:
             docker rm pbl2-fe || true
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-fe:latest
             docker network ls | grep -w "mojadol-network" || docker network create mojadol-network
-            docker run -d -p 4000:80 --name pbl2-fe --network mojadol-network ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-fe:latest
+            docker run -d -p 80:80 --name pbl2-fe --network mojadol-network ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-fe:latest
             docker ps -a
             docker logs --tail=50 pbl2-fe
