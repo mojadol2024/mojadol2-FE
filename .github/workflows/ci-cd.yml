@@ -16,7 +16,8 @@ jobs:
 
       - name: Install Dependencies & Build Frontend
         run: |
-          cd fe
+          cd
+          cd /home/bgt/pbl2/fe
           npm install
           npm run build
 
