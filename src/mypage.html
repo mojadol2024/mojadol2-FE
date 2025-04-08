@@ -3,36 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <title>개인정보 관리</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="mypage.css">
 </head>
 <body>
   <div class="container">
     <!-- Sidebar -->
     <aside class="sidebar">
-      <div class="logo-container">
-        <img src="logo.png" alt="로고" class="logo"/>
+      <!-- 상단 영역 -->
+      <div class="top-area">
+        <div class="logo-container">
+          <img src="logo.png" alt="로고" class="logo"/>
+        </div>
+        <ul class="menu-top">
+          <li>자소서 검사</li>
+          <li>첨삭 현황</li>
+          <li>이용권 관리</li>
+        </ul>
       </div>
 
-      <!-- 상단 메뉴 -->
-      <ul class="menu-top">
-        <li>자소서 검사</li>
-        <li>첨삭 현황</li>
-        <li>이용권 관리</li>
-      </ul>
-
-      <!-- 하단 메뉴 -->
-      <ul class="menu-bottom">
-        <li class="active">개인정보 관리</li>
-        <li>고객센터</li>
-        <li>로그아웃</li>
-      </ul>
+      <!-- 하단 고정 영역 -->
+      <div class="bottom-area">
+        <ul class="menu-bottom">
+          <li class="active">개인정보 관리</li>
+          <li>고객센터</li>
+          <li>로그아웃</li>
+        </ul>
+      </div>
     </aside>
 
     <!-- Content -->
     <main class="content">
       <h1>개인정보 관리</h1>
       <div class="top-buttons">
-        <button class="date-button">2025.03.01</button>
+        <button class="date-button">이용권 만료 일자     2025.03.01</button>
         <button class="edit-button">개인정보수정</button>
       </div>
 
@@ -45,10 +48,10 @@
         </div>
 
         <div class="form-row">
-            <div class="form-label">이메일</div>
-            <div class="form-input email-input">
-              <input type="text">
-              <span>@</span>
+          <div class="form-label">이메일</div>
+          <div class="form-input email-input">
+            <input type="text">
+            <span>@</span>
             <input type="text">
             <select>
               <option>직접입력</option>
@@ -59,29 +62,28 @@
         </div>
 
         <div class="form-row">
-            <div class="form-label">아이디</div>
-            <div class="form-input">
-              <input type="text">
-            </div>
+          <div class="form-label">아이디</div>
+          <div class="form-input">
+            <input type="text">
           </div>
-        
+        </div>
+
         <div class="form-row">
-            <div class="form-label">비밀번호</div>
-            <div class="form-input">
-              <input type="password">
-            </div>
+          <div class="form-label">비밀번호</div>
+          <div class="form-input">
+            <input type="password">
           </div>
+        </div>
 
         <div class="form-row toggle-row">
-            <div class="form-label">마케팅 정보 수신</div>
-            <div class="form-input">
-              <label class="toggle-switch">
-                <input type="checkbox" name="marketing" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
+          <div class="form-label">마케팅 정보 수신</div>
+          <div class="form-input">
+            <label class="toggle-switch">
+              <input type="checkbox" name="marketing" checked>
+              <span class="toggle-slider"></span>
+            </label>
           </div>
-
+        </div>
       </form>
 
       <div class="bottom-button fixed-withdraw">

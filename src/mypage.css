@@ -1,210 +1,235 @@
-/* 기본 설정 */
+/* 전체 화면 설정 */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 body {
-    font-family: 'Noto Sans KR', sans-serif;
-    margin: 0;
-    background-color: #f3f4f6;
-  }
-  
-  /* 컨테이너 */
-  .container {
-    display: flex;
-    min-height: 100vh;
-  }
-  
-  /* 사이드바 */
-  .sidebar {
-    width: 240px;
-    background-color: #fff;
-    padding: 32px 24px;
-    box-shadow: 2px 0 4px rgba(0,0,0,0.05);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  .logo-container {
-    text-align: center;
-    margin-bottom: 40px;
-  }
-  
-  .logo {
-    width: 100px;
-    height: auto;
-  }
-  
-  /* 메뉴 */
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .sidebar li {
-    margin: 18px 0;
-    font-size: 16px;
-    color: #4b5563;
-    cursor: pointer;
-  }
-  
-  .sidebar li.active {
-    font-weight: bold;
-    color: #111827;
-  }
-  
-  .menu-bottom {
-    margin-top: 40px;
-    border-top: 1px solid #e5e7eb;
-    padding-top: 20px;
-  }
-  
-  /* 본문 */
-  .content {
-    flex: 1;
-    padding: 48px 64px;
-    background-color: #f9fafb;
-  }
-  
-  .content h1 {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 24px;
-  }
-  
-  .top-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-bottom: 32px;
-  }
-  
-  .date-button,
-  .edit-button {
-    padding: 6px 14px;
-    font-size: 14px;
-    border-radius: 6px;
-    background-color: white;
-    border: 1px solid #d1d5db;
-  }
-  
-  .edit-button {
-    color: #51E0C4;
-    border-color: #51E0C4;
-  }
-  
-  .form-table {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-width: 600px;
-  }
-  
-  .form-row {
-    display: flex;
-    align-items: center;
-  }
-  
-  .form-label {
-    width: 150px;
-    font-weight: 500;
-    font-size: 14px;
-    color: #333;
-  }
-  
-  .form-input {
-    flex: 1;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-  
-  .form-input input,
-  .form-input select {
-    padding: 8px 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 14px;
-    width: 100%;
-    max-width: 200px;
-  }
-  
-  .email-input input {
-    max-width: 120px;
-  }
-  
-  .email-input select {
-    max-width: 120px;
-  }
-  
-  .form-input span {
-    font-size: 14px;
-    color: #444;
-  }
-  
-  /* 하단 버튼 */
-  .withdraw-button {
-    background-color: #d1d5db;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-  }
-  
-  .toggle-switch {
-    position: relative;
-    width: 50px;
-    height: 28px;
-    display: inline-block;
-  }
-  
-  .toggle-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  
-  .toggle-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #ccc;
-    transition: 0.4s;
-    border-radius: 28px;
-  }
-  
-  .toggle-slider:before {
-    content: "";
-    position: absolute;
-    height: 22px;
-    width: 22px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
-  }
-  
-  .toggle-switch input:checked + .toggle-slider {
-    background-color: #51E0C4;
-  }
-  
-  .toggle-switch input:checked + .toggle-slider:before {
-    transform: translateX(22px);
-  }
-  
-  .fixed-withdraw {
-    position: fixed;
-    bottom: 32px;
-    right: 32px;
-    z-index: 100;
-  }
-  
-  .edit-button:hover {
-    background-color: #ecfdf5;
-  }
-  
-  .withdraw-button:hover {
-    background-color: #9ca3af;
-  }
-  
-  
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f3f4f6;
+  height: calc(100vh - 1px); /* 잘림 방지 */
+  box-sizing: border-box;
+}
+
+/* 컨테이너 */
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* 사이드바 */
+.sidebar {
+  position: relative; /* 하단 고정 기준점 */
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  height: 100%;
+  background-color: #fff;
+  padding: 32px 24px;
+  box-shadow: 2px 0 4px rgba(0,0,0,0.05);
+  border-right: 1px solid #e5e7eb;
+  box-sizing: border-box;
+}
+
+.top-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 100px;
+  height: auto;
+}
+
+/* 메뉴 */
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-top {
+  margin-bottom: 40px;
+}
+
+.sidebar li {
+  margin: 18px 0;
+  font-size: 16px;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.sidebar li.active {
+  font-weight: bold;
+  color: #111827;
+}
+
+/* 진짜 하단 고정된 메뉴 */
+.menu-bottom {
+  position: absolute;
+  bottom: 32px;
+  left: 24px;
+  right: 24px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 20px;
+}
+
+/* 본문 */
+.content {
+  flex: 1;
+  padding: 48px 64px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.content h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.top-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.date-button,
+.edit-button {
+  padding: 6px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+  background-color: white;
+  border: 1px solid #d1d5db;
+}
+
+.edit-button {
+  color: #10b981;
+  border-color: #10b981;
+}
+
+.edit-button:hover {
+  background-color: #ecfdf5;
+}
+
+/* 폼 */
+.form-table {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 600px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+}
+
+.form-label {
+  width: 150px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+}
+
+.form-input {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.form-input input,
+.form-input select {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  max-width: 200px;
+}
+
+.email-input input {
+  max-width: 120px;
+}
+
+.email-input select {
+  max-width: 120px;
+}
+
+.form-input span {
+  font-size: 14px;
+  color: #444;
+}
+
+/* 스위치 */
+.toggle-switch {
+  position: relative;
+  width: 50px;
+  height: 28px;
+  display: inline-block;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 28px;
+}
+
+.toggle-slider:before {
+  content: "";
+  position: absolute;
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: #51E0C4;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(22px);
+}
+
+/* 하단 고정 버튼 */
+.fixed-withdraw {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 100;
+}
+
+.withdraw-button {
+  background-color: #d1d5db;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.withdraw-button:hover {
+  background-color: #9ca3af;
+}
