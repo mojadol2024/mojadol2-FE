@@ -35,25 +35,25 @@
     <main class="content">
       <h1>개인정보 관리</h1>
       <div class="top-buttons">
-        <button class="date-button">이용권 만료 일자     2025.03.01</button>
-        <button class="edit-button">개인정보수정</button>
+        <button class="date-button">이용권 만료 일자 2025.03.01</button>
+        <button id="edit-button" class="edit-button">개인정보수정</button>
       </div>
 
       <form class="form-table">
         <div class="form-row">
           <div class="form-label">이름</div>
           <div class="form-input">
-            <input type="text">
+            <input type="text" disabled>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-label">이메일</div>
           <div class="form-input email-input">
-            <input type="text">
+            <input type="text" disabled>
             <span>@</span>
-            <input type="text">
-            <select>
+            <input type="text" disabled>
+            <select disabled>
               <option>직접입력</option>
               <option>gmail.com</option>
               <option>naver.com</option>
@@ -64,14 +64,14 @@
         <div class="form-row">
           <div class="form-label">아이디</div>
           <div class="form-input">
-            <input type="text">
+            <input type="text" disabled>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-label">비밀번호</div>
           <div class="form-input">
-            <input type="password">
+            <input type="password" disabled>
           </div>
         </div>
 
@@ -79,7 +79,7 @@
           <div class="form-label">마케팅 정보 수신</div>
           <div class="form-input">
             <label class="toggle-switch">
-              <input type="checkbox" name="marketing" checked>
+              <input type="checkbox" name="marketing" checked disabled>
               <span class="toggle-slider"></span>
             </label>
           </div>
@@ -90,6 +90,18 @@
         <button class="withdraw-button">회원 탈퇴</button>
       </div>
     </main>
+  </div>
+
+  <!-- 비밀번호 확인 모달 -->
+  <div id="password-modal" class="modal hidden">
+    <div class="modal-content">
+      <p>비밀번호를 입력하세요</p>
+      <input type="password" id="password-input" placeholder="비밀번호"/>
+      <div class="modal-actions">
+        <button id="confirm-password">확인</button>
+        <button id="cancel-password">취소</button>
+      </div>
+    </div>
   </div>
 
   <script src="mypage.js"></script>
