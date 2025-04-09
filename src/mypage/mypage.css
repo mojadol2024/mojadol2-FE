@@ -1,19 +1,14 @@
-/* 전체 화면 설정 */
+/* @ 와 사이 거리 조금 줄이기 */
+/* 공통 초기화 */
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
-}
-
-body {
+  overflow: hidden; /* 스크롤 없도록 설정 */
   font-family: 'Noto Sans KR', sans-serif;
   background-color: #f3f4f6;
-  height: calc(100vh - 1px); /* 잘림 방지 */
-  box-sizing: border-box;
 }
 
-/* 컨테이너 */
 .container {
   display: flex;
   height: 100vh;
@@ -21,16 +16,15 @@ body {
 
 /* 사이드바 */
 .sidebar {
-  position: relative; /* 하단 고정 기준점 */
   display: flex;
   flex-direction: column;
   width: 240px;
-  height: 100%;
   background-color: #fff;
   padding: 32px 24px;
   box-shadow: 2px 0 4px rgba(0,0,0,0.05);
   border-right: 1px solid #e5e7eb;
   box-sizing: border-box;
+  position: relative;
 }
 
 .top-area {
@@ -48,7 +42,6 @@ body {
   height: auto;
 }
 
-/* 메뉴 */
 .sidebar ul {
   list-style: none;
   padding: 0;
@@ -71,7 +64,6 @@ body {
   color: #111827;
 }
 
-/* 진짜 하단 고정된 메뉴 */
 .menu-bottom {
   position: absolute;
   bottom: 32px;
@@ -120,12 +112,12 @@ body {
   background-color: #ecfdf5;
 }
 
-/* 폼 */
+/* 폼 전체 구조 */
 .form-table {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 600px;
+  max-width: 1200px; /*크기 최대한 넓게 제한 하면 안됨 */ 
 }
 
 .form-row {
@@ -138,8 +130,10 @@ body {
   font-weight: 500;
   font-size: 14px;
   color: #333;
+  margin-right: 8px; 
 }
 
+/* 입력칸/버튼 통일 정렬용 */
 .form-input {
   flex: 1;
   display: flex;
@@ -147,27 +141,67 @@ body {
   align-items: center;
 }
 
+/* ✅ 모든 input, select, button 크기 통일 */
 .form-input input,
-.form-input select {
-  padding: 8px 10px;
+.form-input select,
+.form-input button {
+  height: 40px;
+  padding: 0 12px;
+  font-size: 14px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
-  font-size: 14px;
-  width: 100%;
-  max-width: 200px;
+  box-sizing: border-box;
+  line-height: 1.5;
+  flex-shrink: 0;
 }
 
-.email-input input {
-  max-width: 120px;
+/* 기본 너비 고정 */
+.form-input input,
+.form-input select {
+  width: 240px;
+  max-width: 240px;
 }
 
-.email-input select {
-  max-width: 120px;
+/* 버튼은 고정 너비 */
+.form-input button {
+  width: 100px;
+  background-color: white;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.form-input span {
+.form-input button:hover {
+  background-color: #e5e7eb;
+}
+
+/* 이메일용 row 정렬 */
+.row-flex {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.row-flex span {
   font-size: 14px;
   color: #444;
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+.row-flex input,
+.row-flex select {
+  width: 240px;
+  min-width: 240px;
+  max-width: 240px;
+  flex-shrink: 0;
+}
+
+.row-flex button {
+  width: 100px;
+  flex-shrink: 0;
 }
 
 /* 스위치 */
@@ -232,4 +266,28 @@ body {
 
 .withdraw-button:hover {
   background-color: #9ca3af;
+}
+
+/* 모달 */
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  min-width: 300px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
 }
