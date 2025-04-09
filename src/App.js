@@ -1,12 +1,19 @@
 import React from 'react';
-import LoginScreen from './screens/Login'; // Login.js니까 대문자 'L'!
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/home/home';
+import Mypage from './pages/mypage/mypage';
+import Login from './screens/Login/Login';   
 
 function App() {
   return (
-    <div>
-      <LoginScreen />
-    </div>
-  );
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/mypage" element={<Mypage />} />
+        <Route path="/Login" element={<Login />} />
+      </Routes>   
+    </Router>
+  ); 
 }
 
 export default App;
