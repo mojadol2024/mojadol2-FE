@@ -5,10 +5,7 @@ import { createRoot } from 'react-dom/client';
 import axios from 'axios';
 import './mypage.css';
 
-const BASE_URL =
-  window.location.hostname === 'localhost'
-    ? 'http://localhost:4000/api'
-    : 'https://myeonjub.store/api';
+const BASE_URL ='http://myeonjub.store/api';
 
 function MyPage() {
   const [showModal, setShowModal] = useState(false);
