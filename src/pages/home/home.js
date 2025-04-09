@@ -12,7 +12,7 @@ function Home() {
       alignItems: 'center',
       flexDirection: 'column',
       backgroundColor: '#f3f4f6',
-    }
+    } 
   },
     h('h1', { style: { marginBottom: '20px', fontSize: '24px' } }, '빈 페이지입니다'),
     h('button', {
@@ -26,7 +26,20 @@ function Home() {
         borderRadius: '8px',
         cursor: 'pointer',
       }
-    }, '마이페이지로 이동')
+    }, '마이페이지로 이동'),
+
+    h('button', {
+      onClick: () => navigate('/Login'), 
+      style: {
+        padding: '10px 20px',
+        fontSize: '16px',
+        backgroundColor: '#10b981',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer',
+      }
+    }, '로그인으로 이동')
   );
 }
 
