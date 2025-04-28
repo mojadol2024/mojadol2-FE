@@ -16,25 +16,16 @@
 }
 
 .logo {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 50px;
   display: flex;
+  justify-content: center; /* 중앙 정렬 */
   align-items: center;
-  justify-content: flex-start;
   width: 100%;
+  margin-bottom: 50px;
 }
 
-.logo-text {
-  font-size: 32px;
-  font-weight: bold;
-  line-height: 1.2;
-  color: black;
-  text-align: left; /* 텍스트 중앙 정렬 */
-}
-
-.logo-text span {
-  color: #51E0C4; /* 민트색 */
+.logo img {
+  width: 150px; /* 로고 크기 조정 */
+  height: auto;
 }
 
 .menu {

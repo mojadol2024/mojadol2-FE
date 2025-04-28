@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { FaFileAlt, FaEdit, FaTicketAlt, FaUserCog, FaHeadset, FaSignOutAlt } from 'react-icons/fa';
+import logo from '../assets/logo.png'; // ✅ 로고 이미지 import
 import './side.css'; // CSS 파일 연결
 
 // 로그아웃 API 연결 함수
@@ -25,7 +26,6 @@ const handleLogout = async () => {
         },
       }
     );
-    
 
     if (response.data.isSuccess) {
       alert('로그아웃 성공!');
@@ -45,11 +45,7 @@ function Sidebar() {
     <div className="sidebar">
       {/* 로고 */}
       <div className="logo">
-        <div className="logo-text">
-          면   <span>정</span><br />
-          접   <span>석</span><br />
-          의
-        </div>
+        <img src={logo} alt="로고" className="logo-image" />
       </div>
       {/* 메뉴 상단 그룹 */}
       <ul className="menu top-menu">
