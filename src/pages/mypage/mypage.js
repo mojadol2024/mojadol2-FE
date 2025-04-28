@@ -4,7 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './mypage.css';
 
-const BASE_URL = 'https://myeonjub.store'; // 
+const BASE_URL = 'https://myeonjub.store/api'; // 
 
 function MyPage() {
   const [showModal, setShowModal] = useState(false);
@@ -40,7 +40,16 @@ function MyPage() {
     try {
       const token = localStorage.getItem('token');
 
-      const response = await axios.post(`${BASE_URL}/api/mojadol/api/v1/mypage/checkPassword`,
+      await axios.post(`${BASE_URL}/mojadol/api/v1/auth/signOut`, {}, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
+
+
+      const response = await axios.post(`${BASE_URL}/mojadol/api/v1/mypage/checkPassword`,
         { userPw: password },
         {
           headers: {
@@ -79,7 +88,7 @@ function MyPage() {
     try {
       const token = localStorage.getItem('token');
 
-      const response = await axios.post(`${BASE_URL}/api/mojadol/api/v1/mypage/updateProfile`,
+      const response = await axios.post(`${BASE_URL}/mojadol/api/v1/mypage/updateProfile`,
         {
           userPw: password,
           nickname: nickname,
@@ -114,7 +123,7 @@ function MyPage() {
     try {
       const token = localStorage.getItem('token');
 
-      const response = await axios.post(`${BASE_URL}/api/mojadol/api/v1/mypage/resignUser`, {}, {
+      const response = await axios.post(`${BASE_URL}/mojadol/api/v1/mypage/resignUser`, {}, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -136,6 +145,7 @@ function MyPage() {
     }
   };
 
+
   const inputRow = (label, value, setValue, type = 'text', disabled = false) =>
     h('div', { className: 'form-row' },
       h('div', { className: 'form-label' }, label),
@@ -151,6 +161,7 @@ function MyPage() {
 
   return h('main', { className: 'content' },
     h('h1', null, '개인정보 관리'),
+
 
     h('div', { className: 'top-buttons' },
       h('button', { className: 'date-button' }, '이용권 만료 일자 2025.03.01'),
@@ -199,6 +210,8 @@ function MyPage() {
       inputRow('비밀번호', password, setPassword, 'password', !isEditable),
       h('div', { style: { fontSize: '13px', color: '#ef4444', marginBottom: '10px' } }, passwordMsg),
 
+   
+
       h('div', { className: 'form-row toggle-row' },
         h('div', { className: 'form-label' }, '마케팅 정보 수신'),
         h('div', { className: 'form-input' },
@@ -206,14 +219,16 @@ function MyPage() {
             h('input', {
               type: 'checkbox',
               checked: marketingAgreed,
+
               onChange: () => setMarketingAgreed(!marketingAgreed) 
+
             }),
             h('span', { className: 'toggle-slider' })
           )
         )
       )      
     ),
-
+        
     h('div', { className: 'fixed-withdraw' },
       h('button', { className: 'withdraw-button', onClick: handleWithdraw }, '회원 탈퇴')
     ),
@@ -239,3 +254,4 @@ function MyPage() {
 }
 
 export default MyPage;
+
