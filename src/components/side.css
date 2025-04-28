@@ -1,0 +1,67 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: #fff;
+  border-right: 1px solid #e5e7eb;
+  padding: 28px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.logo-text {
+  font-size: 32px;
+  font-weight: bold;
+  line-height: 1.2;
+  color: black;
+  text-align: left; /* 텍스트 중앙 정렬 */
+}
+
+.logo-text span {
+  color: #51E0C4; /* 민트색 */
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.top-menu {
+  flex-grow: 0;
+}
+
+.bottom-menu {
+  margin-top: auto;
+}
+
+.menu li {
+  font-size: 18px;
+  padding: 15px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s;
+}
+
+.menu li:hover {
+  background-color: #e5e7eb;
+  border-radius: 8px;
+}
