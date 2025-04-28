@@ -5,6 +5,7 @@ import MyPage from './pages/mypage/mypage';
 import Login from './screens/Login/Login';  
 import Side from './components/side'; 
 
+
 function App() {
   return (
     <Router>
@@ -19,7 +20,7 @@ function App() {
         } />
       </Routes>   
     </Router>
-  ); 
+  );
 }
 
 export default App;

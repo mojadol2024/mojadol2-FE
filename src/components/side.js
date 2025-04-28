@@ -47,14 +47,12 @@ function Sidebar() {
       <div className="logo">
         <img src={logo} alt="로고" className="logo-image" />
       </div>
-
       {/* 메뉴 상단 그룹 */}
       <ul className="menu top-menu">
         <li><FaFileAlt size={20} style={{ marginRight: '10px' }} /> 자소서 검사</li>
         <li><FaEdit size={20} style={{ marginRight: '10px' }} /> 첨삭현황</li>
         <li><FaTicketAlt size={20} style={{ marginRight: '10px' }} /> 이용권 관리</li>
       </ul>
-
       {/* 메뉴 하단 그룹 */}
       <ul className="menu bottom-menu">
         <li><FaUserCog size={20} style={{ marginRight: '10px' }} /> 개인정보 관리</li>
