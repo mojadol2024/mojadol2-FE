@@ -1,9 +1,9 @@
 .sidebar {
-  position: fixed; /* <-- 이 줄 추가 */
-  top: 0; 
-  left: 0; 
-  width: 250px; /* 너비도 명시해주면 안정적입니다 */
-  height: 100vh; /* 화면 높이 전체 차지 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
   background-color: #fff;
   border-right: 1px solid #e5e7eb;
   padding: 28px;
@@ -11,43 +11,58 @@
 
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* 왼쪽 정렬 */
-  justify-content: flex-start; /* 위쪽 정렬 */
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
-  .logo {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 50px; /* 로고와 메뉴 사이 간격 확장 */
-    display: flex;
-    align-items: center;
-  }
-  
-  .menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .top-menu {
-    flex-grow: 0; /* 위에 고정 */
-  }
-  
-  .bottom-menu {
-    margin-top: auto; /* 밑으로 밀어내기 */
-  }
-  
-  .menu li {
-    font-size: 18px;
-    padding: 15px 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    transition: background-color 0.3s;
-  }
-  
-  .menu li:hover {
-    background-color: #e5e7eb;
-    border-radius: 8px;
-  }
-  
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.logo-text {
+  font-size: 32px;
+  font-weight: bold;
+  line-height: 1.2;
+  color: black;
+  text-align: left; /* 텍스트 중앙 정렬 */
+}
+
+.logo-text span {
+  color: #51E0C4; /* 민트색 */
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.top-menu {
+  flex-grow: 0;
+}
+
+.bottom-menu {
+  margin-top: auto;
+}
+
+.menu li {
+  font-size: 18px;
+  padding: 15px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s;
+}
+
+.menu li:hover {
+  background-color: #e5e7eb;
+  border-radius: 8px;
+}
+
