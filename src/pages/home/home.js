@@ -108,6 +108,10 @@ function Home() {
     
     h('button', {
       onClick: () => navigate('/TakeSelect'), 
+    }, '로그인으로 이동'),
+
+    h('button', {
+      onClick: () => navigate('/Payment'), 
       style: {
         padding: '10px 20px',
         fontSize: '16px',
@@ -118,6 +122,7 @@ function Home() {
         cursor: 'pointer',
       }
     }, 'take선택지로 이동'),
+    }, '결제관리로 이동')
   );
 }
 

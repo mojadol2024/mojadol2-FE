@@ -11,12 +11,14 @@ import RecordingPage from './pages/recordingPage/RecordingPage';
 import RecordingInProgress from './pages/recordingInProgress/RecordingInProgress';
 import TakeSelect from './pages/takeSelect/TakeSelect';
 
+
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/Login" element={<Login />} />        
+
         <Route path="/mypage" element={
           <div className="container">
             <Side />
@@ -66,9 +68,15 @@ function App() {
           </div>
         } />
 
+        <Route path="/Payment" element={
+          <div className="container">
+            <Side />
+            <Payment />
+          </div>
+        } />
       </Routes>   
     </Router>
-  ); 
+  );
 }
 
 export default App;

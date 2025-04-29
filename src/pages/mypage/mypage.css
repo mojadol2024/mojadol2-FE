@@ -1,10 +1,8 @@
-/* @ 와 사이 거리 조금 줄이기 */
-/* 공통 초기화 */
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* 스크롤 없도록 설정 */
+  overflow: hidden;
   font-family: 'Noto Sans KR', sans-serif;
   background-color: #f3f4f6;
 }
@@ -14,75 +12,18 @@ html, body {
   height: 100vh;
 }
 
-/* 사이드바 */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  width: 240px;
-  background-color: #fff;
-  padding: 32px 24px;
-  box-shadow: 2px 0 4px rgba(0,0,0,0.05);
-  border-right: 1px solid #e5e7eb;
-  box-sizing: border-box;
-  position: relative;
-}
-
-.top-area {
-  display: flex;
-  flex-direction: column;
-}
-
-.logo-container {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.logo {
-  width: 100px;
-  height: auto;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.menu-top {
-  margin-bottom: 40px;
-}
-
-.sidebar li {
-  margin: 18px 0;
-  font-size: 16px;
-  color: #4b5563;
-  cursor: pointer;
-}
-
-.sidebar li.active {
-  font-weight: bold;
-  color: #111827;
-}
-
-.menu-bottom {
-  position: absolute;
-  bottom: 32px;
-  left: 24px;
-  right: 24px;
-  border-top: 1px solid #e5e7eb;
-  padding-top: 20px;
-}
-
-/* 본문 */
 .content {
-  flex: 1;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
   padding: 48px 64px;
   background-color: #fff;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .content h1 {
-  font-size: 24px;
+  font-size: 30px;
   font-weight: 700;
   margin-bottom: 24px;
 }
@@ -117,20 +58,24 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 1200px; /*크기 최대한 넓게 제한 하면 안됨 */ 
+  max-width: 1200px;
+  margin-top: 50px;
 }
 
 .form-row {
   display: flex;
   align-items: center;
+  min-height: 48px; 
+
 }
 
 .form-label {
   width: 150px;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 18px;
   color: #333;
   margin-right: 8px; 
+  gap: 40px; 
 }
 
 /* 입력칸/버튼 통일 정렬용 */
@@ -147,7 +92,7 @@ html, body {
 .form-input button {
   height: 40px;
   padding: 0 12px;
-  font-size: 14px;
+  font-size: 16px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   box-sizing: border-box;
@@ -210,6 +155,7 @@ html, body {
   width: 50px;
   height: 28px;
   display: inline-block;
+  margin-left: 8px; 
 }
 
 .toggle-switch input {
@@ -269,25 +215,63 @@ html, body {
 }
 
 /* 모달 */
+/* 모달 배경 */
 .modal {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5); /* 반투명 배경 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* 모달 내용 박스 */
+.modal-content {
+  background-color: #fff;
+  padding: 30px 40px;
+  border-radius: 10px;
+  text-align: center; /* 안의 글자랑 버튼 모두 가운데 정렬 */
+}
+
+/*모달 안 인풋 */
+.modal-content input[type="password"] {
+  margin-top: 15px;
+  padding: 10px;
+  width: 80%;
+  font-size: 16px;
+}
+
+/* 모달 안 버튼 영역 */
+.modal-actions {
+  margin-top: 20px;
   display: flex;
   justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 24px;
-  border-radius: 8px;
-  min-width: 300px;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
   gap: 10px;
-  margin-top: 12px;
 }
+
+/* "확인" 버튼 스타일 */
+.modal-actions button:first-child {
+  background-color: #51E0C4;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* "취소" 버튼 스타일 */
+.modal-actions button:last-child {
+  background-color: #eee;
+  color: #333;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
