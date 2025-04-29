@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/home/home';
 import MyPage from './pages/mypage/mypage';
 import Login from './screens/Login/Login';  
-import Side from './components/side'; 
+import Side from './components/side';
+import Payment from './pages/Payment/Payment';
 
 
 function App() {
@@ -16,6 +17,12 @@ function App() {
           <div className="container">
             <Side />
             <MyPage />
+          </div>
+        } />
+        <Route path="/Payment" element={
+          <div className="container">
+            <Side />
+            <Payment />
           </div>
         } />
       </Routes>   
