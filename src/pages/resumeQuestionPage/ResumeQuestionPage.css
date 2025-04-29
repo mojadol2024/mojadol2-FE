@@ -1,0 +1,133 @@
+/* ResumeQuestionPage.css */
+
+.resume-question-container {
+    display: flex;
+    height: 100vh;
+    background-color: #f9f9f9;
+    font-family: 'Pretendard', sans-serif;
+  }
+  
+  .resume-question-main {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .resume-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .resume-title {
+    font-size: 28px;
+    font-weight: 700;
+    border: none;
+    background: none;
+    color: #555;
+    padding: 8px 0;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .btn {
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+  
+  .btn.confirm {
+    background-color: #b8e3d0;
+    color: #333;
+  }
+  
+  .btn.confirm:hover {
+    background-color: #9dd9c4;
+  }
+  
+  .btn.save {
+    background-color: #6dd3b5;
+    color: white;
+  }
+  
+  .btn.save:hover {
+    background-color: #56bfa1;
+  }
+  
+  .question-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 100%;
+  }
+  
+  .question-item {
+    background-color: white;
+    border-radius: 12px;
+    padding: 16px 24px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  }
+  
+  .question-text {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .play-icon {
+    color: #2c72d6;
+    font-weight: bold;
+  }
+  
+  .question-actions {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .btn.attach {
+    background-color: #e0f7f4;
+    color: #333;
+  }
+  
+  .btn.record {
+    background-color: #d5f0e4;
+    color: #222;
+  }
+  
+  .question-status {
+    margin-top: 12px;
+    font-size: 14px;
+  }
+  
+  .question-status.done {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .question-status.select {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .btn.redo {
+    background-color: #ffe3e3;
+    color: #c13d3d;
+  }
+  
+  .btn.redo:hover {
+    background-color: #ffc7c7;
+  }
+  

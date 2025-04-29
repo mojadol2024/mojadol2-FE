@@ -1,0 +1,72 @@
+.result-card {
+    background-color: #fcf9e6;
+    border-radius: 16px;
+    padding: 24px;
+    width: 280px;
+    height: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin: 0 12px;
+  }
+  
+  .user-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+  
+  .bar-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  
+  .bar {
+    height: 6px;
+    border-radius: 4px;
+    width: 48%;
+  }
+  
+  .blue {
+    background-color: #4a60d4;
+  }
+  
+  .green {
+    background-color: #90e1c8;
+  }
+  
+  .question-btn {
+    background-color: #90e1c8;
+    border: none;
+    padding: 8px;
+    margin-bottom: 6px;
+    width: 100%;
+    border-radius: 8px;
+  }
+  
+  .interview-btn {
+    background-color: #ccc;
+    border: none;
+    padding: 8px;
+    margin-bottom: 6px;
+    width: 100%;
+    border-radius: 8px;
+  }
+  
+  .interview-btn.active {
+    background-color: #1a2fa0;
+    color: white;
+  }
+  
+  .delete-btn {
+    background-color: black;
+    color: white;
+    padding: 8px;
+    width: 100%;
+    border-radius: 8px;
+    border: none;
+  }
+  
