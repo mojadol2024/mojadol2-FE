@@ -39,7 +39,20 @@ function Home() {
         borderRadius: '8px',
         cursor: 'pointer',
       }
-    }, '로그인으로 이동')
+    }, '로그인으로 이동'),
+    
+    h('button', {
+      onClick: () => navigate('/SignUp'), 
+      style: {
+        padding: '10px 20px',
+        fontSize: '16px',
+        backgroundColor: '#10b981',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer',
+      }
+    }, '회원가입으로 이동')
   );
 }
 

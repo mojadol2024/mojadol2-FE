@@ -9,7 +9,7 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://myeonjub.store/api/mojadol/api/v1/auth/signIn", {
+      const response = await axios.post("https://myeonjub.store/api/mojadol/api/v1/auth/signIn", {
         userLoginId: userLoginId,
         userPw: password,
       });
@@ -59,7 +59,7 @@ function Login() {
           className="toggleButton"
           type="button"
         >
-          {showPassword ? '🙈' : '👁️'}
+          {showPassword ? '🕶️' : ' 👀'}
         </button>
       </div>
 

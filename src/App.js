@@ -4,6 +4,7 @@ import Home from './pages/home/home';
 import MyPage from './pages/mypage/mypage';
 import Login from './screens/Login/Login';  
 import Side from './components/side'; 
+import SignUp from './screens/SignUp/SignUp';  
 
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/Login" element={<Login />} />
+        <Route path="/SignUp" element={<SignUp />} />
         <Route path="/mypage" element={
           <div className="container">
             <Side />
