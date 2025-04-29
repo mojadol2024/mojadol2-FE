@@ -1,18 +1,19 @@
-html, body {
-  margin-left: 100px; /*side 넓이 때문에 왼쪽에 margin 100*/
-  padding: 48px ; 
+html, body {  
   font-family: 'Noto Sans KR', sans-serif;
   background-color: #fff;
-  overflow: auto;
+  /*overflow: auto;*/
+  margin-left: 130px; /*side 때문에 margin 줘야돼돼요*/
 }
 
 .payment-container {
-
   flex-grow: 1;
-  height: 100%;
+  min-height: 100%;
   width: 100%;
   box-sizing: border-box; 
-  overflow: hidden; /*body 에 overflow 적용했더니 이중으로 스크롤이 생겨서 표에서는 가리기*/
+  padding-left: 20px; 
+  padding-right: 50px;
+  padding-top: 20px;
+  overflow-y: auto; /*body 에 overflow 적용했더니 이중으로 스크롤이 생겨서*/
   }
   
   .payment-container p { /*내역 없을 때 안내문구 (현재이용권이없습니다/이용내역이없습니다)*/
@@ -25,28 +26,47 @@ html, body {
   }
   
   /* 상단 제목 및 구매 버튼 */
-  .payment-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;  
-    margin-bottom: 32px; /* mypage.css의 top-buttons margin-bottom 적용 */
-  }
-  
+
   .payment-header h1 {
     font-size: 30px; /* mypage.css의 content h1 font-size 적용 */
     font-weight: 700; /* mypage.css의 content h1 font-weight 적용 */
     color: #333;
     margin: 0;
+    margin-bottom: 20px;
+  }
+
+  .button-group {
+    display: flex; /* 버튼들을 가로로 배치 */
+    gap: 10px; /* 버튼 사이 간격 조절 */
+    justify-content: flex-end; /* 내용을 오른쪽으로 정렬 */
+    margin-bottom: 20px
   }
   
+  .buy-info-button { 
+    color: #ccc; 
+    border: 2px solid #ccc; 
+    background-color: transparent;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .buy-info-button:hover {
+    color: #fff; 
+    background-color: #ccc; 
+  }
+
   .buy-ticket-button {
     background-color: #51E0C4; /* 메인 색상 */
     color: #fff;
     border: none;
     font-weight: bold;
-    padding: 10px 15px; /* mypage.css의 date-button, edit-button padding 적용 */
-    border-radius: 10px; /* mypage.css의 date-button, edit-button border-radius 적용 */
-    font-size: 20px; /* mypage.css의 date-button, edit-button font-size : 16 */
+    padding: 10px 15px; 
+    border-radius: 10px; 
+    font-size: 16px; 
     cursor: pointer;
     transition: background-color 0.2s ease; /* mypage.css의 edit-button transition 적용 */
   }
