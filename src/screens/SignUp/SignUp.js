@@ -13,7 +13,7 @@ function Signup() {
     email: '',
   });
 
-  const [passwordError, setPasswordError] = useState(''); // 비밀번호 확인 에러 메시지 상태
+  const [passwordError, setPasswordError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,7 +22,6 @@ function Signup() {
       [name]: value,
     }));
 
-    // 비밀번호 확인시 일치 여부 체크ㄹ
     if (name === 'confirmPw') {
       if (value !== formData.userPw) {
         setPasswordError('비밀번호가 일치하지 않습니다.');
@@ -39,7 +38,7 @@ function Signup() {
     }
 
     try {
-      const response = await axios.post("https://myeonjub.store/api/mojadol/api/v1/auth/signUp", {
+      const response = await axios.post("https://myeonjub.store/api/mojadol/api/v1/users/sign-up", {
         userLoginId: formData.userLoginId,
         userPw: formData.userPw,
         userName: formData.userName,
@@ -47,10 +46,8 @@ function Signup() {
         phoneNumber: formData.phoneNumber,
         email: formData.email,
       });
-    
-      alert("회원가입 성공!");
-      // 예: navigate('/login') 등으로 로그인 페이지로 이동 가능
 
+      alert("회원가입 성공!");
     } catch (error) {
       if (error.response) {
         console.log(error.response.data); 
@@ -60,7 +57,91 @@ function Signup() {
       }
     }
   };
-  console.log(formData);
+
+  const checkIdDuplicate = async () => {
+    if (!formData.userLoginId) {
+      alert("아이디를 입력해주세요.");
+      return;
+    }
+  
+    try {
+      const res = await axios.get(
+        `https://myeonjub.store/api/mojadol/api/v1/users/check?userLoginId=${formData.userLoginId}`
+      );
+  
+      console.log("아이디 중복 확인 응답:", res.data);
+  
+      if (res.data.result === "중복되는 데이터가 없습니다.") {
+        alert("사용 가능한 아이디입니다.");
+      } else {
+        alert("이미 사용 중인 아이디입니다.");
+      }
+    } catch (err) {
+      alert("아이디 중복 확인 중 오류가 발생했습니다.");
+      console.error("백엔드 응답:", err.response?.data || err.message);
+    }
+  };
+  
+  
+  
+  
+  
+
+  const checkNicknameDuplicate = async () => {
+    if (!formData.nickname) {
+      alert("닉네임을 입력해주세요.");
+      return;
+    }
+  
+    try {
+      const res = await axios.get(
+        `https://myeonjub.store/api/mojadol/api/v1/users/check?nickname=${formData.nickname}`
+      );
+  
+      console.log("응답 데이터:", res.data);
+  
+      if (res.data.result === "중복되는 데이터가 없습니다.") {
+        alert("사용 가능한 닉네임입니다.");
+      } else {
+        alert("이미 사용 중인 닉네임입니다.");
+      }
+    } catch (err) {
+      console.error("닉네임 중복 확인 중 오류:", err);
+      alert("닉네임 중복 확인 중 오류가 발생했습니다.");
+    }
+  };
+  
+  
+  
+
+  const checkEmailDuplicate = async () => {
+    if (!formData.email) {
+      alert("이메일을 입력해주세요.");
+      return;
+    }
+  
+    try {
+      const res = await axios.get(
+        `https://myeonjub.store/api/mojadol/api/v1/users/check?email=${formData.email}`
+      );
+  
+      
+  
+      if (res.data.result === "중복되는 데이터가 없습니다.") {
+        alert("사용 가능한 이메일입니다.");
+        console.log("이메일 중복 확인 응답:", res.data);
+      } else {
+        alert("이미 사용 중인 이메일입니다.");
+        console.log("이메일 중복 확인 응답:", res.data);
+      }
+    } catch (err) {
+      alert("이메일 중복 확인 중 오류가 발생했습니다.");
+      console.error("백엔드 응답:", err.response?.data || err.message);
+    }
+  };
+  
+  
+  
 
   return (
     <div className="container">
@@ -69,15 +150,23 @@ function Signup() {
       </div>
       <h3 className="title">회원가입</h3>
 
-      <input
-        type="text"
-        name="userLoginId"
-        placeholder="로그인 아이디"
-        value={formData.userLoginId}
-        onChange={handleChange}
-        className="input"
-        style={{ marginBottom: '10px' }}
-      />
+      {/* 로그인 아이디 + 중복 확인 버튼 */}
+      <div style={{ position: 'relative', width: '500px', marginBottom: '20px' }}>
+        <input
+          type="text"
+          name="userLoginId"
+          placeholder="로그인 아이디"
+          value={formData.userLoginId}
+          onChange={handleChange}
+          className="input"
+        />
+        <button
+          onClick={checkIdDuplicate}
+          className="duplicate-check-button"
+        >
+          중복 확인
+        </button>
+      </div>
 
       <input
         type="password"
@@ -115,15 +204,23 @@ function Signup() {
         style={{ marginBottom: '10px' }}
       />
 
-      <input
-        type="text"
-        name="nickname"
-        placeholder="닉네임"
-        value={formData.nickname}
-        onChange={handleChange}
-        className="input"
-        style={{ marginBottom: '10px' }}
-      />
+      {/* 닉네임 + 중복 확인 버튼 */}
+      <div style={{ position: 'relative', width: '500px', marginBottom: '20px' }}>
+        <input
+          type="text"
+          name="nickname"
+          placeholder="닉네임"
+          value={formData.nickname}
+          onChange={handleChange}
+          className="input"
+        />
+        <button
+          onClick={checkNicknameDuplicate}
+          className="duplicate-check-button"
+        >
+          중복 확인
+        </button>
+      </div>
 
       <input
         type="tel"
@@ -135,22 +232,30 @@ function Signup() {
         style={{ marginBottom: '10px' }}
       />
 
-      <input
-        type="email"
-        name="email"
-        placeholder="이메일 주소"
-        value={formData.email}
-        onChange={handleChange}
-        className="input"
-        style={{ marginBottom: '10px' }}
-      />
+      {/* 이메일 + 중복 확인 버튼 */}
+      <div style={{ position: 'relative', width: '500px', marginBottom: '20px' }}>
+        <input
+          type="email"
+          name="email"
+          placeholder="이메일 주소"
+          value={formData.email}
+          onChange={handleChange}
+          className="input"
+        />
+        <button
+          onClick={checkEmailDuplicate}
+          className="duplicate-check-button"
+        >
+          중복 확인
+        </button>
+      </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '500px', marginTop: '20px' }}>
         <button
           className="button"
-          style={{ backgroundColor: '#ccc', color: '#000',marginRight: '10px' }}
+          style={{ backgroundColor: '#ccc', color: '#000', marginRight: '10px' }}
           onClick={() => {
-            // 취소 버튼 클릭 시 동작 없음
+            // 취소 동작
           }}
         >
           취소
