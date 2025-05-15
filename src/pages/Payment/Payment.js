@@ -65,7 +65,10 @@ function Payment() {
       {/* 상단 제목 및 구매 버튼 */}
       <div className="payment-header">
         <h1>이용권 관리</h1>
-        <button className="buy-ticket-button">이용권 구매</button>
+        <div className="button-group">
+          <button className="buy-info-button">이용권 정보</button>
+          <button className="buy-ticket-button">이용권 구매</button>
+        </div>
       </div>
 
       {/* 현재 이용권 정보 */}
