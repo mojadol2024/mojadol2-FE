@@ -122,6 +122,18 @@ function Home() {
         cursor: 'pointer',
       }
     }, 'take선택지로 이동'),
+    
+    h('button', {
+      onClick: () => navigate('/Payment'), 
+      style: {
+        padding: '10px 20px',
+        fontSize: '16px',
+        backgroundColor: '#10b981',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer',
+      }
     }, '결제관리로 이동')
   );
 }
