@@ -10,6 +10,7 @@ import QuestionConfirmPage from './pages/questionConfirmPage/QuestionConfirmPage
 import RecordingPage from './pages/recordingPage/RecordingPage';
 import RecordingInProgress from './pages/recordingInProgress/RecordingInProgress';
 import TakeSelect from './pages/takeSelect/TakeSelect';
+import Payment from './pages/Payment/Payment';
 
 
 function App() {
