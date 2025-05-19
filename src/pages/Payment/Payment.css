@@ -11,7 +11,7 @@ html, body {
   width: 100%;
   box-sizing: border-box; 
   padding-left: 20px; 
-  padding-right: 50px;
+  padding-right: 280px; /*뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
   padding-top: 20px;
   overflow-y: auto; /*body 에 overflow 적용했더니 이중으로 스크롤이 생겨서*/
   }
