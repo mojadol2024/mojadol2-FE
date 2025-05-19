@@ -254,3 +254,68 @@ html, body {
     opacity: 0.5;
     cursor: not-allowed;
   }
+
+  /*이용권안내팝업*/
+
+  .info-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 우와신기하다다 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* 다른 요소 위에 표시 */
+}
+
+.info-popup {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-height: 80%;
+  display: flex;
+  flex-direction: column; /* 내부 요소 세로로 배치 */
+}
+
+.info-popup h2 {
+  margin-top: 0;
+}
+
+.info-popup-content { /* 스크롤 적용 */
+  overflow-y: auto;
+  text-align: left;
+  margin-bottom: 5px; /* 닫기 버튼과의 간격 */
+  padding-right: 20px; /* 스크롤바 공간 확보 */
+  padding-left: 40px;
+}
+
+.info-popup p {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 16px;
+}
+
+.info-popup button {
+    margin-top: 10px;  
+    color: #ccc; 
+    border: 2px solid #ccc; 
+    background-color: transparent;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    align-self: center; 
+
+}
+
+.info-popup button:hover {
+    color: #fff; 
+    background-color: #ccc; 
+}

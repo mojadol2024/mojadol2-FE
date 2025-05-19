@@ -84,6 +84,7 @@ function Payment() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalElements, setTotalElements] = useState(0);
+  const [showInfoPopup, setShowInfoPopup] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -138,6 +139,14 @@ function Payment() {
   const goToFirstPage = () => setCurrentPage(0);
   const goToLastPage = () => setCurrentPage(totalPages - 1);
 
+  const handleShowInfoPopup = () => {
+    setShowInfoPopup(true);
+  };
+
+  const handleCloseInfoPopup = () => {
+    setShowInfoPopup(false);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -156,10 +165,27 @@ function Payment() {
       <div className="payment-header">
         <h1>이용권 관리</h1>
         <div className="button-group">
-          <button className="buy-info-button">이용권 정보</button>
+          <button className="buy-info-button" onClick={handleShowInfoPopup}>이용권 안내</button>
           <button className="buy-ticket-button" onClick={requestPayment}>이용권 구매</button> {/* 클릭 이벤트 핸들러 추가 */}
         </div>
       </div>
+
+      {/* 이용권 안내내 팝업 */}
+      {showInfoPopup && (
+        <div className="info-popup-overlay">
+          <div className="info-popup">
+            <h2>이용권 안내</h2>
+            <div className="info-popup-content">
+              <p>이용권 1개 - 1회 사용 가능</p>
+              <p>이용권 10개 묶음 - 9,900원\n이거되나?안되네요요<br />아 br을 쓰면되는구나~! <br />와신기해~</p>
+              <p>이용권 1개 - 1회 사용 가능</p>
+              <p>이용권 1개 - 1회 사용 가능<br />어쩌구어쩌구어쩌구어쩌구어쩌구<br />어쩌구어쩌구어쩌구어쩌구어쩌구<br />어쩌구어쩌구어쩌구어쩌구어쩌구<br />어쩌구어쩌구어쩌구어쩌구어쩌구<br />어쩌구어쩌구어쩌구어쩌구어쩌구<br />어쩌구어쩌구어쩌구어쩌구어쩌구</p>
+              <p>이용권 안내문구가 너무길면어떻게될지보려고요<br />내용이 길어도 팝업창은 화면의 80%만 채우고<br />내용만 따로 스크롤 가능하게 했어요<br />스크롤바때문에 밀려서 글자 가운데정렬이 안돼요<br />패딩으로 최대한 맞췄는데 좀 치우친거같네요<br />와대박천재이우림짱짱ㅋㅋ<br />이우림최고!!</p>
+            </div>
+            <button onClick={handleCloseInfoPopup}>닫기</button>
+          </div>
+        </div>
+      )}
 
       {/* 현재 이용권 정보 */}
       <div className="subscription-info">
