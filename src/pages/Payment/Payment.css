@@ -138,22 +138,29 @@ html, body {
     text-align: left;
     font-size: 16px;
     color: #333;
+    text-align: center;
   }
 
   .subscription-table th:nth-child(1), /* 내용 */
   .subscription-table td:nth-child(1) {
-    width: 50%; 
+    width: 35%; 
   }
 
   .subscription-table th:nth-child(2), /* 개수 */
   .subscription-table td:nth-child(2) {
-    width: 35%; 
+    width: 20%; 
     font-weight: bold;
   }
 
   .subscription-table th:nth-child(3), /* 유효 기간 */
   .subscription-table td:nth-child(3) {
-    width: 15%; 
+    width: 20%; 
+    
+  }
+
+  .subscription-table th:nth-child(4), /* 유효 기간 */
+  .subscription-table td:nth-child(4) {
+    width: 25%; 
     
   }
   
@@ -196,6 +203,7 @@ html, body {
     text-align: left;
     font-size: 16px;
     color: #333;
+    text-align: center;
   }
   
   .payment-history th:nth-child(1), /* 일시 */
@@ -235,39 +243,48 @@ html, body {
   
   
   /* 페이지네이션 */
-  .pagination {
+  
+  .pagination-controls {
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-top: 20px;
-  }
-  
-  /* 추가적인 페이지네이션 스타일 (필요에 따라) */
-  .pagination button {
-    margin: 0 3px;
-    padding: 8px 12px;
-    border: none; /* 테두리 제거 */
-    border-radius: 4px;
-    background-color: transparent; /* 배경색 투명 */
-    color: #333;
+    padding: 10px 0;
+    border-top: 1px solid #eee;
+    gap: 5px; /* 버튼과 정보 사이에 간격 추가 */
+}
+
+.pagination-controls .nav-button {
+    background-color: transparent; 
+    border: none; 
+    padding: 8px 15px; 
     cursor: pointer;
-    font-size: 16px;
-    min-width: 30px; /* 버튼 최소 너비 설정 */
-    text-align: center; /* 텍스트 가운데 정렬 */
-  }
-  
-  .pagination button.active {
-    color: #51E0C4; /* 현재 페이지 강조 색상 */
-    font-weight: bold;
-  }
-  
-  .pagination button:disabled {
-    opacity: 0.5;
+    font-size: 20px; 
+    font-weight: bold; 
+    transition: color 0.2s ease; 
+    color: #51E0C4; 
+}
+
+.pagination-controls .nav-button:hover:not(:disabled) {
+    color: #3cc7a9;
+}
+
+.pagination-controls .nav-button:disabled {
+    color: #cccccc;
     cursor: not-allowed;
-  }
+}
+
+.pagination-controls .current-page-info {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    min-width: 100px; /* 텍스트 길이가 변해도 레이아웃이 크게 변하지 않도록 */
+    text-align: center;
+}
 
   /*이용권안내팝업*/
 
-  .info-popup-overlay {
+.info-popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
