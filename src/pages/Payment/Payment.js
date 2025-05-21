@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './Payment.css';
 
 const API_BASE_URL = 'https://myeonjub.store/api';
 
 /**
  * 결제 내역 리스트 API 호출 함수
- * 이 함수가 이용권 정보와 결제 내역을 모두 가져옵니다.
- * @param {number} page - 요청할 페이지 번호 (0부터 시작)
- * @param {number} size - 페이지당 항목 수
+ * 이 함수는 전체 데이터를 가져올 수 있도록 size를 크게 요청합니다.
+ * @param {number} size - 페이지당 항목 수 (전체 데이터를 위해 큰 값 사용)
  * @returns {Object|null} - API 응답의 result 객체 또는 오류 발생 시 null
  */
-async function fetchPaymentDataAndVouchers(page = 0, size = 10) {
+async function fetchAllPaymentData(size = 1000) {
   const accessToken = localStorage.getItem('accessToken');
-  //const accessToken = ''; //테스트용
-  const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/list?page=${page}&size=${size}`;
+  //const accessToken = ''; // 테스트용
+  const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/list?page=0&size=${size}`;
 
   try {
     const response = await fetch(apiUrl, {
@@ -46,7 +45,7 @@ async function fetchPaymentDataAndVouchers(page = 0, size = 10) {
  */
 async function requestPayment(amount, paymentMethod, title, quantity) {
   const accessToken = localStorage.getItem('accessToken');
-  // const accessToken = ''; //테스트
+  //const accessToken = ''; // 테스트용
   const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/pay`;
 
   try {
@@ -73,13 +72,14 @@ async function requestPayment(amount, paymentMethod, title, quantity) {
 
     const data = await response.json();
     console.log('결제 요청 성공:', data);
-    // TODO: 서버에서 결제창 URL을 받아서 리다이렉트 처리
-    if (data.redirectUrl) {
-      window.location.href = data.redirectUrl;
+
+    // 백엔드에서 redirectUrl을 내려주는 경우 해당 URL로 이동합니다.
+    if (data.result && data.result.redirectUrl) {
+      window.location.href = data.result.redirectUrl;
     } else {
-      alert('결제 요청 성공. 결제창 URL을 받지 못했습니다. (테스트 환경)');
-      // 결제 성공 후 데이터 다시 불러오기
-      window.location.reload(); // 간단하게 페이지 새로고침으로 처리
+      // redirectUrl이 없으면 (예: 백엔드가 아직 구현 중이거나 테스트 환경일 경우)
+      alert('결제 요청 성공!');
+      window.location.reload(); // 페이지 새로고침하여 데이터 다시 로드
     }
   } catch (error) {
     console.error('결제 요청 중 오류 발생:', error);
@@ -89,79 +89,91 @@ async function requestPayment(amount, paymentMethod, title, quantity) {
 
 function Payment() {
   const [currentPage, setCurrentPage] = useState(0);
-  const [paymentsPerPage] = useState(9);
-  const [paymentHistoryData, setPaymentHistoryData] = useState([]);
-  const [availableVouchers, setAvailableVouchers] = useState([]); // 이용권 정보를 위한 새로운 상태
+  const [paymentsPerPage] = useState(5);
+
+  const [allPaymentHistoryData, setAllPaymentHistoryData] = useState([]);
+  const [availableVouchers, setAvailableVouchers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [totalElements, setTotalElements] = useState(0);
-  const [showInfoPopup, setShowInfoPopup] = useState(false);
 
-  // 결제 팝업 관련 상태
+  const [showInfoPopup, setShowInfoPopup] = useState(false);
   const [showPaymentPopup, setShowPaymentPopup] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('신한카드');
-  // 이용권 상품 목록
+
+  const paymentMethods = ['카드결제', '카카오페이', '네이버페이'];
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(paymentMethods[0]);
+
   const availableProducts = [
-    { id: 1, title: '이용권 1개', amount: 1000, quantity: 1 },
-    { id: 2, title: '프리미엄 회원권 (10개 묶음)', amount: 9900, quantity: 10 },
-    { id: 3, title: '이용권 50개 묶음', amount: 45000, quantity: 50 },
+    { id: 1, title: '프리미엄 회원권 (10개)', amount: 9900, quantity: 1, voucherType: 'GOLD' },
+    { id: 2, title: '프리미엄 회원권 (50개)', amount: 49000, quantity: 5, voucherType: 'GOLD' },
+    { id: 3, title: '프리미엄 회원권 (100개)', amount: 98000, quantity: 10, voucherType: 'GOLD' },
   ];
-  const [selectedProduct, setSelectedProduct] = useState(availableProducts[1]); // 기본값으로 10개 묶음 선택
+  const [selectedProduct, setSelectedProduct] = useState(availableProducts[0]);
+
+  const loadInitialData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await fetchAllPaymentData();
+
+      if (result && result.content) {
+        const sortedPayments = [...result.content].sort((a, b) => {
+          const dateA = new Date(a.paymentDate);
+          const dateB = new Date(b.paymentDate);
+          return dateB - dateA;
+        });
+        setAllPaymentHistoryData(sortedPayments);
+
+        const now = new Date();
+        const validVouchers = result.content
+          .filter(item => item.completed === 1 && item.voucher !== null)
+          .map(item => ({
+            ...item.voucher,
+            paymentTitle: item.title
+          }))
+          .filter(voucher => voucher && new Date(voucher.expiredAt) > now);
+
+        const aggregatedVouchers = validVouchers.reduce((acc, voucher) => {
+          const key = `${voucher.type}-${voucher.expiredAt}-${voucher.paymentTitle}`;
+          if (!acc[key]) {
+            acc[key] = {
+              title: voucher.paymentTitle,
+              type: voucher.type,
+              totalCount: 0,
+              expiry: voucher.expiredAt,
+            };
+          }
+          acc[key].totalCount += voucher.totalCount;
+          return acc;
+        }, {});
+
+        const sortedAvailableVouchers = Object.values(aggregatedVouchers).sort((a, b) => {
+          return new Date(a.expiry) - new Date(b.expiry);
+        }).map(voucher => ({
+          ...voucher,
+          expiry: voucher.expiry.split('T')[0]
+        }));
+
+        setAvailableVouchers(sortedAvailableVouchers);
+      } else {
+        setAllPaymentHistoryData([]);
+        setAvailableVouchers([]);
+      }
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    async function loadData() {
-      setLoading(true);
-      setError(null);
+    loadInitialData();
+  }, [loadInitialData]);
 
-      try {
-        // fetchPaymentDataAndVouchers 하나로 모든 데이터 가져오기
-        const result = await fetchPaymentDataAndVouchers(currentPage, paymentsPerPage);
+  const indexOfLastPayment = (currentPage + 1) * paymentsPerPage;
+  const indexOfFirstPayment = indexOfLastPayment - paymentsPerPage;
+  const currentPayments = allPaymentHistoryData.slice(indexOfFirstPayment, indexOfLastPayment);
 
-        if (result) {
-          setPaymentHistoryData(result.content || []); // 결제 내역 설정
-          setTotalElements(result.totalElements || 0);
-
-          // 현재 사용 가능한 이용권 집계 로직
-          const now = new Date();
-          const validVouchers = result.content
-            .filter(item => item.completed === 1 && item.voucher !== null) // 결제 완료된 항목만
-            .map(item => item.voucher) // voucher 객체만 추출
-            .filter(voucher => voucher && new Date(voucher.expiredAt) > now && voucher.totalCount > 0); // 유효 기간이 지나지 않고, 개수가 0보다 큰 것만
-
-          // 같은 종류, 같은 만료일의 이용권 합산
-          const aggregatedVouchers = validVouchers.reduce((acc, voucher) => {
-            const key = `${voucher.type}-${voucher.expiredAt}`; // type과 expiredAt으로 고유하게 식별
-            if (!acc[key]) {
-              acc[key] = {
-                content: voucher.type === 'GOLD' ? '유료 이용권' : '무료 이용권', // 이용권 제목 설정
-                totalCount: 0, // 초기 개수
-                expiry: voucher.expiredAt.split('T')[0], // 날짜만 표시
-                type: voucher.type,
-              };
-            }
-            acc[key].totalCount += voucher.totalCount; // 이용권 개수 합산
-            return acc;
-          }, {});
-
-          // 객체를 배열로 변환
-          setAvailableVouchers(Object.values(aggregatedVouchers));
-
-        } else {
-          setPaymentHistoryData([]);
-          setTotalElements(0);
-          setAvailableVouchers([]);
-        }
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadData();
-  }, [currentPage, paymentsPerPage]); // currentPage, paymentsPerPage가 변경될 때마다 데이터 다시 로드
-
-  // 이용권 정보 요약 (무료/유료)
   const freeSubscriptionsCount = availableVouchers
     .filter(voucher => voucher.type === 'FREE')
     .reduce((sum, voucher) => sum + voucher.totalCount, 0);
@@ -170,37 +182,15 @@ function Payment() {
     .filter(voucher => voucher.type === 'GOLD')
     .reduce((sum, voucher) => sum + voucher.totalCount, 0);
 
-  const totalPages = Math.ceil(totalElements / paymentsPerPage);
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-    const pagesToShow = 3;
-    let startPage = Math.max(0, currentPage - Math.floor(pagesToShow / 2));
-    let endPage = Math.min(totalPages - 1, currentPage + Math.floor(pagesToShow / 2));
-
-    // 페이지 번호가 totalPages를 넘어가지 않도록 조정
-    if (endPage - startPage + 1 < pagesToShow) {
-      if (startPage === 0) {
-        endPage = Math.min(totalPages - 1, pagesToShow - 1);
-      } else if (endPage === totalPages - 1) {
-        startPage = Math.max(0, totalPages - pagesToShow);
-      }
-    }
-    // totalPages가 pagesToShow보다 작을 경우 모든 페이지 표시
-    if (totalPages < pagesToShow) {
-        startPage = 0;
-        endPage = totalPages -1;
-    }
-
-
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(i);
-    }
-    return pageNumbers;
+  const handlePrevPage = () => {
+    setCurrentPage(prev => Math.max(0, prev - 1));
   };
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const goToFirstPage = () => setCurrentPage(0);
-  const goToLastPage = () => setCurrentPage(totalPages - 1);
+  const handleNextPage = () => {
+    if (indexOfLastPayment < allPaymentHistoryData.length) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
 
   const handleShowInfoPopup = () => {
     setShowInfoPopup(true);
@@ -218,30 +208,27 @@ function Payment() {
     setShowPaymentPopup(false);
   };
 
-  // 결제 실행 핸들러 (팝업 내에서 호출)
   const handleConfirmPayment = () => {
     if (!selectedProduct) {
       alert('상품을 선택해주세요.');
       return;
     }
-    // requestPayment 함수 호출
     requestPayment(
       selectedProduct.amount,
       selectedPaymentMethod,
       selectedProduct.title,
       selectedProduct.quantity
     );
-    setShowPaymentPopup(false); // 결제 요청 후 팝업 닫기
+    setShowPaymentPopup(false);
   };
 
-  // 상품 선택 변경 핸들러
   const handleProductChange = (e) => {
     const selectedId = Number(e.target.value);
     const product = availableProducts.find(p => p.id === selectedId);
     setSelectedProduct(product);
   };
 
-  if (loading) {
+  if (loading && allPaymentHistoryData.length === 0) {
     return <div className="loading-message">Loading...</div>;
   }
 
@@ -266,9 +253,9 @@ function Payment() {
           <div className="info-popup">
             <h2>이용권 안내</h2>
             <div className="info-popup-content">
-              <p>이용권 1개 - 1회 사용 가능</p>
-              <p>이용권 10개 묶음 - 9,900원<br />10개의 이용권을 한 번에 구매할 수 있는 상품입니다.</p>
-              <p>이용권 50개 묶음 - 45,000원<br />대량 구매 시 할인 혜택이 적용됩니다.</p>
+              <p>프리미엄 회원권 (10개) - 9,900원<br />10개의 이용권을 한 번에 구매할 수 있는 상품입니다.</p>
+              <p>프리미엄 회원권 (50개) - 49,000원<br />대량 구매 시 할인 혜택이 적용됩니다.</p>
+              <p>프리미엄 회원권 (100개) - 98,000원<br />가장 큰 할인 혜택이 적용되는 대량 구매 상품입니다.</p>
               <p>
                 모든 이용권은 구매일로부터 30일간 유효하며, 유효 기간이 지난 이용권은 자동으로 소멸됩니다.<br />
                 무료 이용권은 이벤트 등을 통해 지급되며, 유료 이용권과 동일하게 사용됩니다.<br />
@@ -295,7 +282,7 @@ function Payment() {
                 >
                   {availableProducts.map(product => (
                     <option key={product.id} value={product.id}>
-                      {product.title} ({product.amount.toLocaleString()}원, {product.quantity}개)
+                      {product.title} ({product.amount.toLocaleString()}원, {product.quantity * 10}개)
                     </option>
                   ))}
                 </select>
@@ -308,15 +295,15 @@ function Payment() {
                   value={selectedPaymentMethod}
                   onChange={(e) => setSelectedPaymentMethod(e.target.value)}
                 >
-                  <option value="신한카드">신한카드</option>
-                  <option value="카카오페이">카카오페이</option>
-                  <option value="네이버페이">네이버페이</option>
+                  {paymentMethods.map(method => (
+                    <option key={method} value={method}>{method}</option>
+                  ))}
                 </select>
               </div>
 
               <p className="summary-text">선택된 상품: <strong>{selectedProduct.title}</strong></p>
               <p className="summary-text">총 결제 금액: <strong>{selectedProduct.amount.toLocaleString()}원</strong></p>
-              <p className="summary-text">획득 이용권 수: <strong>{selectedProduct.quantity}개</strong></p>
+              <p className="summary-text">획득 이용권 수: <strong>{selectedProduct.quantity * 10}개</strong></p>
 
             </div>
             <div className="payment-popup-buttons">
@@ -339,6 +326,7 @@ function Payment() {
             <thead>
               <tr>
                 <th>내용</th>
+                <th>유료/무료</th>
                 <th>개수</th>
                 <th>유효 기간</th>
               </tr>
@@ -346,8 +334,9 @@ function Payment() {
             <tbody>
               {availableVouchers.map((voucher, index) => (
                 <tr key={index}>
-                  <td>{voucher.content}</td>
-                  <td className="align-right">{voucher.totalCount}</td> {/* totalCount 사용 */}
+                  <td>{voucher.title}</td>
+                  <td>{voucher.type === 'GOLD' ? '유료' : '무료'}</td>
+                  <td className="align-right">{voucher.totalCount}</td>
                   <td className="align-right">{voucher.expiry}</td>
                 </tr>
               ))}
@@ -361,7 +350,7 @@ function Payment() {
       {/* 결제 내역 테이블 */}
       <div className="payment-history">
         <h2>결제 내역</h2>
-        {paymentHistoryData.length > 0 ? (
+        {allPaymentHistoryData.length > 0 ? (
           <>
             <table>
               <thead>
@@ -374,42 +363,35 @@ function Payment() {
                 </tr>
               </thead>
               <tbody>
-                {paymentHistoryData.map((payment, index) => (
-                  <tr key={index}>
-                    <td>{payment.paymentDate ? payment.paymentDate.split('T')[0] : ''}</td> {/* 날짜만 표시 */}
-                    <td>{payment.title}</td>
-                    <td className="align-right">{payment.voucher ? payment.voucher.totalCount : 0}</td> {/* voucher.totalCount 사용 */}
-                    <td className="align-right">{payment.amount ? payment.amount.toLocaleString() : 0}</td>
-                    <td>{payment.paymentMethod}</td>
-                  </tr>
+                {currentPayments.map((payment, index) => (
+                  <tr key={index}><td>{payment.paymentDate ? payment.paymentDate.split('T')[0] : ''}</td><td>{payment.title}</td><td className="align-right">{payment.voucher ? payment.voucher.totalCount : 0}</td><td className="align-right">{payment.amount ? payment.amount.toLocaleString() : 0}</td><td>{payment.paymentMethod}</td></tr>
                 ))}
               </tbody>
             </table>
-            {totalPages > 1 && (
-              <div className="pagination">
-                <button onClick={goToFirstPage} disabled={currentPage === 0}>
-                  &lt;&lt;
+
+            {/* 페이지네이션처럼 보이는 UI */}
+            <div className="pagination-controls">
+                <button
+                    onClick={handlePrevPage}
+                    disabled={currentPage === 0 || loading}
+                    className="nav-button"
+                >
+                    &lt;
                 </button>
-                <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 0}>
-                  &lt;
+                <span className="current-page-info">
+                    {allPaymentHistoryData.length > 0 ?
+                        `${indexOfFirstPayment + 1} - ${Math.min(indexOfLastPayment, allPaymentHistoryData.length)} / ${allPaymentHistoryData.length}` :
+                        '0 / 0'
+                    }
+                </span>
+                <button
+                    onClick={handleNextPage}
+                    disabled={indexOfLastPayment >= allPaymentHistoryData.length || loading}
+                    className="nav-button"
+                >
+                    &gt;
                 </button>
-                {getPageNumbers().map((number) => (
-                  <button
-                    key={number}
-                    onClick={() => paginate(number)}
-                    className={currentPage === number ? 'active' : ''}
-                  >
-                    {number + 1}
-                  </button>
-                ))}
-                <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages - 1}>
-                  &gt;
-                </button>
-                <button onClick={goToLastPage} disabled={currentPage === totalPages - 1}>
-                  &gt;&gt;
-                </button>
-              </div>
-            )}
+            </div>
           </>
         ) : (
           <p>이용 내역이 없습니다.</p>
