@@ -99,11 +99,10 @@ function Payment() {
   // 부트페이에서 사용할 결제 수단 매핑 (UI 한글 이름 -> 부트페이 SDK 코드)
   const paymentMethodMap = {
     //'카드결제': 'card',
-    '카카오페이': 'kakaopay',
-    '네이버페이': 'naverpay',
     '계좌이체': 'bank', // KCP의 계좌이체 코드
     'ISP/앱카드결제': 'card', // ISP/앱카드결제는 일반적으로 'card'로 처리됩니다.
-    // 필요에 따라 다른 결제 수단도 추가 (예: 휴대폰 'phone')
+    '카카오페이': 'kakaopay',
+    '네이버페이': 'naverpay',
   };
   const paymentMethods = Object.keys(paymentMethodMap); // 드롭다운에 보여줄 한글 이름
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(paymentMethods[0]);
