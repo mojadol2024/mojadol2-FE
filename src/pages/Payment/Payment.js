@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './Payment.css';
 
-const API_BASE_URL = 'https://myeonjub.store/api';
+/* global BootPay, bootpaySDKLoaded */ // BootPay와 bootpaySDKLoaded가 전역으로 선언되었음을 ESLint에게 알립니다.
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const BOOTPAY_WEB_APPLICATION_ID = process.env.REACT_APP_BOOTPAY_WEB_APPLICATION_ID;
 
 /**
  * 결제 내역 리스트 API 호출 함수
@@ -11,7 +14,6 @@ const API_BASE_URL = 'https://myeonjub.store/api';
  */
 async function fetchAllPaymentData(size = 1000) {
   const accessToken = localStorage.getItem('accessToken');
-  //const accessToken = ''; // 테스트용
   const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/list?page=0&size=${size}`;
 
   try {
@@ -24,29 +26,31 @@ async function fetchAllPaymentData(size = 1000) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('결제 내역 API 요청 실패:', errorData);
+      //console.error('결제 내역 API 요청 실패:', errorData);
       throw new Error(`API 요청 실패: ${response.status}`);
     }
 
     const data = await response.json();
     return data.result;
   } catch (error) {
-    console.error('결제 내역 API 호출 중 오류 발생:', error);
+    //console.error('결제 내역 API 호출 중 오류 발생:', error);
     return null;
   }
 }
 
 /**
- * 결제 요청 API 호출 함수
+ * 백엔드에 결제 승인 요청 API 호출 함수
+ * 프론트에서 부트페이 결제 후 받은 영수증 ID를 백엔드로 전송하여 최종 승인 요청
+ * @param {string} receiptId - 부트페이로부터 받은 영수증 ID
  * @param {number} amount - 결제 금액
- * @param {string} paymentMethod - 결제 수단
+ * @param {string} paymentMethod - 결제 수단 (원래 한글 이름, 예: '카드결제', '카카오페이')
  * @param {string} title - 상품 제목
- * @param {number} quantity - 구매 수량 (이용권 개수)
+ * @param {number} quantity - 구매 수량 (이용권 번들 개수)
+ * @returns {Object|null} - API 응답의 result 객체 또는 오류 발생 시 null
  */
-async function requestPayment(amount, paymentMethod, title, quantity) {
+async function requestPaymentApprovalToBackend(receiptId, amount, paymentMethod, title, quantity) {
   const accessToken = localStorage.getItem('accessToken');
-  //const accessToken = ''; // 테스트용
-  const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/pay`;
+  const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/pay`; // 백엔드 결제 승인 API URL
 
   try {
     const response = await fetch(apiUrl, {
@@ -56,34 +60,27 @@ async function requestPayment(amount, paymentMethod, title, quantity) {
         'Authorization': accessToken ? `Bearer ${accessToken}` : '',
       },
       body: JSON.stringify({
+        receiptId: receiptId, // 부트페이 영수증 ID
         amount: amount,
-        paymentMethod: paymentMethod,
+        paymentMethod: paymentMethod, // 백엔드에 보낼 결제 수단 이름 (한글 또는 백엔드 정의)
         title: title,
-        quantity: quantity
+        quantity: quantity // 백엔드에 보낼 구매 수량 (이용권 번들 개수)
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('결제 요청 실패:', errorData);
-      alert(`결제 요청 실패: ${errorData.message || response.statusText}`);
-      throw new Error(`결제 요청 실패: ${response.status}`);
+      //console.error('백엔드 결제 승인 요청 실패:', errorData);
+      throw new Error(`백엔드 결제 승인 실패: ${errorData.message || response.statusText}`);
     }
 
     const data = await response.json();
-    console.log('결제 요청 성공:', data);
-
-    // 백엔드에서 redirectUrl을 내려주는 경우 해당 URL로 이동합니다.
-    if (data.result && data.result.redirectUrl) {
-      window.location.href = data.result.redirectUrl;
-    } else {
-      // redirectUrl이 없으면 (예: 백엔드가 아직 구현 중이거나 테스트 환경일 경우)
-      alert('결제 요청 성공!');
-      window.location.reload(); // 페이지 새로고침하여 데이터 다시 로드
-    }
+    //console.log('백엔드 결제 승인 성공:', data);
+    return data.result;
   } catch (error) {
-    console.error('결제 요청 중 오류 발생:', error);
-    alert(`결제 요청 중 오류 발생: ${error.message}`);
+    //console.error('백엔드 결제 승인 중 오류 발생:', error);
+    alert(`결제 처리 중 오류 발생: ${error.message}`);
+    return null;
   }
 }
 
@@ -99,13 +96,21 @@ function Payment() {
   const [showInfoPopup, setShowInfoPopup] = useState(false);
   const [showPaymentPopup, setShowPaymentPopup] = useState(false);
 
-  const paymentMethods = ['카드결제', '카카오페이', '네이버페이'];
+  // 부트페이에서 사용할 결제 수단 매핑 (UI 한글 이름 -> 부트페이 SDK 코드)
+  const paymentMethodMap = {
+    //'카드결제': 'card',
+    '계좌이체': 'bank', // KCP의 계좌이체 코드
+    'ISP/앱카드결제': 'card', // ISP/앱카드결제는 일반적으로 'card'로 처리됩니다.
+    '카카오페이': 'kakaopay',
+    '네이버페이': 'naverpay',
+  };
+  const paymentMethods = Object.keys(paymentMethodMap); // 드롭다운에 보여줄 한글 이름
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(paymentMethods[0]);
 
   const availableProducts = [
-    { id: 1, title: '프리미엄 회원권 (10개)', amount: 9900, quantity: 1, voucherType: 'GOLD' },
-    { id: 2, title: '프리미엄 회원권 (50개)', amount: 49000, quantity: 5, voucherType: 'GOLD' },
-    { id: 3, title: '프리미엄 회원권 (100개)', amount: 98000, quantity: 10, voucherType: 'GOLD' },
+    { id: 1, title: '프리미엄 회원권 (10개)', amount: 9900, quantity: 1, voucherCount: 10, voucherType: 'GOLD' }, // quantity는 상품 묶음 개수 (10개 묶음 1개)
+    { id: 2, title: '프리미엄 회원권 (50개)', amount: 49000, quantity: 5, voucherCount: 50, voucherType: 'GOLD' }, // 50개 묶음 1개
+    { id: 3, title: '프리미엄 회원권 (100개)', amount: 98000, quantity: 10, voucherCount: 100, voucherType: 'GOLD' }, // 100개 묶음 1개
   ];
   const [selectedProduct, setSelectedProduct] = useState(availableProducts[0]);
 
@@ -117,6 +122,7 @@ function Payment() {
       const result = await fetchAllPaymentData();
 
       if (result && result.content) {
+        // paymentDate 기준으로 최신순 정렬
         const sortedPayments = [...result.content].sort((a, b) => {
           const dateA = new Date(a.paymentDate);
           const dateB = new Date(b.paymentDate);
@@ -124,12 +130,13 @@ function Payment() {
         });
         setAllPaymentHistoryData(sortedPayments);
 
+        // 유효한 이용권 집계
         const now = new Date();
         const validVouchers = result.content
           .filter(item => item.completed === 1 && item.voucher !== null)
           .map(item => ({
             ...item.voucher,
-            paymentTitle: item.title
+            paymentTitle: item.title // 결제 상품명을 이용권 제목으로 사용
           }))
           .filter(voucher => voucher && new Date(voucher.expiredAt) > now);
 
@@ -147,11 +154,12 @@ function Payment() {
           return acc;
         }, {});
 
+        // 유효 기간 기준으로 정렬 및 날짜 형식 변경
         const sortedAvailableVouchers = Object.values(aggregatedVouchers).sort((a, b) => {
           return new Date(a.expiry) - new Date(b.expiry);
         }).map(voucher => ({
           ...voucher,
-          expiry: voucher.expiry.split('T')[0]
+          expiry: voucher.expiry.split('T')[0] // 'YYYY-MM-DD' 형식으로 자르기
         }));
 
         setAvailableVouchers(sortedAvailableVouchers);
@@ -209,17 +217,97 @@ function Payment() {
   };
 
   const handleConfirmPayment = () => {
+    
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (!user || !user.name || !user.email || !user.phone) {
+      alert('로그인이 필요하거나 사용자 정보가 부족합니다.');
+      return;
+    }
+
     if (!selectedProduct) {
       alert('상품을 선택해주세요.');
       return;
     }
-    requestPayment(
-      selectedProduct.amount,
-      selectedPaymentMethod,
-      selectedProduct.title,
-      selectedProduct.quantity
-    );
-    setShowPaymentPopup(false);
+
+    const bootpayMethodCode = paymentMethodMap[selectedPaymentMethod];
+    if (!bootpayMethodCode) {
+      alert('유효한 결제 수단이 선택되지 않았습니다. 다시 선택해주세요.');
+      return;
+    }
+
+    // ====================================================================
+    // ⭐️ 중요: BootPay 로딩을 기다리는 폴링 로직
+    // `window.bootpaySDKLoaded` 플래그를 사용하여 SDK 로딩 상태를 명확히 확인
+    // ====================================================================
+    let pollingAttempts = 0;
+    const maxPollingAttempts = 50; // 100ms * 50 = 5초 동안 대기
+
+    const checkBootPayReady = setInterval(() => {
+      // window.bootpaySDKLoaded 플래그와 window.BootPay 객체 모두 확인
+      //if (window.bootpaySDKLoaded && typeof window.BootPay !== 'undefined') {
+      if (typeof window.BootPay !== 'undefined') {
+
+        clearInterval(checkBootPayReady); // BootPay가 로드되고 초기화되면 폴링 중지
+        //console.log('BootPay SDK is ready to make requests.');
+
+        // BootPay 요청 로직 시작
+        window.BootPay.request({
+          price: selectedProduct.amount,
+          application_id: BOOTPAY_WEB_APPLICATION_ID,
+          name: selectedProduct.title,
+          pg: 'kcp', // KCP를 사용하셨다고 하셨으므로 'kcp'로 설정합니다.
+          method: bootpayMethodCode,
+          order_id: `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          user_info: {
+            username: user?.name,
+            email: user?.email,
+            phone: user?.phone,
+          },
+          extra: {
+            app_scheme: 'bootpayreactsample',
+            card_quota: '0,2,3',
+            confirm_url: `${API_BASE_URL}/mojadol/api/v1/payment/confirm`,
+          },
+          callbacks: {
+            onDone: async function(data) {
+              //console.log('결제 완료 (프론트엔드):', data);
+              alert('결제가 성공적으로 완료되었습니다!');
+              const backendResult = await requestPaymentApprovalToBackend(
+                data.receipt_id,
+                data.price,
+                selectedPaymentMethod,
+                selectedProduct.title,
+                selectedProduct.quantity
+              );
+              if (backendResult) {
+                loadInitialData(); // 결제 완료 후 결제 내역 새로고침
+              }
+              setShowPaymentPopup(false); // 팝업 닫기
+            },
+            onCancel: function(data) {
+              //console.log('결제 취소 (프론트엔드):', data);
+              alert('결제가 취소되었습니다.');
+              setShowPaymentPopup(false); // 팝업 닫기
+            },
+            onError: function(data) {
+              //console.log('결제 오류 (프론트엔드):', data);
+              alert(`결제 중 오류가 발생했습니다: ${data.message || JSON.stringify(data)}`);
+              setShowPaymentPopup(false); // 팝업 닫기
+            }
+          }
+        });
+      } else {
+        pollingAttempts++;
+        //console.log(`Waiting for BootPay to load... Attempt: ${pollingAttempts}`);
+        if (pollingAttempts >= maxPollingAttempts) {
+          clearInterval(checkBootPayReady);
+          alert('결제 모듈 로딩 시간이 초과되었습니다. 페이지를 새로고침 후 다시 시도해주세요.');
+          //console.error('BootPay loading timed out after max attempts.');
+          setShowPaymentPopup(false);
+        }
+      }
+    }, 100); // 100ms마다 확인
   };
 
   const handleProductChange = (e) => {
@@ -282,7 +370,7 @@ function Payment() {
                 >
                   {availableProducts.map(product => (
                     <option key={product.id} value={product.id}>
-                      {product.title} ({product.amount.toLocaleString()}원, {product.quantity * 10}개)
+                      {product.title} ({product.amount.toLocaleString()}원, {product.voucherCount}개)
                     </option>
                   ))}
                 </select>
@@ -303,7 +391,7 @@ function Payment() {
 
               <p className="summary-text">선택된 상품: <strong>{selectedProduct.title}</strong></p>
               <p className="summary-text">총 결제 금액: <strong>{selectedProduct.amount.toLocaleString()}원</strong></p>
-              <p className="summary-text">획득 이용권 수: <strong>{selectedProduct.quantity * 10}개</strong></p>
+              <p className="summary-text">획득 이용권 수: <strong>{selectedProduct.voucherCount}개</strong></p>
 
             </div>
             <div className="payment-popup-buttons">
@@ -364,12 +452,18 @@ function Payment() {
               </thead>
               <tbody>
                 {currentPayments.map((payment, index) => (
-                  <tr key={index}><td>{payment.paymentDate ? payment.paymentDate.split('T')[0] : ''}</td><td>{payment.title}</td><td className="align-right">{payment.voucher ? payment.voucher.totalCount : 0}</td><td className="align-right">{payment.amount ? payment.amount.toLocaleString() : 0}</td><td>{payment.paymentMethod}</td></tr>
+                  <tr key={index}>
+                    <td>{payment.paymentDate ? payment.paymentDate.split('T')[0] : ''}</td>
+                    <td>{payment.title}</td>
+                    <td className="align-right">{payment.voucher ? payment.voucher.totalCount : 0}</td>
+                    <td className="align-right">{payment.amount ? payment.amount.toLocaleString() : 0}원</td>
+                    <td>{payment.paymentMethod}</td>
+                  </tr>
                 ))}
               </tbody>
             </table>
 
-            {/* 페이지네이션처럼 보이는 UI */}
+            {/* 페이지네이션 컨트롤 */}
             <div className="pagination-controls">
                 <button
                     onClick={handlePrevPage}
