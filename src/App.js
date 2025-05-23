@@ -8,9 +8,9 @@ import Main from './pages/main/InterviewMain';
 import ResumeQuestionPage from './pages/resumeQuestionPage/ResumeQuestionPage';
 import QuestionConfirmPage from './pages/questionConfirmPage/QuestionConfirmPage';
 import RecordingPage from './pages/recordingPage/RecordingPage';
-import RecordingInProgress from './pages/recordingInProgress/RecordingInProgress';
 import TakeSelect from './pages/takeSelect/TakeSelect';
 import Payment from './pages/Payment/Payment';
+import SpellingCorrection from './pages/spellingCorrection/SpellingCorrection';
 
 
 function App() {
@@ -28,46 +28,46 @@ function App() {
         } />
 
         <Route path="/InterviewMain" element={
-          <div className="container">
+          <div className="main-content">
             <Side />
             <Main />
           </div>
         } />
 
+        <Route path="/SpellingCorrection" element={
+          <div className="register-page">
+            <Side />
+            <SpellingCorrection />
+          </div>
+        } />
+
         <Route path="/ResumeQuestionPage" element={
-          <div className="container">
+          <div className="resume-question-container">
             <Side />
             <ResumeQuestionPage />
           </div>
         } />
 
         <Route path="/QuestionConfirmPage" element={
-          <div className="container">
+          <div className="resume-question-container">
             <Side />
             <QuestionConfirmPage />
           </div>
         } />        
         
-        <Route path="/RecordingInProgress" element={
-          <div className="container">
-            <Side />
-            <RecordingInProgress />
-          </div>
-        } /> 
-
         <Route path="/RecordingPage" element={
-          <div className="container">
+          <div className="recording-page-container">
             <Side />
             <RecordingPage />
           </div>
         } /> 
         
         <Route path="/TakeSelect" element={
-          <div className="container">
+          <div className="take-select-container">
             <Side />
             <TakeSelect />
           </div>
-        } />
+        } /> 
 
         <Route path="/Payment" element={
           <div className="container">

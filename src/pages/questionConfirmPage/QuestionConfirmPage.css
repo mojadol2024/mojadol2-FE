@@ -1,8 +1,9 @@
 .question-confirm-container {
   display: flex;
   height: 100vh;
-  background-color: #f9f9f9;
+  background-color: #fff;
   font-family: 'Pretendard', sans-serif;
+  padding-right: 280px
 }
 
 .question-confirm-main {
@@ -53,6 +54,40 @@
 
 .btn.green:hover {
   background-color: #9dd9c4;
+}
+
+/* 영상 첨부 확인/재첨부/분석 완료 관련 스타일 */
+.btn.confirm {
+  background-color: #cce5ff;
+  color: #2c2c2c;
+}
+
+.btn.confirm:hover {
+  background-color: #b3d8fd;
+}
+
+.btn.redo {
+  background-color: #ffe3e3;
+  color: #c13d3d;
+}
+
+.btn.redo:hover {
+  background-color: #ffc7c7;
+}
+
+.video-preview {
+  font-size: 20px;
+  color: #666;
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.question-status.done {
+  color: green;
+  font-weight: bold;
+  margin-top: 16px;
 }
 
 .notice-text {
