@@ -1,0 +1,483 @@
+html, body {  
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #fff;
+  margin-left: 130px; /*side 때문에 margin 줘야돼돼요*/
+}
+
+.payment-container {
+  flex-grow: 1;
+  min-height: 100%;
+  width: 100%;
+  box-sizing: border-box; 
+  padding-left: 20px; 
+  padding-right: 280px; /*뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
+  padding-top: 20px;
+  overflow-y: auto; /*body 에 overflow 적용했더니 이중으로 스크롤이 생겨서*/
+  }
+  
+  .payment-container p { /*내역 없을 때 안내문구 (현재이용권이없습니다/이용내역이없습니다)*/
+    font-size: 25px;
+    color: #ccc;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    text-align: center;
+
+  }
+
+  /* 로딩 및 에러 메시지 스타일 추가 */
+  .loading-message, .error-message {
+    text-align: center;
+    font-size: 1.5em;
+    padding: 50px;
+    color: #555;
+  }
+  .error-message {
+    color: #e74c3c; /* 빨간색 에러 메시지 */
+  }
+  
+  /* 상단 제목 및 구매 버튼 */
+
+  .payment-header h1 {
+    font-size: 30px; /* mypage.css의 content h1 font-size 적용 */
+    font-weight: 700; /* mypage.css의 content h1 font-weight 적용 */
+    color: #333;
+    margin: 0;
+    margin-bottom: 20px;
+  }
+
+  .button-group {
+    display: flex; /* 버튼들을 가로로 배치 */
+    gap: 10px; /* 버튼 사이 간격 조절 */
+    justify-content: flex-end; /* 내용을 오른쪽으로 정렬 */
+    margin-bottom: 20px
+  }
+  
+  .buy-info-button { 
+    color: #ccc; 
+    border: 2px solid #ccc; 
+    background-color: transparent;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .buy-info-button:hover {
+    color: #fff; 
+    background-color: #ccc; 
+  }
+
+  .buy-ticket-button {
+    background-color: #51E0C4; /* 메인 색상 */
+    color: #fff;
+    border: none;
+    font-weight: bold;
+    padding: 10px 15px; 
+    border-radius: 10px; 
+    font-size: 16px; 
+    cursor: pointer;
+    transition: background-color 0.2s ease; /* mypage.css의 edit-button transition 적용 */
+  }
+  
+  .buy-ticket-button:hover {
+    background-color: #3cc7a9; /* 호버 시 약간 어둡게 */
+  }
+  
+  /* 현재 이용권 정보 */
+  
+  
+  .subscription-info h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+  
+  .subscription-summary {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  
+  }
+  
+  .subscription-box {
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 16px;
+    text-align: center;
+    border: none; 
+    background-color: #ccc;
+  }
+  
+  .subscription-count {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  /* 이용권 목록 테이블 */
+  
+  .subscription-table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+  }
+  
+  .subscription-table th,
+  .subscription-table td {
+    border-left: none; /* 세로 줄 제거 */
+    border-right: none; /* 세로 줄 제거 */
+    border-bottom: 1px solid #d1d5db; /* 가로 줄 유지 */
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+  }
+
+  .subscription-table th:nth-child(1), /* 내용 */
+  .subscription-table td:nth-child(1) {
+    width: 35%; 
+  }
+
+  .subscription-table th:nth-child(2), /* 개수 */
+  .subscription-table td:nth-child(2) {
+    width: 20%; 
+    font-weight: bold;
+  }
+
+  .subscription-table th:nth-child(3), /* 유효 기간 */
+  .subscription-table td:nth-child(3) {
+    width: 20%; 
+    
+  }
+
+  .subscription-table th:nth-child(4), /* 유효 기간 */
+  .subscription-table td:nth-child(4) {
+    width: 25%; 
+    
+  }
+  
+  .subscription-table th {
+    border-bottom: 3px solid #999;
+    font-weight: bold;
+  }
+  
+  /* 결제 내역 테이블 */
+  .payment-history {
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+  
+  .payment-history h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+  
+  .payment-history-filter {
+    /* 필터링 UI 스타일링 (추후 추가??) */
+    margin-bottom: 15px;
+  }
+  
+  .payment-history table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+  }
+  
+  .payment-history th,
+  .payment-history td {
+    border-left: none; /* 세로 줄 제거 */
+    border-right: none; /* 세로 줄 제거 */
+    border-bottom: 1px solid #d1d5db; /* 가로 줄 유지 */
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+  }
+  
+  .payment-history th:nth-child(1), /* 일시 */
+  .payment-history td:nth-child(1) {
+    width: 15%; 
+  }
+
+  .payment-history th:nth-child(2), /* 내용 */
+  .payment-history td:nth-child(2) {
+    width: 30%; 
+  }
+
+  .payment-history th:nth-child(3), /* 이용권 횟수 */
+  .payment-history td:nth-child(3) {
+    width: 15%; 
+  }
+
+  .payment-history th:nth-child(4), /* 결제 금액 */
+  .payment-history td:nth-child(4) {
+    width: 15%; 
+  }
+
+  .payment-history th:nth-child(5), /* 결제 수단 */
+  .payment-history td:nth-child(5) {
+    width: 15%; 
+  }
+
+  .payment-history th {
+    border-bottom: 3px solid #999;
+    font-weight: bold;
+  }
+  
+  .payment-history tbody tr:last-child td {
+    border-bottom: none; /* 마지막 행의 아래쪽 가로 줄 제거 (선택 사항) */
+  }
+  
+  
+  
+  /* 페이지네이션 */
+  
+  .pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    padding: 10px 0;
+    border-top: 1px solid #eee;
+    gap: 5px; /* 버튼과 정보 사이에 간격 추가 */
+}
+
+.pagination-controls .nav-button {
+    background-color: transparent; 
+    border: none; 
+    padding: 8px 15px; 
+    cursor: pointer;
+    font-size: 20px; 
+    font-weight: bold; 
+    transition: color 0.2s ease; 
+    color: #51E0C4; 
+}
+
+.pagination-controls .nav-button:hover:not(:disabled) {
+    color: #3cc7a9;
+}
+
+.pagination-controls .nav-button:disabled {
+    color: #cccccc;
+    cursor: not-allowed;
+}
+
+.pagination-controls .current-page-info {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    min-width: 100px; /* 텍스트 길이가 변해도 레이아웃이 크게 변하지 않도록 */
+    text-align: center;
+}
+
+  /*이용권안내팝업*/
+
+.info-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 우와신기하다다 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* 다른 요소 위에 표시 */
+}
+
+.info-popup {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-height: 80%;
+  display: flex;
+  flex-direction: column; /* 내부 요소 세로로 배치 */
+  animation: fadeInScale 0.3s ease-out forwards; /* 0.3초 동안 부드럽게 나타남 */
+}
+
+.info-popup h2 {
+  margin-top: 0;
+}
+
+.info-popup-content { /* 스크롤 적용 */
+  overflow-y: auto;
+  text-align: left;
+  margin-bottom: 5px; /* 닫기 버튼과의 간격 */
+  padding-right: 20px; /* 스크롤바 공간 확보 */
+  padding-left: 40px;
+}
+
+.info-popup p {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 16px;
+}
+
+.info-popup button {
+    margin-top: 10px;  
+    color: #ccc; 
+    border: 2px solid #ccc; 
+    background-color: transparent;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    align-self: center; 
+
+}
+
+.info-popup button:hover {
+  color: #fff; 
+  background-color: #ccc; 
+}
+
+.payment-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* 반투명 검정 배경 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* 다른 요소 위에 표시 */
+}
+
+/* 팝업 컨테이너 기본 스타일 */
+.payment-popup {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-height: 80%;
+  display: flex;
+  flex-direction: column; /* 내부 요소 세로로 배치 */
+  animation: fadeInScale 0.3s ease-out forwards;
+}
+
+/* 팝업 제목 */
+.payment-popup h2 {
+  margin-top: 0;
+}
+
+/* 팝업 내용 섹션 */
+.payment-popup-content {
+  overflow-y: auto;
+  text-align: left;
+  margin-bottom: 5px; /* 닫기 버튼과의 간격 */
+  padding-right: 20px; /* 스크롤바 공간 확보 */
+  padding-left: 40px;
+}
+
+.payment-popup p {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 16px;
+}
+
+/* 폼 그룹 (라벨과 셀렉트/인풋) */
+.payment-popup-content .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.payment-popup-content label {
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.payment-popup-content select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 18px;
+    width: 100%; /* 너비를 100%로 설정 */
+    box-sizing: border-box; /* 패딩과 보더가 너비에 포함되도록 */
+}
+
+/* 요약 텍스트 */
+.summary-text {  
+  font-size: 18px;
+  color: #333;
+    
+}
+
+.summary-text strong {
+    color: #51E0C4; /* 강조 색상 */
+}
+
+
+/* 팝업 버튼 그룹 */
+.payment-popup-buttons {
+    display: flex;
+    justify-content: center; 
+    margin-top: 10px;
+    gap: 10px;
+}
+
+/* 팝업 버튼 기본 스타일 */
+.payment-popup-buttons button {
+    padding:10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    font-weight: bold;
+}
+
+.payment-popup-buttons .confirm-button {
+    background-color: #51E0C4;
+    color: #fff;
+    border: none;
+}
+
+.payment-popup-buttons .confirm-button:hover {
+    background-color: #3cc7a9; 
+}
+
+.payment-popup-buttons .cancel-button {
+  color: #ccc; 
+  border: 2px solid #ccc; 
+  background-color: transparent;
+}
+
+.payment-popup-buttons .cancel-button:hover {
+  color: #fff; 
+  background-color: #ccc;
+}
+
+
+/* 팝업 애니메이션 */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
