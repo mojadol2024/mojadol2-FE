@@ -1,17 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './Payment.css';
 
-/* global BootPay, bootpaySDKLoaded */ // BootPay와 bootpaySDKLoaded가 전역으로 선언되었음을 ESLint에게 알립니다.
+/* global BootPay, bootpaySDKLoaded */
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const BOOTPAY_WEB_APPLICATION_ID = process.env.REACT_APP_BOOTPAY_WEB_APPLICATION_ID;
 
-/**
- * 결제 내역 리스트 API 호출 함수
- * 이 함수는 전체 데이터를 가져올 수 있도록 size를 크게 요청합니다.
- * @param {number} size - 페이지당 항목 수 (전체 데이터를 위해 큰 값 사용)
- * @returns {Object|null} - API 응답의 result 객체 또는 오류 발생 시 null
- */
 async function fetchAllPaymentData(size = 1000) {
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/list?page=0&size=${size}`;
@@ -26,31 +20,20 @@ async function fetchAllPaymentData(size = 1000) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      //console.error('결제 내역 API 요청 실패:', errorData);
       throw new Error(`API 요청 실패: ${response.status}`);
     }
 
     const data = await response.json();
     return data.result;
   } catch (error) {
-    //console.error('결제 내역 API 호출 중 오류 발생:', error);
+    console.error('결제 내역 API 호출 중 오류 발생:', error);
     return null;
   }
 }
 
-/**
- * 백엔드에 결제 승인 요청 API 호출 함수
- * 프론트에서 부트페이 결제 후 받은 영수증 ID를 백엔드로 전송하여 최종 승인 요청
- * @param {string} receiptId - 부트페이로부터 받은 영수증 ID
- * @param {number} amount - 결제 금액
- * @param {string} paymentMethod - 결제 수단 (원래 한글 이름, 예: '카드결제', '카카오페이')
- * @param {string} title - 상품 제목
- * @param {number} quantity - 구매 수량 (이용권 번들 개수)
- * @returns {Object|null} - API 응답의 result 객체 또는 오류 발생 시 null
- */
 async function requestPaymentApprovalToBackend(receiptId, amount, paymentMethod, title, quantity) {
   const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/pay`; // 백엔드 결제 승인 API URL
+  const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/pay`;
 
   try {
     const response = await fetch(apiUrl, {
@@ -60,29 +43,54 @@ async function requestPaymentApprovalToBackend(receiptId, amount, paymentMethod,
         'Authorization': accessToken ? `Bearer ${accessToken}` : '',
       },
       body: JSON.stringify({
-        receiptId: receiptId, // 부트페이 영수증 ID
+        receiptId: receiptId,
         amount: amount,
-        paymentMethod: paymentMethod, // 백엔드에 보낼 결제 수단 이름 (한글 또는 백엔드 정의)
+        paymentMethod: paymentMethod,
         title: title,
-        quantity: quantity // 백엔드에 보낼 구매 수량 (이용권 번들 개수)
+        quantity: quantity
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      //console.error('백엔드 결제 승인 요청 실패:', errorData);
       throw new Error(`백엔드 결제 승인 실패: ${errorData.message || response.statusText}`);
     }
 
     const data = await response.json();
-    //console.log('백엔드 결제 승인 성공:', data);
     return data.result;
   } catch (error) {
-    //console.error('백엔드 결제 승인 중 오류 발생:', error);
+    console.error('백엔드 결제 승인 중 오류 발생:', error);
     alert(`결제 처리 중 오류 발생: ${error.message}`);
     return null;
   }
 }
+
+async function fetchUserProfile() {
+  const accessToken = localStorage.getItem('accessToken');
+  const apiUrl = `${API_BASE_URL}/mojadol/api/v1/mypage/profile`;
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': accessToken ? `Bearer ${accessToken}` : '',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('사용자 프로필 API 요청 실패:', errorData);
+      throw new Error(`사용자 프로필 요청 실패: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.result;
+  } catch (error) {
+    console.error('사용자 프로필 API 호출 중 오류 발생:', error);
+    return null;
+  }
+}
+
 
 function Payment() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -92,25 +100,24 @@ function Payment() {
   const [availableVouchers, setAvailableVouchers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
 
   const [showInfoPopup, setShowInfoPopup] = useState(false);
   const [showPaymentPopup, setShowPaymentPopup] = useState(false);
 
-  // 부트페이에서 사용할 결제 수단 매핑 (UI 한글 이름 -> 부트페이 SDK 코드)
   const paymentMethodMap = {
-    //'카드결제': 'card',
-    '계좌이체': 'bank', // KCP의 계좌이체 코드
-    'ISP/앱카드결제': 'card', // ISP/앱카드결제는 일반적으로 'card'로 처리됩니다.
+    '계좌이체': 'bank',
+    'ISP/앱카드결제': 'card',
     '카카오페이': 'kakaopay',
     '네이버페이': 'naverpay',
   };
-  const paymentMethods = Object.keys(paymentMethodMap); // 드롭다운에 보여줄 한글 이름
+  const paymentMethods = Object.keys(paymentMethodMap);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(paymentMethods[0]);
 
   const availableProducts = [
-    { id: 1, title: '프리미엄 회원권 (10개)', amount: 9900, quantity: 1, voucherCount: 10, voucherType: 'GOLD' }, // quantity는 상품 묶음 개수 (10개 묶음 1개)
-    { id: 2, title: '프리미엄 회원권 (50개)', amount: 49000, quantity: 5, voucherCount: 50, voucherType: 'GOLD' }, // 50개 묶음 1개
-    { id: 3, title: '프리미엄 회원권 (100개)', amount: 98000, quantity: 10, voucherCount: 100, voucherType: 'GOLD' }, // 100개 묶음 1개
+    { id: 1, title: '프리미엄 회원권 (10개)', amount: 9900, quantity: 1, voucherCount: 10, voucherType: 'GOLD' },
+    { id: 2, title: '프리미엄 회원권 (50개)', amount: 49000, quantity: 5, voucherCount: 50, voucherType: 'GOLD' },
+    { id: 3, title: '프리미엄 회원권 (100개)', amount: 98000, quantity: 10, voucherCount: 100, voucherType: 'GOLD' },
   ];
   const [selectedProduct, setSelectedProduct] = useState(availableProducts[0]);
 
@@ -119,24 +126,25 @@ function Payment() {
     setError(null);
 
     try {
-      const result = await fetchAllPaymentData();
+      const [paymentResult, profileResult] = await Promise.all([
+        fetchAllPaymentData(),
+        fetchUserProfile()
+      ]);
 
-      if (result && result.content) {
-        // paymentDate 기준으로 최신순 정렬
-        const sortedPayments = [...result.content].sort((a, b) => {
+      if (paymentResult && paymentResult.content) {
+        const sortedPayments = [...paymentResult.content].sort((a, b) => {
           const dateA = new Date(a.paymentDate);
           const dateB = new Date(b.paymentDate);
           return dateB - dateA;
         });
         setAllPaymentHistoryData(sortedPayments);
 
-        // 유효한 이용권 집계
         const now = new Date();
-        const validVouchers = result.content
+        const validVouchers = paymentResult.content
           .filter(item => item.completed === 1 && item.voucher !== null)
           .map(item => ({
             ...item.voucher,
-            paymentTitle: item.title // 결제 상품명을 이용권 제목으로 사용
+            paymentTitle: item.title
           }))
           .filter(voucher => voucher && new Date(voucher.expiredAt) > now);
 
@@ -154,18 +162,23 @@ function Payment() {
           return acc;
         }, {});
 
-        // 유효 기간 기준으로 정렬 및 날짜 형식 변경
         const sortedAvailableVouchers = Object.values(aggregatedVouchers).sort((a, b) => {
           return new Date(a.expiry) - new Date(b.expiry);
         }).map(voucher => ({
           ...voucher,
-          expiry: voucher.expiry.split('T')[0] // 'YYYY-MM-DD' 형식으로 자르기
+          expiry: voucher.expiry.split('T')[0]
         }));
 
         setAvailableVouchers(sortedAvailableVouchers);
       } else {
         setAllPaymentHistoryData([]);
         setAvailableVouchers([]);
+      }
+
+      if (profileResult) {
+        setUserProfile(profileResult);
+      } else {
+        setError(new Error('사용자 프로필을 불러오지 못했습니다.'));
       }
     } catch (err) {
       setError(err);
@@ -217,11 +230,8 @@ function Payment() {
   };
 
   const handleConfirmPayment = () => {
-    
-    const user = JSON.parse(localStorage.getItem('user'));
-
-    if (!user || !user.name || !user.email || !user.phone) {
-      alert('로그인이 필요하거나 사용자 정보가 부족합니다.');
+    if (!userProfile || !userProfile.userName || !userProfile.email || !userProfile.phoneNumber) {
+      alert('사용자 정보가 부족하여 결제를 진행할 수 없습니다. 백엔드에서 사용자 프로필 정보가 제대로 반환되는지 확인해주세요.');
       return;
     }
 
@@ -236,33 +246,24 @@ function Payment() {
       return;
     }
 
-    // ====================================================================
-    // ⭐️ 중요: BootPay 로딩을 기다리는 폴링 로직
-    // `window.bootpaySDKLoaded` 플래그를 사용하여 SDK 로딩 상태를 명확히 확인
-    // ====================================================================
     let pollingAttempts = 0;
-    const maxPollingAttempts = 50; // 100ms * 50 = 5초 동안 대기
+    const maxPollingAttempts = 50;
 
     const checkBootPayReady = setInterval(() => {
-      // window.bootpaySDKLoaded 플래그와 window.BootPay 객체 모두 확인
-      //if (window.bootpaySDKLoaded && typeof window.BootPay !== 'undefined') {
       if (typeof window.BootPay !== 'undefined') {
+        clearInterval(checkBootPayReady);
 
-        clearInterval(checkBootPayReady); // BootPay가 로드되고 초기화되면 폴링 중지
-        //console.log('BootPay SDK is ready to make requests.');
-
-        // BootPay 요청 로직 시작
         window.BootPay.request({
           price: selectedProduct.amount,
           application_id: BOOTPAY_WEB_APPLICATION_ID,
           name: selectedProduct.title,
-          pg: 'kcp', // KCP를 사용하셨다고 하셨으므로 'kcp'로 설정합니다.
+          pg: 'kcp',
           method: bootpayMethodCode,
           order_id: `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           user_info: {
-            username: user?.name,
-            email: user?.email,
-            phone: user?.phone,
+            username: userProfile.userName,
+            email: userProfile.email,
+            phone: userProfile.phoneNumber,
           },
           extra: {
             app_scheme: 'bootpayreactsample',
@@ -271,7 +272,6 @@ function Payment() {
           },
           callbacks: {
             onDone: async function(data) {
-              //console.log('결제 완료 (프론트엔드):', data);
               alert('결제가 성공적으로 완료되었습니다!');
               const backendResult = await requestPaymentApprovalToBackend(
                 data.receipt_id,
@@ -281,33 +281,29 @@ function Payment() {
                 selectedProduct.quantity
               );
               if (backendResult) {
-                loadInitialData(); // 결제 완료 후 결제 내역 새로고침
+                loadInitialData();
               }
-              setShowPaymentPopup(false); // 팝업 닫기
+              setShowPaymentPopup(false);
             },
             onCancel: function(data) {
-              //console.log('결제 취소 (프론트엔드):', data);
               alert('결제가 취소되었습니다.');
-              setShowPaymentPopup(false); // 팝업 닫기
+              setShowPaymentPopup(false);
             },
             onError: function(data) {
-              //console.log('결제 오류 (프론트엔드):', data);
               alert(`결제 중 오류가 발생했습니다: ${data.message || JSON.stringify(data)}`);
-              setShowPaymentPopup(false); // 팝업 닫기
+              setShowPaymentPopup(false);
             }
           }
         });
       } else {
         pollingAttempts++;
-        //console.log(`Waiting for BootPay to load... Attempt: ${pollingAttempts}`);
         if (pollingAttempts >= maxPollingAttempts) {
           clearInterval(checkBootPayReady);
           alert('결제 모듈 로딩 시간이 초과되었습니다. 페이지를 새로고침 후 다시 시도해주세요.');
-          //console.error('BootPay loading timed out after max attempts.');
           setShowPaymentPopup(false);
         }
       }
-    }, 100); // 100ms마다 확인
+    }, 100);
   };
 
   const handleProductChange = (e) => {
@@ -316,14 +312,24 @@ function Payment() {
     setSelectedProduct(product);
   };
 
-  if (loading && allPaymentHistoryData.length === 0) {
-    return <div className="loading-message">Loading...</div>;
+  // 로딩 중일 때 로딩 메시지와 스피너 표시
+  if (loading) {
+    return (
+      <div className="payment-container">
+        <div className="loading-state-container">
+          <div className="spinner"></div>
+          <p className="loading-message">데이터를 불러오는 중입니다...</p>
+        </div>
+      </div>
+    );
   }
 
+  // 에러 발생 시
   if (error) {
     return <div className="error-message">Error: {error.message}</div>;
   }
 
+  // 데이터 로드 완료 및 에러 없을 시 정상 렌더링
   return (
     <div className="payment-container">
       {/* 상단 제목 및 구매 버튼 */}
