@@ -42,7 +42,7 @@ function Home() {
     }, '로그인으로 이동'),
     
     h('button', {
-      onClick: () => navigate('/SignUp'), 
+      onClick: () => navigate('/Sign-Up'), 
       style: {
         padding: '10px 20px',
         fontSize: '16px',
