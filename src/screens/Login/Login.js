@@ -204,23 +204,16 @@ function Login() {
       </button>
 
       <div className="linkContainer">
-        <div className="leftLinks">
-          <button className="link buttonLike">비밀번호 찾기</button>
-          <span className="divider">|</span>
-          <button
-            className="link buttonLike"
-            onClick={() => navigate('/find-id')}
-          >
-            아이디 찾기
-          </button>
-        </div>
-        <button
-          className="signupLink buttonLike"
-          onClick={() => navigate('/sign-up')}
-        >
-          회원가입
-        </button>
-      </div>
+  <div className="leftLinks">
+    <span className="link" onClick={() => navigate('/find-id')}>
+      아이디 찾기
+    </span>
+  </div>
+  <span className="signupLink" onClick={() => navigate('/sign-up')}>
+    회원가입
+  </span>
+</div>
+
     </div>
   );
 }
