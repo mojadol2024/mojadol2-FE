@@ -343,7 +343,8 @@ function Home() {
         borderRadius: '8px',
         cursor: 'pointer',
       }
-    }, '결제관리로 이동'),  
+    }, '결제관리로 이동')
+    
   );
 }
 
