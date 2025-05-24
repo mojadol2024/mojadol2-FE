@@ -11,23 +11,21 @@ function TakeSelect() {
   return (
     <div className="take-select-container">
       <main className="take-main">
-        <div className="take-question-wrapper">
-          <div className="take-question">
-            질문: 본인의 강점에 대해서 간단히 말해주세요
-          </div>
+        <div className="take-question">
+          질문: 본인의 강점에 대해서 간단히 말해주세요
         </div>
 
         <button className="take-rec-btn">Take 2 녹화 시작</button>
 
         <div className="take-box">
-          <div className="take-header">
-            <div
-              className={`take-radio ${selectedTake === 1 ? 'selected' : ''}`}
-              onClick={() => handleSelect(1)}
-            ></div>
-            <span className="take-label">Take 1</span>
+          <div
+            className={`take-radio ${selectedTake === 1 ? 'selected' : ''}`}
+            onClick={() => handleSelect(1)}
+          ></div>
+          <span>Take 1</span>
+          <div className="take-image">
+            {/* 사용자 녹화 캡처 이미지가 들어갈 부분 */}
           </div>
-          <div className="take-image" />
         </div>
 
         <div className="take-buttons">
