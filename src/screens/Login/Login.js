@@ -117,27 +117,32 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
+// ✅ 환경변수에서 API 주소 읽기
+const API_BASE_URL = process.env.REACT_APP_BASE_URL;
+
 function Login() {
   const [userLoginId, setUserLoginId] = useState('');
-  const [password, setPassword]   = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    const url = `${API_BASE_URL}/mojadol/api/v1/auth/login`;
     console.log("▶ 로그인 요청 시작:", {
-      url: 'https://myeonjub.store/api/mojadol/api/v1/auth/login',
+      url,
       payload: { userLoginId, userPw: password },
     });
 
     try {
       const response = await axios.post(
-        'https://myeonjub.store/api/mojadol/api/v1/auth/login',
+        url,
         { userLoginId, userPw: password },
         {
-          withCredentials: true,            // 쿠키/세션 필요 시
+          withCredentials: true,
           headers: { 'Content-Type': 'application/json' },
         }
       );
+
       console.log("✅ 로그인 성공 응답:", response);
       const { accessToken } = response.data;
       localStorage.setItem('accessToken', accessToken);
@@ -200,9 +205,7 @@ function Login() {
 
       <div className="linkContainer">
         <div className="leftLinks">
-          <button className="link buttonLike">
-            비밀번호 찾기
-          </button>
+          <button className="link buttonLike">비밀번호 찾기</button>
           <span className="divider">|</span>
           <button
             className="link buttonLike"

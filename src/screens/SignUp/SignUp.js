@@ -281,6 +281,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
 
+const API_BASE_URL = process.env.REACT_APP_BASE_URL;
+
 function SignUp() {
   const [formData, setFormData] = useState({
     userLoginId: '',
@@ -314,7 +316,7 @@ function SignUp() {
 
     try {
       const res = await axios.post(
-        'https://myeonjub.store/api/mojadol/api/v1/users/sign-up',
+        `${API_BASE_URL}/mojadol/api/v1/users/sign-up`,
         {
           userLoginId: formData.userLoginId,
           userPw:       formData.userPw,
@@ -346,7 +348,7 @@ function SignUp() {
     }
     try {
       const { data } = await axios.get(
-        'https://myeonjub.store/api/mojadol/api/v1/users/check',
+        `${API_BASE_URL}/mojadol/api/v1/users/check`,
         {
           params: { userLoginId: formData.userLoginId },
           withCredentials: true,
@@ -359,6 +361,8 @@ function SignUp() {
       );
     } catch (err) {
       console.error('⛔ 아이디 중복 확인 실패:', err.response || err);
+      console.log("❓ 요청 URL 확인:", `${API_BASE_URL}/mojadol/api/v1/users/check`);
+      console.log("❓ 요청 파라미터:", formData.userLoginId);
       alert('아이디 중복 확인 중 오류가 발생했습니다.');
     }
   };
@@ -370,7 +374,7 @@ function SignUp() {
     }
     try {
       const { data } = await axios.get(
-        'https://myeonjub.store/api/mojadol/api/v1/users/check',
+        `${API_BASE_URL}/mojadol/api/v1/users/check`,
         {
           params: { nickname: formData.nickname },
           withCredentials: true,
@@ -394,7 +398,7 @@ function SignUp() {
     }
     try {
       const { data } = await axios.get(
-        'https://myeonjub.store/api/mojadol/api/v1/users/check',
+        `${API_BASE_URL}/mojadol/api/v1/users/check`,
         {
           params: { email: formData.email },
           withCredentials: true,
@@ -418,7 +422,6 @@ function SignUp() {
       </div>
       <h3 className="title">회원가입</h3>
 
-      {/* 아이디 + 중복 확인 */}
       <div style={{ position: 'relative', width: '500px', marginBottom: '20px' }}>
         <input
           type="text"
@@ -433,7 +436,6 @@ function SignUp() {
         </button>
       </div>
 
-      {/* 비밀번호 */}
       <input
         type="password"
         name="userPw"
@@ -456,7 +458,6 @@ function SignUp() {
         </div>
       )}
 
-      {/* 이름 */}
       <input
         type="text"
         name="userName"
@@ -467,7 +468,6 @@ function SignUp() {
         style={{ marginBottom: '20px' }}
       />
 
-      {/* 닉네임 + 중복 확인 */}
       <div style={{ position: 'relative', width: '500px', marginBottom: '20px' }}>
         <input
           type="text"
@@ -482,7 +482,6 @@ function SignUp() {
         </button>
       </div>
 
-      {/* 휴대폰 */}
       <input
         type="tel"
         name="phoneNumber"
@@ -493,7 +492,6 @@ function SignUp() {
         style={{ marginBottom: '20px' }}
       />
 
-      {/* 이메일 + 중복 확인 */}
       <div style={{ position: 'relative', width: '500px', marginBottom: '20px' }}>
         <input
           type="email"
@@ -508,7 +506,6 @@ function SignUp() {
         </button>
       </div>
 
-      {/* 버튼 */}
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '500px' }}>
         <button className="button" style={{ backgroundColor: '#ccc', color: '#000' }} onClick={() => navigate(-1)}>
           취소
@@ -522,6 +519,7 @@ function SignUp() {
 }
 
 export default SignUp;
+
   // import React, { useState } from 'react';
   // import axios from 'axios';
   // import { useNavigate } from 'react-router-dom';
