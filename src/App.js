@@ -26,12 +26,95 @@
 // }
 
 // export default App;
+
+
+
+
+
+
+
+
+
+// import React from 'react';
+// import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+// import SidebarLayout from './components/layout/SidebarLayout';
+
+// import Home from './pages/home/home';
+// import MyPage from './pages/mypage/mypage';
+// import Login from './screens/Login/Login';
+// import SignUp from './screens/SignUp/SignUp';
+// import FindId from './screens/FindId/FindId';
+// import InterviewMain from './pages/main/InterviewMain';
+// import ResumeQuestionPage from './pages/resumeQuestionPage/ResumeQuestionPage';
+// import QuestionConfirmPage from './pages/questionConfirmPage/QuestionConfirmPage';
+// import RecordingPage from './pages/recordingPage/RecordingPage';
+// import TakeSelect from './pages/takeSelect/TakeSelect';
+// import Payment from './pages/Payment/Payment';
+// import SpellingCorrection from './pages/spellingCorrection/SpellingCorrection';
+
+// function App() {
+//   return (
+//     <Router>
+//       <Routes>
+//         {/* 사이드바 없는 페이지 */}
+//         <Route path="/" element={<Home />} />
+//         <Route path="/login" element={<Login />} />
+//         <Route path="/sign-up" element={<SignUp />} />
+//         <Route path="/find-id" element={<FindId />} />
+
+//         {/* 사이드바 포함 페이지 */}
+//         <Route element={<SidebarLayout />}>
+//           <Route path="/mypage" element={<MyPage />} />
+//           <Route path="/interviewmain" element={<InterviewMain />} />
+//           <Route path="/spellingcorrection" element={<SpellingCorrection />} />
+//           <Route path="/resumequestionpage" element={<ResumeQuestionPage />} />
+//           <Route path="/questionconfirmpage" element={<QuestionConfirmPage />} />
+//           <Route path="/recordingpage" element={<RecordingPage />} />
+//           <Route path="/takeselect" element={<TakeSelect />} />
+//           <Route path="/payment" element={<Payment />} />
+//         </Route>
+//       </Routes>
+//     </Router>
+//   );
+// }
+
+// export default App;
+
+
+// import React from 'react';
+// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// import Home from './pages/home/home';
+// import MyPage from './pages/mypage/mypage';
+// import Login from './screens/Login/Login';  
+// import Side from './components/side'; 
+// import SignUp from './screens/SignUp/SignUp';  
+
+
+// function App() {
+//   return (
+//     <Router>
+//       <Routes>
+//         <Route path="/" element={<Home />} />
+//         <Route path="/Login" element={<Login />} />
+//         <Route path="/SignUp" element={<SignUp />} />
+//         <Route path="/mypage" element={
+//           <div className="container">
+//             <Side />
+//             <MyPage />
+//           </div>
+//         } />
+//       </Routes>   
+//     </Router>
+//   );
+// }
+
+// export default App;
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/home/home';
 import MyPage from './pages/mypage/mypage';
 import Login from './screens/Login/Login';    
-import Side from './components/sideBar/sideBar/side'; 
+import Side from './components/sideBar/side';
 import Main from './pages/main/InterviewMain';
 import ResumeQuestionPage from './pages/resumeQuestionPage/ResumeQuestionPage';
 import QuestionConfirmPage from './pages/questionConfirmPage/QuestionConfirmPage';
@@ -41,6 +124,8 @@ import Payment from './pages/Payment/Payment';
 import SpellingCorrection from './pages/spellingCorrection/SpellingCorrection';
 import SignUp from './screens/SignUp/SignUp';   // SignUp 컴포넌트
 import FindId from './screens/FindId/FindId';
+
+
 
 function App() {
   return (
