@@ -10,7 +10,7 @@ html, body {
   width: 100%;
   box-sizing: border-box; 
   padding-left: 20px; 
-  padding-right: 280px; /*뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
+  padding-right: 290px; /*뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
   padding-top: 20px;
   overflow-y: auto; /*body 에 overflow 적용했더니 이중으로 스크롤이 생겨서*/
   }
@@ -22,17 +22,6 @@ html, body {
     margin-bottom: 50px;
     text-align: center;
 
-  }
-
-  /* 로딩 및 에러 메시지 스타일 추가 */
-  .loading-message, .error-message {
-    text-align: center;
-    font-size: 1.5em;
-    padding: 50px;
-    color: #555;
-  }
-  .error-message {
-    color: #e74c3c; /* 빨간색 에러 메시지 */
   }
   
   /* 상단 제목 및 구매 버튼 */
@@ -49,7 +38,7 @@ html, body {
     display: flex; /* 버튼들을 가로로 배치 */
     gap: 10px; /* 버튼 사이 간격 조절 */
     justify-content: flex-end; /* 내용을 오른쪽으로 정렬 */
-    margin-bottom: 20px
+    margin-bottom: 20px;
   }
   
   .buy-info-button { 
@@ -113,7 +102,7 @@ html, body {
     font-size: 16px;
     text-align: center;
     border: none; 
-    background-color: #ccc;
+    background-color: #999;
   }
   
   .subscription-count {
@@ -146,13 +135,12 @@ html, body {
     width: 35%; 
   }
 
-  .subscription-table th:nth-child(2), /* 개수 */
+  .subscription-table th:nth-child(2), /* gold*/
   .subscription-table td:nth-child(2) {
     width: 20%; 
-    font-weight: bold;
   }
 
-  .subscription-table th:nth-child(3), /* 유효 기간 */
+  .subscription-table th:nth-child(3), /* 개수 */
   .subscription-table td:nth-child(3) {
     width: 20%; 
     
@@ -167,6 +155,10 @@ html, body {
   .subscription-table th {
     border-bottom: 3px solid #999;
     font-weight: bold;
+  }
+
+  .subscription-table tbody tr:last-child td {
+    border-bottom: none; /* 마지막 행의 아래쪽 가로 줄 제거 (선택 사항) */
   }
   
   /* 결제 내역 테이블 */
@@ -208,12 +200,12 @@ html, body {
   
   .payment-history th:nth-child(1), /* 일시 */
   .payment-history td:nth-child(1) {
-    width: 15%; 
+    width: 10%; 
   }
 
   .payment-history th:nth-child(2), /* 내용 */
   .payment-history td:nth-child(2) {
-    width: 30%; 
+    width: 25%; 
   }
 
   .payment-history th:nth-child(3), /* 이용권 횟수 */
@@ -223,12 +215,12 @@ html, body {
 
   .payment-history th:nth-child(4), /* 결제 금액 */
   .payment-history td:nth-child(4) {
-    width: 15%; 
+    width: 20%; 
   }
 
   .payment-history th:nth-child(5), /* 결제 수단 */
   .payment-history td:nth-child(5) {
-    width: 15%; 
+    width: 20%; 
   }
 
   .payment-history th {
@@ -250,7 +242,6 @@ html, body {
     align-items: center;
     margin-top: 20px;
     padding: 10px 0;
-    border-top: 1px solid #eee;
     gap: 5px; /* 버튼과 정보 사이에 간격 추가 */
 }
 
@@ -317,7 +308,7 @@ html, body {
   overflow-y: auto;
   text-align: left;
   margin-bottom: 5px; /* 닫기 버튼과의 간격 */
-  padding-right: 20px; /* 스크롤바 공간 확보 */
+  padding-right: 30px; /* 스크롤바 공간 확보 */
   padding-left: 40px;
 }
 
@@ -480,4 +471,48 @@ html, body {
         opacity: 1;
         transform: scale(1);
     }
+}
+
+.loading-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 700px; /* 로딩 중에도 최소 높이를 유지하여 레이아웃 흔들림 방지 */
+  color: #555;
+  padding-left: 20px; 
+  padding-right: 290px; 
+}
+
+/* 스피너 스타일 */
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #51E0C4; /* 스피너 색상 - 메인 색상으로 변경 */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto; /* 중앙 정렬 */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 로딩 및 에러 메시지 스타일 추가 */
+.loading-message, .error-message {
+  text-align: center;
+  font-size: 18px;
+  font-size: 25px;
+  color: #ccc;
+}
+
+.error-message {
+  color: #e74c3c; 
+  text-align: center;
+  font-size: 18px;
+  padding-left: 20px; 
+  padding-right: 290px; 
+  font-size: 25px;
 }
