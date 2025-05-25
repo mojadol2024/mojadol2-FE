@@ -1,0 +1,57 @@
+/* src/pages/FindId.css */
+.findid-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  font-family: sans-serif;
+}
+
+.logo {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.logoHighlight {
+  color: #51E0C4;
+}
+
+.title {
+  margin-bottom: 20px;
+}
+
+.input {
+  width: 500px;
+  height: 45px;
+  padding: 0 15px;
+  border-radius: 7px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+
+.button {
+  width: 500px;
+  height: 45px;
+  background-color: #51e2c2;
+  color: #fff;
+  font-weight: bold;
+  font-size: 18px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.backLink {
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+}
