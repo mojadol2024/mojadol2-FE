@@ -53,6 +53,19 @@ function Home() {
         cursor: 'pointer',
       }
     }, '메인으로 이동'),
+    
+    h('button', {
+      onClick: () => navigate('/SpellingCorrection'), 
+      style: {
+        padding: '10px 20px',
+        fontSize: '16px',
+        backgroundColor: '#10b981',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer',
+      }
+    }, '맞춤법 교정기 이동'),
 
     h('button', {
       onClick: () => navigate('/ResumeQuestionPage'), 
@@ -91,27 +104,10 @@ function Home() {
         borderRadius: '8px',
         cursor: 'pointer',
       }
-    }, '녹화시작페이지로 이동'),    
-    
-    h('button', {
-      onClick: () => navigate('/RecordingInProgress'), 
-      style: {
-        padding: '10px 20px',
-        fontSize: '16px',
-        backgroundColor: '#10b981',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '8px',
-        cursor: 'pointer',
-      }
-    }, '녹화페이지로 이동'),    
-    
-    h('button', {
-      onClick: () => navigate('/TakeSelect'), 
-    }, '로그인으로 이동'),
+    }, '녹화시작페이지로 이동'),      
 
     h('button', {
-      onClick: () => navigate('/Payment'), 
+      onClick: () => navigate('/TakeSelect'), 
       style: {
         padding: '10px 20px',
         fontSize: '16px',
@@ -135,6 +131,7 @@ function Home() {
         cursor: 'pointer',
       }
     }, '결제관리로 이동')
+    
   );
 }
 
