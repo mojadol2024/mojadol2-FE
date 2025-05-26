@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './Payment.css';
-import axios from 'axios';
-
+// import axios from 'axios'; 
+import axiosInstance from '../../lib/axiosInstance'; 
 /* global BootPay, bootpaySDKLoaded */
 
 // 환경 변수를 동적으로 가져오는 함수
@@ -18,19 +18,13 @@ const API_BASE_URL = getEnvVariable('REACT_APP_API_BASE_URL');
 const BOOTPAY_WEB_APPLICATION_ID = getEnvVariable('REACT_APP_BOOTPAY_WEB_APPLICATION_ID');
 
 async function fetchAllPaymentData(size = 1000) {
-    const accessToken = localStorage.getItem('accessToken');
     const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/list?page=0&size=${size}`;
 
     try {
-        const response = await axios.get(apiUrl, {
-            headers: {
-                'Authorization': accessToken ? `Bearer ${accessToken}` : '',
-            },
-        });
+        const response = await axiosInstance.get(apiUrl); 
         return response.data.result;
     } catch (error) {
         console.error('결제 내역 API 호출 중 오류 발생:', error);
-        // 에러 응답이 있을 경우 메시지를 확인하여 사용자에게 더 구체적인 정보를 제공할 수 있습니다.
         if (error.response) {
             console.error('Error response data:', error.response.data);
             console.error('Error response status:', error.response.status);
@@ -42,22 +36,16 @@ async function fetchAllPaymentData(size = 1000) {
 }
 
 async function requestPaymentApprovalToBackend(receiptId, amount, paymentMethod, title, quantity) {
-    const accessToken = localStorage.getItem('accessToken');
     const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/pay`;
 
     try {
-        const response = await axios.post(apiUrl, {
+        const response = await axiosInstance.post(apiUrl, { 
             receiptId: receiptId,
             amount: amount,
             paymentMethod: paymentMethod,
             title: title,
             quantity: quantity
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': accessToken ? `Bearer ${accessToken}` : '',
-            },
-        });
+        }); 
         return response.data.result;
     } catch (error) {
         console.error('백엔드 결제 승인 중 오류 발생:', error);
@@ -68,20 +56,15 @@ async function requestPaymentApprovalToBackend(receiptId, amount, paymentMethod,
             errorMessage = `네트워크 오류: ${error.message}`;
         }
         alert(errorMessage);
-        throw new Error(errorMessage); // 오류를 다시 throw하여 호출자가 catch할 수 있도록 합니다.
+        throw new Error(errorMessage);
     }
 }
 
 async function fetchUserProfile() {
-    const accessToken = localStorage.getItem('accessToken');
     const apiUrl = `${API_BASE_URL}/mojadol/api/v1/mypage/profile`;
 
     try {
-        const response = await axios.get(apiUrl, {
-            headers: {
-                'Authorization': accessToken ? `Bearer ${accessToken}` : '',
-            },
-        });
+        const response = await axiosInstance.get(apiUrl);
         return response.data.result;
     } catch (error) {
         console.error('사용자 프로필 API 호출 중 오류 발생:', error);
@@ -356,13 +339,13 @@ function Payment() {
                     <div className="info-popup">
                         <h2>이용권 안내</h2>
                         <div className="info-popup-content">
-                          <p>FREE 이용권이 매달 1개씩 제공되며,<br /> 유효 기간이 지나면 소멸됩니다.<br />
-                          <strong>FREE 이용권</strong> 사용 시, 생성된 면접 질문을 전부<br />녹화해야만 분석 결과를 열람할 수 있습니다.</p>
-                          <p><strong>GOLD 이용권</strong>은 면접 질문 1개 이상 녹화시<br />바로 결과 열람이 가능합니다.<br />
-                          후에 답변하지 않았던 질문을 녹화하여<br />결과지를 업데이트하는 것도 가능합니다.</p>
-                          <p><strong>이미 자소서 분석을 시작한 경우 이용권 변경이 불가합니다.</strong><br />
-                          (FREE 이용권으로 면접 질문을 생성한 경우,<br />도중에 GOLD 이용권으로 변경하는 것 불가)</p>
-                          <p>모든 이용권은 구매일로부터 <strong>30일</strong>간 유효하며,<br />유효 기간이 지난 이용권은 자동으로 소멸됩니다.</p>
+                            <p>FREE 이용권이 매달 1개씩 제공되며,<br /> 유효 기간이 지나면 소멸됩니다.<br />
+                            <strong>FREE 이용권</strong> 사용 시, 생성된 면접 질문을 전부<br />녹화해야만 분석 결과를 열람할 수 있습니다.</p>
+                            <p><strong>GOLD 이용권</strong>은 면접 질문 1개 이상 녹화시<br />바로 결과 열람이 가능합니다.<br />
+                            후에 답변하지 않았던 질문을 녹화하여<br />결과지를 업데이트하는 것도 가능합니다.</p>
+                            <p><strong>이미 자소서 분석을 시작한 경우 이용권 변경이 불가합니다.</strong><br />
+                            (FREE 이용권으로 면접 질문을 생성한 경우,<br />도중에 GOLD 이용권으로 변경하는 것 불가)</p>
+                            <p>모든 이용권은 구매일로부터 <strong>30일</strong>간 유효하며,<br />유효 기간이 지난 이용권은 자동으로 소멸됩니다.</p>
                         </div>
                         <button onClick={handleCloseInfoPopup}>닫기</button>
                     </div>
