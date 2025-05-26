@@ -7,8 +7,8 @@ import './ResumeQuestionPage.css';
 function ResumeQuestionPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const coverLetterId = new URLSearchParams(location.search).get('id');
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const coverLetterId = new URLSearchParams(location.search).get('id');
 
   const [title, setTitle] = useState('');
   const [questions, setQuestions] = useState([]);
@@ -17,28 +17,26 @@ function ResumeQuestionPage() {
   const [voucherType, setVoucherType] = useState(null); // 'FREE' or 'GOLD' 사용자 선택에 따라 달라짐
   const [pendingAI, setPendingAI] = useState({}); // { index: boolean }
 
+
   useEffect(() => {
-    fetchCoverLetter();
-    fetchQuestions();
+    if (!coverLetterId) {
+      alert('자소서 ID가 없습니다.');
+      return;
+    }
+    fetchLetterDetail();
   }, []);
 
-  const fetchCoverLetter = async () => {
+  const fetchLetterDetail = async () => {
     try {
       const response = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
-      setTitle(response.data.result.title || '자소서 제목 없음');
-      setVoucherType(response.data.result.voucherType); // 백엔드에서 받은 'FREE' 또는 'GOLD'
+      const result = response.data.result;
+
+      setTitle(result.coverLetter?.title || '자소서 제목 없음');
+      setVoucherType(result.coverLetter?.useVoucher || 'FREE');
+      setQuestions(Array.isArray(result.questions) ? result.questions : []);
     } catch (error) {
       console.error('자소서 정보 조회 실패:', error);
-    }
-  };
-
-  const fetchQuestions = async () => {
-    try {
-      const response = await axiosInstance.get(`/mojadol/api/v1/letter/question-list/${coverLetterId}`);
-      setQuestions(response.data.questions || []);
-    } catch (error) {
-      console.error('질문 불러오기 실패:', error);
-      alert('질문 리스트를 불러오는 데 실패했습니다.');
+      alert('자소서 정보를 불러오는 데 실패했습니다.');
     } finally {
       setLoading(false);
     }
@@ -166,7 +164,7 @@ function ResumeQuestionPage() {
           <div className="question-item" key={i}>
             <div className="question-text">
               <span className="play-icon">▶</span>
-              질문 {i + 1}: "{q}"
+              질문 {i + 1}: "{q.content}"
             </div>
             <div className="question-actions">
               <button

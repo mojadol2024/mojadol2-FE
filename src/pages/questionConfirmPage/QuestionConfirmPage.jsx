@@ -10,8 +10,8 @@ function QuestionConfirmPage() {
   const location = useLocation();
   const coverLetterId = new URLSearchParams(location.search).get('id');
   const questionIndex = new URLSearchParams(location.search).get('q');
-  const questionText = location.state?.question
-    ? `질문 ${parseInt(questionIndex, 10) + 1}: "${location.state.question}"`
+  const questionText = location.state?.question?.content
+    ? `질문 ${parseInt(questionIndex, 10) + 1}: "${location.state.question.content}"`
     : `질문 ${parseInt(questionIndex, 10) + 1}: "질문 내용을 불러올 수 없습니다."`;
 
   const handleNavigateBack = () => {
