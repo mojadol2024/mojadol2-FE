@@ -1,168 +1,493 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './Payment.css';
+// import axios from 'axios'; 
+import axiosInstance from '../../lib/axiosInstance'; 
+/* global BootPay, bootpaySDKLoaded */
+
+// 환경 변수를 동적으로 가져오는 함수
+const getEnvVariable = (key) => {
+    // 배포 환경에서 window._env_가 있다면 그 값을 사용
+    if (window._env_ && window._env_[key]) {
+        return window._env_[key];
+    }
+    // 로컬 개발 환경 또는 _env_에 해당 키가 없다면 process.env를 사용
+    return process.env[key];
+};
+
+const API_BASE_URL = getEnvVariable('REACT_APP_BASE_URL');
+const BOOTPAY_WEB_APPLICATION_ID = getEnvVariable('REACT_APP_BOOTPAY_WEB_APPLICATION_ID');
+
+async function fetchAllPaymentData(size = 1000) {
+    const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/list?page=0&size=${size}`;
+
+    try {
+        const response = await axiosInstance.get(apiUrl); 
+        return response.data.result;
+    } catch (error) {
+        console.error('결제 내역 API 호출 중 오류 발생:', error);
+        if (error.response) {
+            console.error('Error response data:', error.response.data);
+            console.error('Error response status:', error.response.status);
+            throw new Error(`API 요청 실패: ${error.response.status} - ${error.response.data.message || error.message}`);
+        } else {
+            throw new Error(`API 요청 실패: ${error.message}`);
+        }
+    }
+}
+
+async function requestPaymentApprovalToBackend(receiptId, amount, paymentMethod, title, quantity) {
+    const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/pay`;
+
+    try {
+        const response = await axiosInstance.post(apiUrl, { 
+            receiptId: receiptId,
+            amount: amount,
+            paymentMethod: paymentMethod,
+            title: title,
+            quantity: quantity
+        }); 
+        return response.data.result;
+    } catch (error) {
+        console.error('백엔드 결제 승인 중 오류 발생:', error);
+        let errorMessage = '결제 처리 중 오류 발생';
+        if (error.response) {
+            errorMessage = `백엔드 결제 승인 실패: ${error.response.data.message || error.response.statusText}`;
+        } else {
+            errorMessage = `네트워크 오류: ${error.message}`;
+        }
+        alert(errorMessage);
+        throw new Error(errorMessage);
+    }
+}
+
+async function fetchUserProfile() {
+    const apiUrl = `${API_BASE_URL}/mojadol/api/v1/mypage/profile`;
+
+    try {
+        const response = await axiosInstance.get(apiUrl);
+        return response.data.result;
+    } catch (error) {
+        console.error('사용자 프로필 API 호출 중 오류 발생:', error);
+        if (error.response) {
+            console.error('Error response data:', error.response.data);
+            console.error('Error response status:', error.response.status);
+            throw new Error(`사용자 프로필 요청 실패: ${error.response.status} - ${error.response.data.message || error.message}`);
+        } else {
+            throw new Error(`사용자 프로필 요청 실패: ${error.message}`);
+        }
+    }
+}
 
 function Payment() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const paymentsPerPage = 3; 
-  const [paymentHistoryData, setPaymentHistoryData] = useState([
-    { date: '2024.02.16', content: '카카오페이 라이트 이용권 (30일)', quantity: 1, amount: 9900, method: '카카오페이'},
-    { date: '2024.02.16', content: '관리자 충전', quantity: 10, amount: 0, method: '-'},
-    { date: '2024.01.20', content: '네이버페이 프리미엄 이용권 (60일)', quantity: 1, amount: 29900, method: '네이버페이'},
-    { date: '2023.12.25', content: '기타 결제', quantity: 5, amount: 5000, method: '신용카드'},
-  ]);
-  const [subscriptionData, setSubscriptionData] = useState([
-    { content: '무료 이용권', usage: 0, expiry: '2022-01-31', free: 0 }, // free: 0 이 무료 1이 유료라고 해놨는데 바꿔도돼요
-    { content: '유료 이용권', usage: 0, expiry: '2022-02-02', free: 1 },
-    { content: '무료 이용권', usage: 1, expiry: '2023-03-03', free: 0 },
-    { content: '공짜이용권', usage: 2, expiry: '2022-02-02', free: 0 },
-    { content: '이용권(유료)', usage: 4, expiry: '2023-03-03', free: 1 },
-  ]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [paymentsPerPage] = useState(5);
 
-  
-  const freeSubscriptionsCount = subscriptionData.filter(sub => sub.free === 0).reduce((sum, sub) => sum + sub.usage, 0);
-  const paidSubscriptionsCount = subscriptionData.filter(sub => sub.free === 1).reduce((sum, sub) => sum + sub.usage, 0);
+    const [allPaymentHistoryData, setAllPaymentHistoryData] = useState([]);
+    const [availableVouchers, setAvailableVouchers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [userProfile, setUserProfile] = useState(null);
 
-  const totalPages = Math.ceil(paymentHistoryData.length / paymentsPerPage);
-  const indexOfLastPayment = currentPage * paymentsPerPage;
-  const indexOfFirstPayment = indexOfLastPayment - paymentsPerPage;
-  const currentPayments = paymentHistoryData.slice(indexOfFirstPayment, indexOfLastPayment);
+    const [showInfoPopup, setShowInfoPopup] = useState(false);
+    const [showPaymentPopup, setShowPaymentPopup] = useState(false);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const paymentMethodMap = {
+        '계좌이체': 'bank',
+        'ISP/앱카드결제': 'card',
+        '카카오페이': 'kakaopay',
+        '네이버페이': 'naverpay',
+    };
+    const paymentMethods = Object.keys(paymentMethodMap);
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(paymentMethods[0]);
 
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-    const pagesToShow = 3;
-    let startPage = Math.max(1, currentPage - Math.floor(pagesToShow / 2));
-    let endPage = Math.min(totalPages, currentPage + Math.floor(pagesToShow / 2));
+    const availableProducts = [
+        { id: 1, title: 'GOLD 이용권 (10개)', amount: 9900, quantity: 1, voucherCount: 10, voucherType: 'GOLD' },
+        { id: 2, title: 'GOLD 이용권 (50개)', amount: 49000, quantity: 5, voucherCount: 50, voucherType: 'GOLD' },
+        { id: 3, title: 'GOLD 이용권 (100개)', amount: 98000, quantity: 10, voucherCount: 100, voucherType: 'GOLD' },
+    ];
+    const [selectedProduct, setSelectedProduct] = useState(availableProducts[0]);
 
-    if (totalPages <= pagesToShow) {
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else {
-      for (let i = startPage; i <= endPage; i++) {
-        pageNumbers.push(i);
-      }
+    const loadInitialData = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const [paymentResult, profileResult] = await Promise.all([
+                fetchAllPaymentData(),
+                fetchUserProfile()
+            ]);
+
+            if (paymentResult && paymentResult.content) {
+                const sortedPayments = [...paymentResult.content].sort((a, b) => {
+                    const dateA = new Date(a.paymentDate);
+                    const dateB = new Date(b.paymentDate);
+                    return dateB - dateA;
+                });
+                setAllPaymentHistoryData(sortedPayments);
+
+                const now = new Date();
+                const validVouchers = paymentResult.content
+                    .filter(item => item.completed === 1 && item.voucher !== null)
+                    .map(item => ({
+                        ...item.voucher,
+                        paymentTitle: item.title
+                    }))
+                    .filter(voucher => voucher && new Date(voucher.expiredAt) > now);
+
+                const aggregatedVouchers = validVouchers.reduce((acc, voucher) => {
+                    const key = `${voucher.type}-${voucher.expiredAt}-${voucher.paymentTitle}`;
+                    if (!acc[key]) {
+                        acc[key] = {
+                            title: voucher.paymentTitle,
+                            type: voucher.type,
+                            totalCount: 0,
+                            expiry: voucher.expiredAt,
+                        };
+                    }
+                    acc[key].totalCount += voucher.totalCount;
+                    return acc;
+                }, {});
+
+                const sortedAvailableVouchers = Object.values(aggregatedVouchers).sort((a, b) => {
+                    return new Date(a.expiry) - new Date(b.expiry);
+                }).map(voucher => ({
+                    ...voucher,
+                    expiry: voucher.expiry.split('T')[0]
+                }));
+
+                setAvailableVouchers(sortedAvailableVouchers);
+            } else {
+                setAllPaymentHistoryData([]);
+                setAvailableVouchers([]);
+            }
+
+            if (profileResult) {
+                setUserProfile(profileResult);
+            } else {
+                setError(new Error('사용자 프로필을 불러오지 못했습니다.'));
+            }
+        } catch (err) {
+            setError(err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        loadInitialData();
+    }, [loadInitialData]);
+
+    const indexOfLastPayment = (currentPage + 1) * paymentsPerPage;
+    const indexOfFirstPayment = indexOfLastPayment - paymentsPerPage;
+    const currentPayments = allPaymentHistoryData.slice(indexOfFirstPayment, indexOfLastPayment);
+
+    const freeSubscriptionsCount = availableVouchers
+        .filter(voucher => voucher.type === 'FREE')
+        .reduce((sum, voucher) => sum + voucher.totalCount, 0);
+
+    const paidSubscriptionsCount = availableVouchers
+        .filter(voucher => voucher.type === 'GOLD')
+        .reduce((sum, voucher) => sum + voucher.totalCount, 0);
+
+    const handlePrevPage = () => {
+        setCurrentPage(prev => Math.max(0, prev - 1));
+    };
+
+    const handleNextPage = () => {
+        if (indexOfLastPayment < allPaymentHistoryData.length) {
+            setCurrentPage(prev => prev + 1);
+        }
+    };
+
+    const handleShowInfoPopup = () => {
+        setShowInfoPopup(true);
+    };
+
+    const handleCloseInfoPopup = () => {
+        setShowInfoPopup(false);
+    };
+
+    const handleOpenPaymentPopup = () => {
+        setShowPaymentPopup(true);
+    };
+
+    const handleClosePaymentPopup = () => {
+        setShowPaymentPopup(false);
+    };
+
+    const handleConfirmPayment = () => {
+        if (!userProfile || !userProfile.userName || !userProfile.email || !userProfile.phoneNumber) {
+            alert('사용자 정보가 부족하여 결제를 진행할 수 없습니다. 백엔드에서 사용자 프로필 정보가 제대로 반환되는지 확인해주세요.');
+            return;
+        }
+
+        if (!selectedProduct) {
+            alert('상품을 선택해주세요.');
+            return;
+        }
+
+        const bootpayMethodCode = paymentMethodMap[selectedPaymentMethod];
+        if (!bootpayMethodCode) {
+            alert('유효한 결제 수단이 선택되지 않았습니다. 다시 선택해주세요.');
+            return;
+        }
+
+        let pollingAttempts = 0;
+        const maxPollingAttempts = 50;
+
+        const checkBootPayReady = setInterval(() => {
+            if (typeof window.BootPay !== 'undefined') {
+                clearInterval(checkBootPayReady);
+
+                window.BootPay.request({
+                    price: selectedProduct.amount,
+                    application_id: BOOTPAY_WEB_APPLICATION_ID,
+                    name: selectedProduct.title,
+                    pg: 'kcp',
+                    method: bootpayMethodCode,
+                    order_id: `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                    user_info: {
+                        username: userProfile.userName,
+                        email: userProfile.email,
+                        phone: userProfile.phoneNumber,
+                    },
+                    extra: {
+                        app_scheme: 'bootpayreactsample',
+                        card_quota: '0,2,3',
+                        confirm_url: `${API_BASE_URL}/mojadol/api/v1/payment/confirm`,
+                    },
+                    callbacks: {
+                        onDone: async function(data) {
+                            alert('결제가 성공적으로 완료되었습니다!');
+                            try {
+                                const backendResult = await requestPaymentApprovalToBackend(
+                                    data.receipt_id,
+                                    data.price,
+                                    selectedPaymentMethod,
+                                    selectedProduct.title,
+                                    selectedProduct.quantity
+                                );
+                                if (backendResult) {
+                                    loadInitialData();
+                                }
+                            } catch (error) {
+                                console.error('백엔드 결제 승인 후 처리 중 오류:', error);
+                                alert(`결제 후 처리 중 오류 발생: ${error.message}`);
+                            } finally {
+                                setShowPaymentPopup(false);
+                            }
+                        },
+                        onCancel: function(data) {
+                            alert('결제가 취소되었습니다.');
+                            setShowPaymentPopup(false);
+                        },
+                        onError: function(data) {
+                            alert(`결제 중 오류가 발생했습니다: ${data.message || JSON.stringify(data)}`);
+                            setShowPaymentPopup(false);
+                        }
+                    }
+                });
+            } else {
+                pollingAttempts++;
+                if (pollingAttempts >= maxPollingAttempts) {
+                    clearInterval(checkBootPayReady);
+                    alert('결제 모듈 로딩 시간이 초과되었습니다. 페이지를 새로고침 후 다시 시도해주세요.');
+                    setShowPaymentPopup(false);
+                }
+            }
+        }, 100);
+    };
+
+    const handleProductChange = (e) => {
+        const selectedId = Number(e.target.value);
+        const product = availableProducts.find(p => p.id === selectedId);
+        setSelectedProduct(product);
+    };
+
+    // 로딩 중일 때 로딩 메시지와 스피너 표시
+    if (loading) {
+        return (
+            <div>
+                <div className="loading-state-container">
+                    <div className="spinner"></div>
+                    <p className="loading-message">데이터를 불러오는 중입니다...</p>
+                </div>
+            </div>
+        );
     }
-    return pageNumbers;
-  };
 
-  const goToFirstPage = () => setCurrentPage(1);
-  const goToLastPage = () => setCurrentPage(totalPages);
+    // 에러 발생 시
+    if (error) {
+        return <div className="error-message">Error: {error.message}</div>;
+    }
 
-  useEffect(() => {
-    // 이용권 정보 정렬 (유효 기간 임박 순)
-    const sortedSubscriptions = [...subscriptionData].sort((a, b) => new Date(a.expiry) - new Date(b.expiry));
-    setSubscriptionData(sortedSubscriptions);
+    // 데이터 로드 완료 및 에러 없을 시 정상 렌더링
+    return (
+        <div className="payment-container">
+            {/* 상단 제목 및 구매 버튼 */}
+            <div className="payment-header">
+                <h1>이용권 관리</h1>
+                <div className="button-group">
+                    <button className="buy-info-button" onClick={handleShowInfoPopup}>이용권 안내</button>
+                    <button className="buy-ticket-button" onClick={handleOpenPaymentPopup}>이용권 구매</button>
+                </div>
+            </div>
 
-    // 결제 내역 정렬 (최근 결제 순)
-    const sortedPayments = [...paymentHistoryData].sort((a, b) => new Date(b.date) - new Date(a.date));
-    setPaymentHistoryData(sortedPayments);
-  }, []);
-
-  return (
-    <div className="payment-container">
-      {/* 상단 제목 및 구매 버튼 */}
-      <div className="payment-header">
-        <h1>이용권 관리</h1>
-        <div className="button-group">
-          <button className="buy-info-button">이용권 정보</button>
-          <button className="buy-ticket-button">이용권 구매</button>
-        </div>
-      </div>
-
-      {/* 현재 이용권 정보 */}
-      <div className="subscription-info">
-        <h2>이용권 정보</h2>
-        <div className="subscription-summary">
-          <div className="subscription-box free">무료 이용권<span className="subscription-count">&nbsp;&nbsp;{freeSubscriptionsCount}</span></div>
-          <div className="subscription-box paid">유료 이용권<span className="subscription-count">&nbsp;&nbsp;{paidSubscriptionsCount}</span></div>
-        </div>
-        {subscriptionData.length > 0 ? (
-          <table className="subscription-table">
-            <thead>
-              <tr>
-                <th>내용</th>
-                <th>개수</th>
-                <th>유효 기간</th>
-              </tr>
-            </thead>
-            <tbody>
-              {subscriptionData
-                .filter(sub => sub.usage > 0) // usage = 이용권 개수가 0보다 큰 경우만 보여주기 0 인 경우 (이용권 다 쓴 경우)는 우짜지..
-                .map((sub, index) => (
-                  <tr key={index}>
-                    <td>{sub.content}</td>
-                    <td className="align-right">{sub.usage}</td>
-                    <td className="align-right">{sub.expiry}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>현재 이용권이 없습니다.</p>
-        )}
-      </div>
-
-      {/* 결제 내역 테이블 */}
-      <div className="payment-history">
-        <h2>결제 내역</h2>
-        {paymentHistoryData.length > 0 ? (
-          <>
-            <table>
-              <thead>
-                <tr>
-                  <th>일시</th>
-                  <th>내용</th>
-                  <th>이용권 횟수</th>
-                  <th>결제 금액</th>
-                  <th>결제 수단</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentPayments.map((payment, index) => (
-                  <tr key={index}>
-                    <td>{payment.date}</td>
-                    <td>{payment.content}</td>
-                    <td className="align-right">{payment.quantity}</td>
-                    <td className="align-right">{payment.amount.toLocaleString()}</td>
-                    <td>{payment.method}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {totalPages > 1 && (
-              <div className="pagination">
-                <button onClick={goToFirstPage} disabled={currentPage === 1}>
-                  &lt;&lt;
-                </button>
-                <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>
-                  &lt;
-                </button>
-                {getPageNumbers().map((number, index) => (
-                  <button
-                    key={index}
-                    onClick={() => paginate(number)}
-                    className={currentPage === number ? 'active' : ''}
-                  >
-                    {number}
-                  </button>
-                ))}
-                <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages}>
-                  &gt;
-                </button>
-                <button onClick={goToLastPage} disabled={currentPage === totalPages}>
-                  &gt;&gt;
-                </button>
-              </div>
+            {/* 이용권 안내 팝업 */}
+            {showInfoPopup && (
+                <div className="info-popup-overlay">
+                    <div className="info-popup">
+                        <h2>이용권 안내</h2>
+                        <div className="info-popup-content">
+                            <p>FREE 이용권이 매달 1개씩 제공되며,<br /> 유효 기간이 지나면 소멸됩니다.<br />
+                            <strong>FREE 이용권</strong> 사용 시, 생성된 면접 질문을 전부<br />녹화해야만 분석 결과를 열람할 수 있습니다.</p>
+                            <p><strong>GOLD 이용권</strong>은 면접 질문 1개 이상 녹화시<br />바로 결과 열람이 가능합니다.<br />
+                            후에 답변하지 않았던 질문을 녹화하여<br />결과지를 업데이트하는 것도 가능합니다.</p>
+                            <p><strong>이미 자소서 분석을 시작한 경우 이용권 변경이 불가합니다.</strong><br />
+                            (FREE 이용권으로 면접 질문을 생성한 경우,<br />도중에 GOLD 이용권으로 변경하는 것 불가)</p>
+                            <p>모든 이용권은 구매일로부터 <strong>30일</strong>간 유효하며,<br />유효 기간이 지난 이용권은 자동으로 소멸됩니다.</p>
+                        </div>
+                        <button onClick={handleCloseInfoPopup}>닫기</button>
+                    </div>
+                </div>
             )}
-          </>
-        ) : (
-          <p>이용 내역이 없습니다.</p>
-        )}
-      </div>
-    </div>
-  );
+
+            {/* 이용권 구매 팝업 */}
+            {showPaymentPopup && (
+                <div className="payment-popup-overlay">
+                    <div className="payment-popup">
+                        <h2>이용권 구매</h2>
+                        <div className="payment-popup-content">
+                            <div className="form-group">
+                                <label htmlFor="product-select">상품 선택:</label>
+                                <select
+                                    id="product-select"
+                                    value={selectedProduct.id}
+                                    onChange={handleProductChange}
+                                >
+                                    {availableProducts.map(product => (
+                                        <option key={product.id} value={product.id}>
+                                            {product.title} - {product.amount.toLocaleString()}원, {product.voucherCount}개
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="method-select">결제 수단:</label>
+                                <select
+                                    id="method-select"
+                                    value={selectedPaymentMethod}
+                                    onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                                >
+                                    {paymentMethods.map(method => (
+                                        <option key={method} value={method}>{method}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <p className="summary-text">선택된 상품: <strong>{selectedProduct.title}</strong></p>
+                            <p className="summary-text">총 결제 금액: <strong>{selectedProduct.amount.toLocaleString()}원</strong></p>
+                        </div>
+                        <div className="payment-popup-buttons">
+                            <button className="confirm-button" onClick={handleConfirmPayment}>결제하기</button>
+                            <button className="cancel-button" onClick={handleClosePaymentPopup}>취소</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 현재 이용권 정보 */}
+            <div className="subscription-info">
+                <h2>이용권 정보</h2>
+                <div className="subscription-summary">
+                    <div className="subscription-box free">FREE 이용권<span className="subscription-count">&nbsp;&nbsp;{freeSubscriptionsCount}</span></div>
+                    <div className="subscription-box paid">GOLD 이용권<span className="subscription-count">&nbsp;&nbsp;{paidSubscriptionsCount}</span></div>
+                </div>
+                {availableVouchers.length > 0 ? (
+                    <table className="subscription-table">
+                        <thead>
+                            <tr>
+                                <th>이용권 명</th>
+                                <th>종류</th>
+                                <th>잔여 개수</th>
+                                <th>유효 기간</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {availableVouchers.map((voucher, index) => (
+                                <tr key={index}>
+                                    <td>{voucher.title}</td>
+                                    <td>{voucher.type === 'GOLD' ? 'GOLD' : 'FREE'}</td>
+                                    <td className="align-right">{voucher.totalCount}</td>
+                                    <td className="align-right">{voucher.expiry}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (
+                    <p>현재 사용 가능한 이용권이 없습니다.</p>
+                )}
+            </div>
+
+            {/* 결제 내역 테이블 */}
+            <div className="payment-history">
+                <h2>결제 내역</h2>
+                {allPaymentHistoryData.length > 0 ? (
+                    <>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>일시</th>
+                                    <th>이용권 명</th>
+                                    <th>구매 개수</th>
+                                    <th>결제 금액</th>
+                                    <th>결제 수단</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {currentPayments.map((payment, index) => (
+                                    <tr key={index}>
+                                        <td>{payment.paymentDate ? payment.paymentDate.split('T')[0] : ''}</td>
+                                        <td>{payment.title}</td>
+                                        <td className="align-right">{payment.voucher ? payment.voucher.totalCount : 0}</td>
+                                        <td className="align-right">{payment.amount ? payment.amount.toLocaleString() : 0}원</td>
+                                        <td>{payment.paymentMethod}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+
+                        {/* 페이지네이션 컨트롤 */}
+                        <div className="pagination-controls">
+                            <button
+                                onClick={handlePrevPage}
+                                disabled={currentPage === 0 || loading}
+                                className="nav-button"
+                            >
+                                &lt;
+                            </button>
+                            <span className="current-page-info">
+                                {allPaymentHistoryData.length > 0 ?
+                                    `${indexOfFirstPayment + 1} - ${Math.min(indexOfLastPayment, allPaymentHistoryData.length)} / ${allPaymentHistoryData.length}` :
+                                    '0 / 0'
+                                }
+                            </span>
+                            <button
+                                onClick={handleNextPage}
+                                disabled={indexOfLastPayment >= allPaymentHistoryData.length || loading}
+                                className="nav-button"
+                            >
+                                &gt;
+                            </button>
+                        </div>
+                    </>
+                ) : (
+                    <p>이용 내역이 없습니다.</p>
+                )}
+            </div>
+        </div>
+    );
 }
 
 export default Payment;

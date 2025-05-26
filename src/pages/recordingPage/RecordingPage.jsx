@@ -5,7 +5,8 @@ import './RecordingPage.css';
 function RecordingPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const question = location.state?.question || '질문이 없습니다.';
+  const questionObj = location.state?.question;
+  const questionText = questionObj?.content || '질문이 없습니다.';
 
   const videoRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -53,7 +54,7 @@ function RecordingPage() {
         const blob = new Blob(chunks, { type: 'video/webm' });
         setRecordedChunks(chunks);
         console.log('녹화 완료, 영상 크기:', blob.size);
-        navigate('/TakeSelect', { state: { videoBlob: blob, question } });
+        navigate('/TakeSelect', { state: { videoBlob: blob, question: questionText } });
       };
 
       mediaRecorder.start();
@@ -121,7 +122,7 @@ function RecordingPage() {
         {step === 'recording' && (
           <>
             <div className="recording-top-bar">
-              <div className="question-text">{question}</div>
+              <div className="question-text">{questionText}</div>
 
               <div className="timer-box">
                 <button className="recording-stop-button" onClick={stopRecording}>⏹</button>
