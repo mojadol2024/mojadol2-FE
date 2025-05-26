@@ -25,6 +25,7 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>면접의 정석</title>
+    <script src="%PUBLIC_URL%/env.js"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -39,5 +40,19 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
+    <script src="https://cdn.bootpay.co.kr/js/bootpay-3.3.2.min.js" type="text/javascript"></script>
+    <script>
+      window.bootpaySDKLoaded = false;
+
+      // BootPay가 로드되었는지 확인
+      const waitForBootPay = setInterval(() => {
+        if (window.BootPay) {
+          console.log('✅ BootPay SDK Loaded');
+          window.bootpaySDKLoaded = true;
+          clearInterval(waitForBootPay);
+        }
+      }, 100);
+    </script>
   </body>
 </html>

@@ -1,9 +1,11 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+// index.js 또는 App.js 상단에 있어야 함
+import './App.css';
+
 import Home from './pages/home/home';
 import MyPage from './pages/mypage/mypage';
-import Login from './screens/Login/Login';   
-import Side from './components/sideBar/side'; 
+import Login from './screens/Login/Login';
 import Main from './pages/main/InterviewMain';
 import ResumeQuestionPage from './pages/resumeQuestionPage/ResumeQuestionPage';
 import QuestionConfirmPage from './pages/questionConfirmPage/QuestionConfirmPage';
@@ -11,71 +13,55 @@ import RecordingPage from './pages/recordingPage/RecordingPage';
 import TakeSelect from './pages/takeSelect/TakeSelect';
 import Payment from './pages/Payment/Payment';
 import SpellingCorrection from './pages/spellingCorrection/SpellingCorrection';
+import SignUp from './screens/SignUp/SignUp';
+import FindId from './screens/FindId/FindId';
+import MainLayout from './components/layout/MainLayout';
 
+
+// ✅ 페이지에 따라 body 클래스 다르게 적용하는 컨트롤러
+function BodyClassController() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const body = document.body;
+    const path = location.pathname;
+
+    // 로그인/회원가입/아이디 찾기 페이지에서는 auth-body
+    if (['/login', '/sign-up', '/find-id'].includes(path)) {
+      body.classList.add('auth-body');
+      body.classList.remove('default-body');
+    } else {
+      // 그 외 페이지에서는 default-body
+      body.classList.add('default-body');
+      body.classList.remove('auth-body');
+    }
+  }, [location.pathname]);
+
+  return null;
+}
 
 function App() {
   return (
     <Router>
+      <BodyClassController />
+
       <Routes>
+        {/* ✅ 사이드바 없는 페이지들 */}
         <Route path="/" element={<Home />} />
-        <Route path="/Login" element={<Login />} />        
+        <Route path="/login" element={<Login />} />
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/find-id" element={<FindId />} />
 
-        <Route path="/mypage" element={
-          <div className="container">
-            <Side />
-            <MyPage />
-          </div>
-        } />
-
-        <Route path="/InterviewMain" element={
-          <div className="main-content">
-            <Side />
-            <Main />
-          </div>
-        } />
-
-        <Route path="/SpellingCorrection" element={
-          <div className="register-page">
-            <Side />
-            <SpellingCorrection />
-          </div>
-        } />
-
-        <Route path="/ResumeQuestionPage" element={
-          <div className="resume-question-container">
-            <Side />
-            <ResumeQuestionPage />
-          </div>
-        } />
-
-        <Route path="/QuestionConfirmPage" element={
-          <div className="resume-question-container">
-            <Side />
-            <QuestionConfirmPage />
-          </div>
-        } />        
-        
-        <Route path="/RecordingPage" element={
-          <div className="recording-page-container">
-            <Side />
-            <RecordingPage />
-          </div>
-        } /> 
-        
-        <Route path="/TakeSelect" element={
-          <div className="take-select-container">
-            <Side />
-            <TakeSelect />
-          </div>
-        } /> 
-
-        <Route path="/Payment" element={
-          <div className="container">
-            <Side />
-            <Payment />
-          </div>
-        } />
-      </Routes>   
+        {/* ✅ 사이드바 포함된 레이아웃 페이지들 */}
+        <Route path="/mypage" element={<MainLayout><MyPage /></MainLayout>} />
+        <Route path="/InterviewMain" element={<MainLayout><Main /></MainLayout>} />
+        <Route path="/SpellingCorrection" element={<MainLayout><SpellingCorrection /></MainLayout>} />
+        <Route path="/ResumeQuestionPage" element={<MainLayout><ResumeQuestionPage /></MainLayout>} />
+        <Route path="/QuestionConfirmPage" element={<MainLayout><QuestionConfirmPage /></MainLayout>} />
+        <Route path="/RecordingPage" element={<MainLayout><RecordingPage /></MainLayout>} />
+        <Route path="/TakeSelect" element={<MainLayout><TakeSelect /></MainLayout>} />
+        <Route path="/Payment" element={<MainLayout><Payment /></MainLayout>} />
+      </Routes>
     </Router>
   );
 }

@@ -1,0 +1,9 @@
+.layout-wrapper {
+  display: flex;
+}
+
+.page-content {
+  margin-left: 250px; /* ✅ sidebar 너비만큼 밀기 */
+  width: calc(100% - 250px);
+  padding: 20px; /* 선택 사항: 내부 패딩 */
+}

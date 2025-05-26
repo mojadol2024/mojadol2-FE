@@ -10,7 +10,7 @@
   }
   
   .logo {
-    font-size: 36px;
+    font-size: 3w6px;
     font-weight: bold;
     margin-bottom: 20px;
   }
@@ -20,36 +20,50 @@
   }
   
   .title {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
   
   .input {
-    width: 500px;
-    height: 45px;
-    padding: 0 15px;
-    border-radius: 7px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    box-sizing: border-box;
-  }
-  
-  .passwordWrapper {
-    position: relative;
-    width: 500px;
-    margin-top: 10px;
-    margin-bottom: 20px;
-  }
-  
+  width: 500px;
+  height: 45px;
+  padding: 0 15px;
+  border-radius: 7px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  box-sizing: border-box;
+  margin-bottom: 0px !important; /* ✅ 간격 제거 */
+}
+
+.passwordWrapper {
+  position: relative;
+  width: 500px;
+  margin-top: 6px;        /* ✅ input 간 간격 조정 */
+  margin-bottom: 12px;    /* ✅ 로그인 버튼과의 간격도 약간 좁게 */
+  display: flex;
+  align-items: center;
+}
+
+  .passwordWrapper .input {
+  flex: 1;
+  margin-bottom: 0; /* ✅ 필요 시 중복된 margin 제거 */
+}
   .toggleButton {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 18px;
-  }
+  position: absolute;
+  top: 50%; /* ✅ 기준 추가 */
+  right: 15px;
+  transform: translateY(-60%); /* 🔼 위로 더 올리고 싶을수록 -60% ~ -65%로 조정 */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
   
   .button {
     width: 500px;
@@ -61,25 +75,30 @@
     border: none;
     border-radius: 7px;
     cursor: pointer;
-    margin-bottom: -3px;
+    margin-bottom: 0px;
   }
   
-  .linkContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 16px;
-    width: 100%;
-    max-width: 500px;
-    margin: 10px auto 0;
-    font-size: 14px;
-  }
+ .linkContainer {
+  position: relative;
+  top: -20px; /* ✅ 위로 당기기 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  width: 100%;
+  max-width: 500px;
+  font-size: 14px;
+}
   
-  .link {
-    text-decoration: none;
-    color: #555;
-    margin: 0 3px;
-  }
+ .link {
+  text-decoration: underline;  /* ✅ 텍스트 링크처럼 보이게 */
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+}
   
   .leftLinks {
     display: flex;
@@ -88,15 +107,22 @@
   }
   
   .signupLink {
-    text-decoration: none;
-    color: #555;
-    font-weight: normal;
-    margin-left: auto;
-    margin-right: 0;
-  }
+  text-decoration: underline;  /* ✅ 링크처럼 보이게 */
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+}
   
   .divider {
     color: #ccc;
     margin: 0 3px;
   }
-  
+  /* ✅ 모든 페이지에 margin/padding 제거 */
+html, body, #root {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+}

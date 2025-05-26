@@ -15,6 +15,7 @@ const getEnvVariable = (key) => {
 };
 
 const API_BASE_URL = getEnvVariable('REACT_APP_BASE_URL');
+
 const BOOTPAY_WEB_APPLICATION_ID = getEnvVariable('REACT_APP_BOOTPAY_WEB_APPLICATION_ID');
 
 async function fetchAllPaymentData(size = 1000) {
