@@ -61,7 +61,7 @@ async function requestPaymentApprovalToBackend(receiptId, amount, paymentMethod,
 }
 
 async function requestPaymentCancelToBackend(paymentId) {
-    const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/detail/${paymentId}`;
+    const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/cancel/${paymentId}`;
 
     try {
         const response = await axiosInstance.post(apiUrl); // POST 요청으로 변경
@@ -324,28 +324,24 @@ function Payment() {
     };
 
     const handleCancelPayment = async (paymentId, title, amount, voucher) => {
-        // 이미 사용된 이용권인지 확인 (프론트엔드 단에서 최대한의 필터링)
-        // 백엔드에서 voucher.usedCount를 제공하지 않으므로,
-        // completed === 1 이면서 voucher가 null이 아닌 경우, 그리고 totalCount가 0보다 큰 경우에만 취소 가능하다고 가정합니다.
-        // 실제 사용 여부는 백엔드에서 정확히 판단해야 합니다.
-        if (voucher && voucher.totalCount > 0 && !window.confirm(`${title} (${amount.toLocaleString()}원) 결제를 취소하시겠습니까?`)) {
-            return;
-        } else if (!voucher && !window.confirm(`${title} (${amount.toLocaleString()}원) 결제를 취소하시겠습니까?`)) {
-            return;
-        }
+        // 버튼 자체가 disabled 되어 환불 불가한 경우 클릭되지 않으므로,
+        // 여기서는 단순히 취소 의사를 다시 한번 확인하는 역할만 합니다.
+        if (!window.confirm(`${title} (${amount.toLocaleString()}원) 결제를 취소하시겠습니까?`)) {
+            return;
+        }
 
-        setLoading(true);
-        try {
-            await requestPaymentCancelToBackend(paymentId);
-            alert('결제가 성공적으로 취소되었습니다.');
-            loadInitialData(); // 취소 후 데이터 새로고침
-        } catch (error) {
-            console.error('결제 취소 실패:', error);
-            alert(`결제 취소에 실패했습니다: ${error.message}`);
-        } finally {
-            setLoading(false);
-        }
-    };
+        setLoading(true);
+        try {
+            await requestPaymentCancelToBackend(paymentId);
+            alert('결제가 성공적으로 취소되었습니다.');
+            loadInitialData(); 
+        } catch (error) {
+            console.error('결제 취소 실패:', error);
+            alert(`결제 취소에 실패했습니다: ${error.message}`);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // 로딩 중일 때 로딩 메시지와 스피너 표시
     if (loading) {
@@ -497,17 +493,13 @@ function Payment() {
                                         <td className="align-right">{payment.amount ? payment.amount.toLocaleString() : 0}원</td>
                                         <td>{payment.paymentMethod}</td>
                                         <td>
-                                            {payment.completed === 1 && payment.voucher && payment.voucher.totalCount > 0 ? (
+                                            {payment.completed === 0 ? (
+                                                <span className="cancelled-text">취소됨</span>
+                                            ) : (
                                                 <button
                                                     className="cancel-payment-button"
                                                     onClick={() => handleCancelPayment(payment.paymentId, payment.title, payment.amount, payment.voucher)}
-                                                >
-                                                    취소
-                                                </button>
-                                            ) : (
-                                                <button className="cancel-payment-button" disabled>
-                                                    취소 불가
-                                                </button>
+                                                    disabled={!payment.voucher || payment.voucher.totalCount === 0}>취소</button> 
                                             )}
                                         </td>
                                     </tr>
