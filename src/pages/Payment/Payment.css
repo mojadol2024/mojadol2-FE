@@ -517,7 +517,7 @@ html, body {
   font-size: 25px;
 }
 
-/* 취소 버튼 스타일 */
+/* 결제 취소 버튼 */
 .cancel-payment-button {
     color: #333; 
     border: 1px solid #333; 
@@ -528,13 +528,11 @@ html, body {
     transition: color 0.2s ease, border-color 0.2s ease;
 }
 
-/* 마우스 호버 시 스타일 */
 .cancel-payment-button:not(:disabled):hover {
     color: #fff; 
     background-color: #999;
 }
 
-/* 비활성화된 취소 버튼 스타일 */
 .cancel-payment-button:disabled {
     background-color: transparent;
     border: transparent;
@@ -543,7 +541,6 @@ html, body {
     opacity: 1;
 }
 
-/* 취소된 결제 내역 텍스트 스타일???? */
 .cancelled-text {
     font-style: italic;
     color: #999;
