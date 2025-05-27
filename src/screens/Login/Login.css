@@ -75,12 +75,11 @@
     border: none;
     border-radius: 7px;
     cursor: pointer;
-    margin-bottom: 0px;
+    margin-bottom: 0px !important;
   }
   
- .linkContainer {
-  position: relative;
-  top: -20px; /* ✅ 위로 당기기 */
+.linkContainer {
+  margin-top: 12px !important; /* ✅ 여백 추가로 아래로 내림 */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -89,6 +88,7 @@
   max-width: 500px;
   font-size: 14px;
 }
+
   
  .link {
   text-decoration: underline;  /* ✅ 텍스트 링크처럼 보이게 */
@@ -96,8 +96,9 @@
   border: none;
   color: #555;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   padding: 0;
+  
 }
   
   .leftLinks {
