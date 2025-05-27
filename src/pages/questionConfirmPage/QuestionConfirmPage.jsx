@@ -32,7 +32,7 @@ function QuestionConfirmPage() {
       if (!file) return;
 
       const formData = new FormData();
-      formData.append('video', file); // MultipartFile, Long이 필드 이름일까..? 아니면, 타입 명시인가?
+      formData.append('video', file);
       formData.append('id', Number(coverLetterId));
 
       try {
@@ -56,23 +56,23 @@ function QuestionConfirmPage() {
   };
 
   // handleConfirmVideo - 이것도 ai api..? 아닌가..
-  const handleConfirmVideo = async () => {
-    if (!videoInfo?.interviewId) return alert('업로드된 영상이 없습니다.');
+  // const handleConfirmVideo = async () => {
+  //   if (!videoInfo?.interviewId) return alert('업로드된 영상이 없습니다.');
 
-    try {
-      await axiosInstance.post('/mojadol/api/v1/interview/분석 ai api', {
-        interviewId: videoInfo.interviewId,
-        coverLetterId,
-        questionIndex,
-      });
+  //   try {
+  //     await axiosInstance.post('/mojadol/api/v1/interview/분석 ai api', {
+  //       interviewId: videoInfo.interviewId,
+  //       coverLetterId,
+  //       questionIndex,
+  //     });
 
-      setVideoInfo((prev) => ({ ...prev, confirmed: true }));
-      alert('AI 분석이 시작되었습니다.');
-    } catch (err) {
-      console.error('AI 분석 실패:', err);
-      alert('AI 분석 요청 중 오류가 발생했습니다.');
-    }
-  };
+  //     setVideoInfo((prev) => ({ ...prev, confirmed: true }));
+  //     alert('AI 분석이 시작되었습니다.');
+  //   } catch (err) {
+  //     console.error('AI 분석 실패:', err);
+  //     alert('AI 분석 요청 중 오류가 발생했습니다.');
+  //   }
+  // };
 
   // handleDeleteVideo
   const handleDeleteVideo = async () => {
@@ -112,7 +112,6 @@ function QuestionConfirmPage() {
           {videoInfo?.url && !videoInfo?.confirmed && (
             <>
               <span className="video-preview">첨부됨: {videoInfo.url.split('/').pop()}</span>
-              <button className="btn confirm" onClick={handleConfirmVideo}>✓ 확인</button>
               <button className="btn redo" onClick={handleDeleteVideo}>재첨부</button>
             </>
           )}

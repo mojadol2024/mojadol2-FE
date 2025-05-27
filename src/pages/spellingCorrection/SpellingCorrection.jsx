@@ -148,15 +148,19 @@ function SelfIntroRegister() {
         }
       );
       const savedId = response.data.result.coverLetterId; // ✅ 이렇게 수정
-      alert('자소서가 저장되었습니다. 질문 생성을 기다리는 중입니다...');
+      alert('자소서가 저장되었습니다. 질문 생성을 기다리는 중입니다...'); // 나중에 자소서가 저장됨과 동시에 뜨는 거라 애매하네..
 
       const success = await waitForQuestions(savedId);
       if (!success) {
         alert('질문 생성에 실패했거나 시간이 초과되었습니다. 나중에 다시 시도해주세요.');
         return;
       }
-      navigate(`/ResumeQuestionPage?id=${savedId}`);
+      // 🔽 ✅ 메인 페이지가 새 자소서를 반영하도록 플래그 저장
+      localStorage.setItem("shouldRefreshMainList", "true");
 
+      // ✅ 질문 생성이 완료되면 이동
+      navigate(`/ResumeQuestionPage?id=${savedId}`);
+      
     } catch (error) {
       console.error('자소서 저장 오류:', error);
       alert('자소서 저장에 실패했습니다.');

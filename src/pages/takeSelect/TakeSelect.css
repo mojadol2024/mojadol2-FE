@@ -21,6 +21,8 @@ html, body {
   flex-direction: column;
   align-items: center;
   gap: 32px;
+  flex-wrap: wrap; /* 또는 */
+  overflow-x: auto;
   overflow-y: auto;
   position: relative;
 }
@@ -49,6 +51,7 @@ html, body {
 .take-box {
   display: flex;
   align-items: center;
+  flex-direction: column;
   gap: 20px;
   margin-top: 16px;
 }
@@ -68,10 +71,16 @@ html, body {
 
 .take-image {
   width: 240px;
-  height: 240px;
+  height: 280px;
   background-color: #ddd;
   border-radius: 8px;
   object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.take-image:hover {
+  transform: scale(1.05);
 }
 
 .take-buttons {

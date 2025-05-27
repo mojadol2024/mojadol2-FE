@@ -36,6 +36,26 @@ function RecordingPage() {
     checkDevices();
   }, [navigate]);
 
+  const extractThumbnail = (blob) => {
+    return new Promise((resolve) => {
+      const video = document.createElement('video');
+      video.src = URL.createObjectURL(blob);
+      video.currentTime = 0;
+      video.muted = true;
+      video.playsInline = true;
+
+      video.onloadeddata = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 240;
+        canvas.height = 240;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, 240, 240);
+        const base64 = canvas.toDataURL('image/png');
+        resolve(base64);
+      };
+    });
+  };
+
   const startRecording = async () => {
     try {
       const userStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -50,11 +70,24 @@ function RecordingPage() {
         if (e.data.size > 0) chunks.push(e.data);
       };
 
-      mediaRecorder.onstop = () => {
+      mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'video/webm' });
         setRecordedChunks(chunks);
         console.log('녹화 완료, 영상 크기:', blob.size);
-        navigate('/TakeSelect', { state: { videoBlob: blob, question: questionText } });
+
+        // ✅ 썸네일 생성
+        const thumbnail = await extractThumbnail(blob);
+
+        // ✅ 영상 저장 (localStorage에 누적)
+        const newTake = {
+          takeNumber: Date.now(), // 또는 takes.length + 1 (번호용)
+          file: blob,
+          imageUrl: thumbnail,
+        };
+        const prevTakes = JSON.parse(localStorage.getItem('videoTakes') || '[]');
+        localStorage.setItem('videoTakes', JSON.stringify([...prevTakes, newTake]));
+
+        navigate(`/TakeSelect?id=${location.search.split('id=')[1]}&q=${location.search.split('q=')[1]}`);
       };
 
       mediaRecorder.start();
@@ -97,7 +130,7 @@ function RecordingPage() {
       });
     }, 1000);
   };
-
+  
   useEffect(() => {
     if (step === 'countdown' && countdown > 0) {
       const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
