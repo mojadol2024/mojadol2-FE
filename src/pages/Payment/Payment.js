@@ -15,7 +15,6 @@ const getEnvVariable = (key) => {
 };
 
 const API_BASE_URL = getEnvVariable('REACT_APP_BASE_URL');
-
 const BOOTPAY_WEB_APPLICATION_ID = getEnvVariable('REACT_APP_BOOTPAY_WEB_APPLICATION_ID');
 
 async function fetchAllPaymentData(size = 1000) {
@@ -53,6 +52,25 @@ async function requestPaymentApprovalToBackend(receiptId, amount, paymentMethod,
         let errorMessage = '결제 처리 중 오류 발생';
         if (error.response) {
             errorMessage = `백엔드 결제 승인 실패: ${error.response.data.message || error.response.statusText}`;
+        } else {
+            errorMessage = `네트워크 오류: ${error.message}`;
+        }
+        alert(errorMessage);
+        throw new Error(errorMessage);
+    }
+}
+
+async function requestPaymentCancelToBackend(paymentId) {
+    const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/detail/${paymentId}`;
+
+    try {
+        const response = await axiosInstance.post(apiUrl); // POST 요청으로 변경
+        return response.data.result;
+    } catch (error) {
+        console.error(`결제 ID ${paymentId} 취소 중 오류 발생:`, error);
+        let errorMessage = '결제 취소 처리 중 오류 발생';
+        if (error.response) {
+            errorMessage = `결제 취소 실패: ${error.response.data.message || error.response.statusText}`;
         } else {
             errorMessage = `네트워크 오류: ${error.message}`;
         }
@@ -305,6 +323,30 @@ function Payment() {
         setSelectedProduct(product);
     };
 
+    const handleCancelPayment = async (paymentId, title, amount, voucher) => {
+        // 이미 사용된 이용권인지 확인 (프론트엔드 단에서 최대한의 필터링)
+        // 백엔드에서 voucher.usedCount를 제공하지 않으므로,
+        // completed === 1 이면서 voucher가 null이 아닌 경우, 그리고 totalCount가 0보다 큰 경우에만 취소 가능하다고 가정합니다.
+        // 실제 사용 여부는 백엔드에서 정확히 판단해야 합니다.
+        if (voucher && voucher.totalCount > 0 && !window.confirm(`${title} (${amount.toLocaleString()}원) 결제를 취소하시겠습니까?`)) {
+            return;
+        } else if (!voucher && !window.confirm(`${title} (${amount.toLocaleString()}원) 결제를 취소하시겠습니까?`)) {
+            return;
+        }
+
+        setLoading(true);
+        try {
+            await requestPaymentCancelToBackend(paymentId);
+            alert('결제가 성공적으로 취소되었습니다.');
+            loadInitialData(); // 취소 후 데이터 새로고침
+        } catch (error) {
+            console.error('결제 취소 실패:', error);
+            alert(`결제 취소에 실패했습니다: ${error.message}`);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // 로딩 중일 때 로딩 메시지와 스피너 표시
     if (loading) {
         return (
@@ -441,9 +483,9 @@ function Payment() {
                                 <tr>
                                     <th>일시</th>
                                     <th>이용권 명</th>
-                                    <th>구매 개수</th>
                                     <th>결제 금액</th>
                                     <th>결제 수단</th>
+                                    <th>관리</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -451,9 +493,23 @@ function Payment() {
                                     <tr key={index}>
                                         <td>{payment.paymentDate ? payment.paymentDate.split('T')[0] : ''}</td>
                                         <td>{payment.title}</td>
-                                        <td className="align-right">{payment.voucher ? payment.voucher.totalCount : 0}</td>
+                                        {/*<td className="align-right">{payment.voucher ? payment.voucher.totalCount : 0}</td>*/}
                                         <td className="align-right">{payment.amount ? payment.amount.toLocaleString() : 0}원</td>
                                         <td>{payment.paymentMethod}</td>
+                                        <td>
+                                            {payment.completed === 1 && payment.voucher && payment.voucher.totalCount > 0 ? (
+                                                <button
+                                                    className="cancel-payment-button"
+                                                    onClick={() => handleCancelPayment(payment.paymentId, payment.title, payment.amount, payment.voucher)}
+                                                >
+                                                    취소
+                                                </button>
+                                            ) : (
+                                                <button className="cancel-payment-button" disabled>
+                                                    취소 불가
+                                                </button>
+                                            )}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
