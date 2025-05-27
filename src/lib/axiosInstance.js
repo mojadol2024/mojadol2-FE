@@ -14,7 +14,7 @@ const axiosInstance = axios.create({
 // 요청 시 Authorization 헤더 자동 추가
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token ='eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyOSIsImlhdCI6MTc0ODI4MzU0NSwiZXhwIjoxNzQ4Mjg3MTQ1fQ.ga0AtXdcRzFiNwXgLB4UYineGZxpgj1GWtL1ih58Jt0';
+    const token ='eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyOSIsImlhdCI6MTc0ODM1MzgyOCwiZXhwIjoxNzQ4MzU3NDI4fQ.IE0bCNTWusSZO8GvmQJ3JY-I5-jBuWT5rQZ5OqNb_7U';
      // const token = localStorage.getItem('accessToken');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;

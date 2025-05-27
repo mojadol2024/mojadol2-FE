@@ -74,32 +74,32 @@ function ResumeQuestionPage() {
     fileInput.click(); // 브라우저가 바로 파일 탐색기를 엶
   };
 
-  const handleConfirmVideo = async (index) => {
-    try {
-      const interviewId = videos[index]?.interviewId;
-      if (!interviewId) return alert('영상 정보가 없습니다.');
+  // const handleConfirmVideo = async (index) => {
+  //   try {
+  //     const interviewId = videos[index]?.interviewId;
+  //     if (!interviewId) return alert('영상 정보가 없습니다.');
 
-      // AI 분석 요청 API 호출
-      await axiosInstance.post('/mojadol/api/v1/interview/ai api 넣어야 함', { // 결과지 생성을 위한 ai 불러오기 | 서버에서 내부적으로 두 개의 AI 모델을 실행하고, 통합 결과를 DB에 저장하도록 해야함
-        interviewId,
-        coverLetterId,
-        questionIndex: index,
-      });
+  //     // AI 분석 요청 API 호출
+  //     await axiosInstance.post('/mojadol/api/v1/interview/ai api 넣어야 함', { // 결과지 생성을 위한 ai 불러오기 | 서버에서 내부적으로 두 개의 AI 모델을 실행하고, 통합 결과를 DB에 저장하도록 해야함
+  //       interviewId,
+  //       coverLetterId,
+  //       questionIndex: index,
+  //     });
 
-      setAnalysisResults((prev) => ({
-        ...prev,
-        [index]: { exists: true },
-      }));
-      setVideos((prev) => ({
-        ...prev,
-        [index]: { ...prev[index], confirmed: true },
-      }));
-      alert('AI 분석이 시작되었습니다.');
-    } catch (err) {
-      console.error('AI 분석 요청 실패:', err);
-      alert('AI 분석 요청에 실패했습니다.');
-    }
-  };
+  //     setAnalysisResults((prev) => ({
+  //       ...prev,
+  //       [index]: { exists: true },
+  //     }));
+  //     setVideos((prev) => ({
+  //       ...prev,
+  //       [index]: { ...prev[index], confirmed: true },
+  //     }));
+  //     alert('AI 분석이 시작되었습니다.');
+  //   } catch (err) {
+  //     console.error('AI 분석 요청 실패:', err);
+  //     alert('AI 분석 요청에 실패했습니다.');
+  //   }
+  // };
 
   const handleDeleteVideo = async (index) => {
     try {
@@ -180,7 +180,6 @@ function ResumeQuestionPage() {
               {videos[i]?.uploaded && !videos[i]?.confirmed && !analysisResults[i]?.exists && (
                 <>
                   <span className="video-preview">첨부됨: {videos[i]?.url.split('/').pop()}</span>
-                  <button className="btn confirm" onClick={() => handleConfirmVideo(i)}>✓ 확인</button>
                   <button className="btn redo" onClick={() => handleDeleteVideo(i)}>재첨부</button>
                 </>
               )}
