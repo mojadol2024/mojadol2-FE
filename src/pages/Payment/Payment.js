@@ -499,7 +499,8 @@ function Payment() {
                                                 <button
                                                     className="cancel-payment-button"
                                                     onClick={() => handleCancelPayment(payment.paymentId, payment.title, payment.amount, payment.voucher)}
-                                                    disabled={!payment.voucher || payment.voucher.totalCount === 0}>취소</button> 
+                                                    disabled={!payment.voucher || payment.voucher.totalCount === 0}>
+                                                    취소</button> 
                                             )}
                                         </td>
                                     </tr>

@@ -234,8 +234,6 @@ html, body {
     border-bottom: none; /* 마지막 행의 아래쪽 가로 줄 제거 (선택 사항) */
   }
   
-  
-  
   /* 페이지네이션 */
   
   .pagination-controls {
@@ -545,7 +543,7 @@ html, body {
     opacity: 1;
 }
 
-/* 취소된 결제 내역 텍스트 스타일 */
+/* 취소된 결제 내역 텍스트 스타일???? */
 .cancelled-text {
     font-style: italic;
     color: #999;
