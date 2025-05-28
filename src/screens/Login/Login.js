@@ -28,7 +28,7 @@ function Login() {
       const { accessToken } = response.data;
       localStorage.setItem('accessToken', accessToken);
       alert('로그인 성공!');
-      navigate('/');
+      navigate('/InterviewMain');
     } catch (error) {
       if (error.response) {
         alert(
