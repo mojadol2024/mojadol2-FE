@@ -2,20 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import './Payment.css';
 // import axios from 'axios'; 
 import axiosInstance from '../../lib/axiosInstance'; 
+import { getEnv } from '../../lib/getEnv';
 /* global BootPay, bootpaySDKLoaded */
 
-// 환경 변수를 동적으로 가져오는 함수
-const getEnvVariable = (key) => {
-    // 배포 환경에서 window._env_가 있다면 그 값을 사용
-    if (window._env_ && window._env_[key]) {
-        return window._env_[key];
-    }
-    // 로컬 개발 환경 또는 _env_에 해당 키가 없다면 process.env를 사용
-    return process.env[key];
-};
-
-const API_BASE_URL = getEnvVariable('REACT_APP_BASE_URL');
-const BOOTPAY_WEB_APPLICATION_ID = getEnvVariable('REACT_APP_BOOTPAY_WEB_APPLICATION_ID');
+const API_BASE_URL = getEnv('REACT_APP_BASE_URL');
+const BOOTPAY_WEB_APPLICATION_ID = getEnv('REACT_APP_BOOTPAY_WEB_APPLICATION_ID');
 
 async function fetchAllPaymentData(size = 1000) {
     const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/list?page=0&size=${size}`;
