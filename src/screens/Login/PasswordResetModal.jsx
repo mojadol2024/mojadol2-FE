@@ -12,7 +12,6 @@ function PasswordResetModal({ onClose }) {
   const [verified, setVerified] = useState(false);
   const [newPw, setNewPw] = useState('');
   const [confirmPw, setConfirmPw] = useState('');
-  const [pwMatch, setPwMatch] = useState(null);
 
   const handleSendCode = async () => {
     try {
@@ -49,10 +48,11 @@ function PasswordResetModal({ onClose }) {
 
     try {
       await axios.patch(`${API_BASE_URL}/mojadol/api/v1/mail/update-password`, {
-        userLoginId: userId,
-        email,
-        userPw: newPw,
-      });
+  userLoginId: userId,
+  email,
+  userPw: newPw,
+});
+
       alert('비밀번호가 변경되었습니다.');
       onClose();
     } catch (err) {
@@ -60,14 +60,11 @@ function PasswordResetModal({ onClose }) {
     }
   };
 
-  const handlePwChange = (val) => {
-    setNewPw(val);
-    setPwMatch(val === confirmPw);
-  };
-
-  const handleConfirmPwChange = (val) => {
-    setConfirmPw(val);
-    setPwMatch(val === newPw);
+  const getPasswordMatchMessage = () => {
+    if (!newPw || !confirmPw) return '';
+    return newPw === confirmPw
+      ? '✅ 비밀번호가 일치합니다.'
+      : '❌ 비밀번호가 일치하지 않습니다.';
   };
 
   return (
@@ -88,8 +85,11 @@ function PasswordResetModal({ onClose }) {
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
+
         {!codeSent ? (
-          <button className="button" onClick={handleSendCode}>인증번호 전송</button>
+          <button className="button" onClick={handleSendCode}>
+            인증번호 전송
+          </button>
         ) : !verified ? (
           <>
             <input
@@ -99,7 +99,9 @@ function PasswordResetModal({ onClose }) {
               value={authCode}
               onChange={e => setAuthCode(e.target.value)}
             />
-            <button className="button" onClick={handleVerifyCode}>인증 확인</button>
+            <button className="button" onClick={handleVerifyCode}>
+              인증 확인
+            </button>
           </>
         ) : (
           <>
@@ -108,25 +110,27 @@ function PasswordResetModal({ onClose }) {
               placeholder="새 비밀번호 입력"
               className="input"
               value={newPw}
-              onChange={e => handlePwChange(e.target.value)}
+              onChange={e => setNewPw(e.target.value)}
             />
             <input
               type="password"
               placeholder="새 비밀번호 확인"
               className="input"
               value={confirmPw}
-              onChange={e => handleConfirmPwChange(e.target.value)}
+              onChange={e => setConfirmPw(e.target.value)}
             />
-            {pwMatch === false && (
-              <p style={{ color: 'red', fontSize: '14px' }}>비밀번호가 일치하지 않습니다.</p>
-            )}
-            {pwMatch === true && (
-              <p style={{ color: 'green', fontSize: '14px' }}>비밀번호가 일치합니다.</p>
-            )}
-            <button className="button" onClick={handleResetPassword}>비밀번호 변경</button>
+            <div style={{ marginBottom: '10px', fontSize: '14px', color: newPw === confirmPw ? 'green' : 'red' }}>
+              {getPasswordMatchMessage()}
+            </div>
+            <button className="button" onClick={handleResetPassword}>
+              비밀번호 변경
+            </button>
           </>
         )}
-        <button className="backLink" onClick={onClose}>닫기</button>
+
+        <button className="backLink" onClick={onClose}>
+          닫기
+        </button>
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-/* src/pages/FindId.css */
 .findid-container {
   height: 100vh;
   display: flex;
@@ -34,6 +33,31 @@
   margin-bottom: 20px;
 }
 
+.input-with-button {
+  position: relative;
+  width: 500px;
+  margin-bottom: 20px;
+}
+
+.input-with-button .input {
+  padding-right: 130px; /* 버튼 자리 확보 */
+  margin-bottom: 0;
+}
+
+.inline-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 32px;
+  padding: 0 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  background-color: #eee;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
 .button {
   width: 500px;
   height: 45px;
@@ -54,4 +78,6 @@
   cursor: pointer;
   font-size: 14px;
   text-decoration: underline;
+  padding-top: 10px;
+  
 }
