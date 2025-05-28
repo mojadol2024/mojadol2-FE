@@ -25,10 +25,28 @@ function Login() {
           headers: { 'Content-Type': 'application/json' },
         }
       );
-      const { accessToken } = response.data;
-      localStorage.setItem('accessToken', accessToken);
-      alert('로그인 성공!');
-      navigate('/InterviewMain');
+      console.log("🧾 응답 헤더:", response.headers);
+
+// ✅ 헤더에서 accessToken 추출 (헤더 이름은 실제 서버에 따라 다름)
+const token = response.headers['authorization'];
+
+ // ✅ 헤더에서 토큰 받기
+
+console.log("✅ 받아온 accessToken from headers:", token);
+
+if (!token) {
+  alert("토큰이 응답 헤더에 없습니다.");
+  return;
+}
+
+// ✅ 'Bearer ' 접두사 제거
+const accessToken = token.startsWith('Bearer ') ? token.slice(7) : token;
+
+localStorage.setItem('accessToken', accessToken);
+alert('로그인 성공!');
+navigate('/InterviewMain');
+
+
     } catch (error) {
       if (error.response) {
         alert(
