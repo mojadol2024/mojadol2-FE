@@ -6,7 +6,12 @@ function RecordingPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const questionObj = location.state?.question;
-  const questionText = questionObj?.content || '질문이 없습니다.';
+  const coverLetterId = location.state?.coverLetterId;
+  const questions = location.state?.questions || JSON.parse(localStorage.getItem('questions') || '[]');
+  const questionIndex = location.state?.questionIndex;
+  const questionText = location.state?.question?.content
+    ? `질문 ${parseInt(questionIndex, 10) + 1}: "${location.state.question.content}"`
+    : `질문 ${parseInt(questionIndex, 10) + 1}: "질문 내용을 불러올 수 없습니다."`;
 
   const videoRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -18,23 +23,59 @@ function RecordingPage() {
   const [step, setStep] = useState('ready');
   const [timer, setTimer] = useState(0);
   const [silenceCount, setSilenceCount] = useState(0);
-  const maxRecordingSeconds = 5 * 60; // 5 minutes
+  const maxRecordingSeconds = 5; // 5 minutes
   let silenceCounter = 0;
 
-  // ✅ 페이지 진입 시 카메라/마이크 접근 확인
   useEffect(() => {
+    const streamRef = { current: null };
+
+    if (!coverLetterId || !questionObj) {
+      alert('잘못된 접근입니다. 다시 질문을 선택해주세요.');
+      navigate(`/ResumeQuestionPage?id=${coverLetterId}`);
+      return;
+    }
+    const key = `videoTakes_${coverLetterId}_${questionIndex}`;
+    const prevTakes = JSON.parse(localStorage.getItem(key) || '[]');
+    if (prevTakes.length >= 3) {
+      alert('이 질문에 대한 최대 3개의 녹화가 이미 완료되었습니다.');
+      navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
+        state: { coverLetterId, questionIndex, question: questionObj, questions }
+      });
+      return;
+    }
     const checkDevices = async () => {
       try {
-        await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        // 접근 가능 → 별도 저장 안 하고 그냥 통과
+        const userStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        setStream(userStream);
+        streamRef.current = userStream;
+
+        setTimeout(() => {
+          if (videoRef.current) {
+            videoRef.current.srcObject = userStream;
+          } else {
+            console.warn('videoRef가 아직 렌더되지 않았습니다.');
+          }
+        }, 100);
       } catch (err) {
+        console.error('getUserMedia 실패:', err);
         alert('카메라 또는 마이크에 접근할 수 없습니다.\n브라우저 설정 또는 장치를 확인해주세요.');
-        navigate(-1); // 또는 navigate('/error')
+        navigate(-1);
       }
     };
 
-    checkDevices();
-  }, [navigate]);
+    checkDevices(); // ✅ 여기서 한 번만 호출
+
+    return () => {
+      // ✅ 페이지 떠날 때 마이크/카메라 스트림 정지
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [navigate, coverLetterId, questionObj]);
+
 
   const extractThumbnail = (blob) => {
     return new Promise((resolve) => {
@@ -53,6 +94,12 @@ function RecordingPage() {
         const base64 = canvas.toDataURL('image/png');
         resolve(base64);
       };
+      video.onerror = () => {
+        console.error("❌ 썸네일 생성 실패");
+        resolve(null);
+      };
+
+      video.load(); // ✅ 명시적으로 로드 시도
     });
   };
 
@@ -75,19 +122,32 @@ function RecordingPage() {
         setRecordedChunks(chunks);
         console.log('녹화 완료, 영상 크기:', blob.size);
 
-        // ✅ 썸네일 생성
         const thumbnail = await extractThumbnail(blob);
+        console.log("생성된 썸네일:", thumbnail);
 
-        // ✅ 영상 저장 (localStorage에 누적)
         const newTake = {
-          takeNumber: Date.now(), // 또는 takes.length + 1 (번호용)
+          takeNumber: Date.now(),
           file: blob,
           imageUrl: thumbnail,
         };
-        const prevTakes = JSON.parse(localStorage.getItem('videoTakes') || '[]');
-        localStorage.setItem('videoTakes', JSON.stringify([...prevTakes, newTake]));
+        console.log("newTake:", newTake);
 
-        navigate(`/TakeSelect?id=${location.search.split('id=')[1]}&q=${location.search.split('q=')[1]}`);
+        if (!coverLetterId || !questionIndex) {
+          alert('녹화 데이터를 저장할 수 없습니다. 필수 정보 누락');
+          return;
+        }
+        const key = `videoTakes_${coverLetterId}_${questionIndex}`;
+        const prevTakes = JSON.parse(localStorage.getItem(key) || '[]');
+        localStorage.setItem(key, JSON.stringify([...prevTakes, newTake]));
+
+        // 영상 저장 후 navigate
+        navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
+          state: {
+            coverLetterId,
+            questionIndex,
+            question: questionObj,
+          },
+        });
       };
 
       mediaRecorder.start();

@@ -19,8 +19,15 @@ function QuestionConfirmPage() {
   };
 
   const handleNavigateToRecording = () => {
-    navigate(`/RecordingPage?id=${coverLetterId}&q=${questionIndex}`); // 녹화 시작시 이동
+    navigate(`/RecordingPage?id=${coverLetterId}&q=${questionIndex}`, {
+      state: {
+        coverLetterId,
+        questionIndex,
+        question: location.state?.question,
+      },
+    });
   };
+
 
   // handleVideoUpload
   const handleVideoUpload = async () => {

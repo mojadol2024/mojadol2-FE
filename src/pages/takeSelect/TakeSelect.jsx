@@ -5,20 +5,40 @@ import axiosInstance from '../../lib/axiosInstance';
 
 function TakeSelect({ videoTakes, questions }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [selectedTake, setSelectedTake] = useState(null);
   const [takes, setTakes] = useState([]); // Array of video data (base64 or thumbnail URLs)
-  const navigate = useNavigate();
-  const questionIndex = new URLSearchParams(location.search).get('q');
   const coverLetterId = new URLSearchParams(location.search).get('id');
+  const questionIndex = new URLSearchParams(location.search).get('q');
+  const questionObj = location.state?.question;
+  const incomingQuestions = location.state?.questions;
+  const storedQuestions = JSON.parse(localStorage.getItem('questions') || '[]');
+  const [questionList, setQuestionList] = useState(questions || storedQuestions);
+  const questionText = questionObj?.content
+    ? `질문 ${parseInt(questionIndex, 10) + 1}: "${questionObj.content}"`
+    : `질문 ${parseInt(questionIndex, 10) + 1}: "질문 내용을 불러올 수 없습니다."`;
+
 
   useEffect(() => {
-    if (videoTakes && videoTakes.length > 0) {
-      setTakes(videoTakes);
-    } else {
-      const saved = JSON.parse(localStorage.getItem('videoTakes') || '[]');
-      if (saved.length > 0) setTakes(saved);
+    console.log('coverLetterId:', coverLetterId);
+    console.log('questionIndex:', questionIndex);
+    console.log('question:', questionObj);
+
+    if (!coverLetterId || !questionIndex || !questionObj) {
+      alert('잘못된 접근입니다. 홈으로 이동합니다.');
+      navigate('/');
+      return;
     }
-  }, [videoTakes]);
+    const saved = JSON.parse(
+      localStorage.getItem(`videoTakes_${coverLetterId}_${questionIndex}`) || '[]'
+    );
+    if (incomingQuestions) {
+      localStorage.setItem('questions', JSON.stringify(incomingQuestions));
+      setQuestionList(incomingQuestions);
+    }
+    setTakes(saved);
+    console.log('불러온 takes:', saved);
+  }, [coverLetterId, questionIndex]);
 
   const handleSelect = (index) => {
     setSelectedTake(index);
@@ -58,14 +78,22 @@ function TakeSelect({ videoTakes, questions }) {
   };
 
   const handleNavigateToRecording = () => {
-    navigate(`/RecordingPage?id=${coverLetterId}&q=${questionIndex}`, { // 재녹화
-      state: { question: questions[questionIndex] }
+    navigate(`/RecordingPage?id=${coverLetterId}&q=${questionIndex}`, {
+      state: {
+        coverLetterId,
+        questionIndex,
+        question: questionObj,  // 변수 이름도 정확히 맞춰야 TakeSelect에서 받을 수 있음
+      },
     });
   };
 
   const handleNewQuestion = () => {
+    if (!questionList  || !questionList [questionIndex]) {
+      alert('질문을 찾을 수 없습니다.');
+      return;
+    }
     navigate(`/ResumeQuestionPage?id=${coverLetterId}&q=${questionIndex}`, { // 새 질문 녹화하기
-      state: { question: questions[questionIndex] }
+      state: { question: questionList[questionIndex], questions: questionList }  // ✅ 함께 전달
     });
   };
 
@@ -73,13 +101,16 @@ function TakeSelect({ videoTakes, questions }) {
     <div className="take-select-container">
       <main className="take-main">
         <div className="take-question">
-          질문: 본인의 강점에 대해서 간단히 말해주세요
+          {questionText}
         </div>
 
         {takes.length < 3 && (
           <button className="take-rec-btn" onClick={handleNavigateToRecording}>
             Take {takes.length + 1} 녹화 시작
           </button>
+        )}
+        {takes.length >= 3 && (
+          <p className="take-limit-warning">최대 3개의 영상을 녹화할 수 있습니다.</p>
         )}
 
         <div style={{ display: 'flex', gap: '20px' }}>
@@ -90,11 +121,7 @@ function TakeSelect({ videoTakes, questions }) {
                 onClick={() => handleSelect(index)}
               ></div>
               <span>Take {index + 1}</span>
-              <img
-                src={take.imageUrl}
-                alt={`Take ${index + 1}`}
-                className="take-image"
-              />
+              <img src={take.imageUrl} alt={`Take ${index + 1}`} className="take-image" onError={() => console.warn(`❗ 이미지 로드 실패: Take ${index + 1}`)}/>
             </div>
           ))}
         </div>
