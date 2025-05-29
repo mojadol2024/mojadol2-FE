@@ -3,10 +3,11 @@ import './Payment.css';
 // import axios from 'axios'; 
 import axiosInstance from '../../lib/axiosInstance'; 
 import { getEnv } from '../../lib/getEnv';
+
 /* global BootPay, bootpaySDKLoaded */
 
-const API_BASE_URL = getEnv('REACT_APP_BASE_URL');
-const BOOTPAY_WEB_APPLICATION_ID = getEnv('REACT_APP_BOOTPAY_WEB_APPLICATION_ID');
+const API_BASE_URL = getEnv('BASE_URL');
+const BOOTPAY_WEB_APPLICATION_ID = getEnv('BOOTPAY_WEB_APPLICATION_ID');
 
 async function fetchAllPaymentData(size = 1000) {
     const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/list?page=0&size=${size}`;
@@ -15,10 +16,7 @@ async function fetchAllPaymentData(size = 1000) {
         const response = await axiosInstance.get(apiUrl); 
         return response.data.result;
     } catch (error) {
-        console.error('결제 내역 API 호출 중 오류 발생:', error);
-        if (error.response) {
-            console.error('Error response data:', error.response.data);
-            console.error('Error response status:', error.response.status);
+        if (error.response) {   
             throw new Error(`API 요청 실패: ${error.response.status} - ${error.response.data.message || error.message}`);
         } else {
             throw new Error(`API 요청 실패: ${error.message}`);
@@ -26,26 +24,27 @@ async function fetchAllPaymentData(size = 1000) {
     }
 }
 
-async function requestPaymentApprovalToBackend(receiptId, amount, paymentMethod, title, quantity) {
+async function requestPaymentApprovalToBackend(amount, paymentMethod, title, quantity) {
     const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/pay`;
 
+    const requestBody = {
+        amount: amount,
+        paymentMethod: paymentMethod,
+        title: title,
+        quantity: quantity
+    };
+
     try {
-        const response = await axiosInstance.post(apiUrl, { 
-            receiptId: receiptId,
-            amount: amount,
-            paymentMethod: paymentMethod,
-            title: title,
-            quantity: quantity
-        }); 
+        const response = await axiosInstance.post(apiUrl, requestBody);
         return response.data.result;
     } catch (error) {
-        console.error('백엔드 결제 승인 중 오류 발생:', error);
         let errorMessage = '결제 처리 중 오류 발생';
         if (error.response) {
-            errorMessage = `백엔드 결제 승인 실패: ${error.response.data.message || error.response.statusText}`;
+            errorMessage = `백엔드 결제 승인 실패: ${error.response.status} - ${error.response.data.message || error.response.statusText}`;
         } else {
             errorMessage = `네트워크 오류: ${error.message}`;
         }
+        sessionStorage.setItem('bootpay_backend_error_log', error.message || JSON.stringify(error));
         alert(errorMessage);
         throw new Error(errorMessage);
     }
@@ -58,7 +57,6 @@ async function requestPaymentCancelToBackend(paymentId) {
         const response = await axiosInstance.post(apiUrl); // POST 요청으로 변경
         return response.data.result;
     } catch (error) {
-        console.error(`결제 ID ${paymentId} 취소 중 오류 발생:`, error);
         let errorMessage = '결제 취소 처리 중 오류 발생';
         if (error.response) {
             errorMessage = `결제 취소 실패: ${error.response.data.message || error.response.statusText}`;
@@ -77,10 +75,7 @@ async function fetchUserProfile() {
         const response = await axiosInstance.get(apiUrl);
         return response.data.result;
     } catch (error) {
-        console.error('사용자 프로필 API 호출 중 오류 발생:', error);
         if (error.response) {
-            console.error('Error response data:', error.response.data);
-            console.error('Error response status:', error.response.status);
             throw new Error(`사용자 프로필 요청 실패: ${error.response.status} - ${error.response.data.message || error.message}`);
         } else {
             throw new Error(`사용자 프로필 요청 실패: ${error.message}`);
@@ -98,6 +93,9 @@ function Payment() {
     const [error, setError] = useState(null);
     const [userProfile, setUserProfile] = useState(null);
 
+    const [freeSubscriptionsCount, setFreeSubscriptionsCount] = useState(0);
+    const [paidSubscriptionsCount, setPaidSubscriptionsCount] = useState(0);
+
     const [showInfoPopup, setShowInfoPopup] = useState(false);
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
 
@@ -114,6 +112,7 @@ function Payment() {
         { id: 1, title: 'GOLD 이용권 (10개)', amount: 9900, quantity: 1, voucherCount: 10, voucherType: 'GOLD' },
         { id: 2, title: 'GOLD 이용권 (50개)', amount: 49000, quantity: 5, voucherCount: 50, voucherType: 'GOLD' },
         { id: 3, title: 'GOLD 이용권 (100개)', amount: 98000, quantity: 10, voucherCount: 100, voucherType: 'GOLD' },
+        { id: 4, title: 'GOLD 이용권 test (10개)', amount: 100, quantity: 1, voucherCount: 10, voucherType: 'GOLD' },
     ];
     const [selectedProduct, setSelectedProduct] = useState(availableProducts[0]);
 
@@ -128,6 +127,9 @@ function Payment() {
             ]);
 
             if (paymentResult && paymentResult.content) {
+                setFreeSubscriptionsCount(paymentResult.free || 0);
+                setPaidSubscriptionsCount(paymentResult.gold || 0);
+                
                 const sortedPayments = [...paymentResult.content].sort((a, b) => {
                     const dateA = new Date(a.paymentDate);
                     const dateB = new Date(b.paymentDate);
@@ -169,6 +171,8 @@ function Payment() {
             } else {
                 setAllPaymentHistoryData([]);
                 setAvailableVouchers([]);
+                setFreeSubscriptionsCount(0); // 빈응답대비
+                setPaidSubscriptionsCount(0);
             }
 
             if (profileResult) {
@@ -191,13 +195,12 @@ function Payment() {
     const indexOfFirstPayment = indexOfLastPayment - paymentsPerPage;
     const currentPayments = allPaymentHistoryData.slice(indexOfFirstPayment, indexOfLastPayment);
 
-    const freeSubscriptionsCount = availableVouchers
-        .filter(voucher => voucher.type === 'FREE')
-        .reduce((sum, voucher) => sum + voucher.totalCount, 0);
-
-    const paidSubscriptionsCount = availableVouchers
-        .filter(voucher => voucher.type === 'GOLD')
-        .reduce((sum, voucher) => sum + voucher.totalCount, 0);
+    //const freeSubscriptionsCount = availableVouchers 유효한 free gold 숫자세기
+    //    .filter(voucher => voucher.type === 'FREE')
+    //    .reduce((sum, voucher) => sum + voucher.totalCount, 0);
+    //const paidSubscriptionsCount = availableVouchers
+    //    .filter(voucher => voucher.type === 'GOLD')
+    //    .reduce((sum, voucher) => sum + voucher.totalCount, 0);
 
     const handlePrevPage = () => {
         setCurrentPage(prev => Math.max(0, prev - 1));
@@ -226,92 +229,85 @@ function Payment() {
     };
 
     const handleConfirmPayment = () => {
-        if (!userProfile || !userProfile.userName || !userProfile.email || !userProfile.phoneNumber) {
-            alert('사용자 정보가 부족하여 결제를 진행할 수 없습니다. 백엔드에서 사용자 프로필 정보가 제대로 반환되는지 확인해주세요.');
+        if (!userProfile || !selectedProduct) {
+            alert('사용자 정보 또는 상품 정보가 없습니다.');
             return;
         }
 
-        if (!selectedProduct) {
-            alert('상품을 선택해주세요.');
+        if (typeof window.BootPay === 'undefined') {
+            alert('BootPay SDK가 로드되지 않았습니다.');
             return;
         }
 
-        const bootpayMethodCode = paymentMethodMap[selectedPaymentMethod];
-        if (!bootpayMethodCode) {
-            alert('유효한 결제 수단이 선택되지 않았습니다. 다시 선택해주세요.');
-            return;
-        }
+        window.BootPay.request({
+            price: selectedProduct.amount,
+            application_id: BOOTPAY_WEB_APPLICATION_ID,
+            name: selectedProduct.title,
+            pg: 'kcp',
+            method: paymentMethodMap[selectedPaymentMethod],
+            order_id: `ORDER_${Date.now()}`,
+            user_info: {
+            username: userProfile.userName,
+            email: userProfile.email,
+            phone: userProfile.phoneNumber,
+            },
+            extra: {
+            app_scheme: 'bootpayreactsample',
+            card_quota: '0,2,3',
+            },
+        })
+            .error(function(data) {
+            alert(`결제 오류 발생: ${data.message || JSON.stringify(data)}`);
+            setShowPaymentPopup(false);
+            })
+            .cancel(function(data) {
+            alert('결제가 취소되었습니다.');
+            setShowPaymentPopup(false);
+            })
+            .done(async function(data) {
+            alert('BootPay 결제 성공!');
 
-        let pollingAttempts = 0;
-        const maxPollingAttempts = 50;
+            // 프론트에서 백엔드로 결제 승인 데이터 전송
+            try {
+                const backendResult = await requestPaymentApprovalToBackend(
+                data.price,
+                selectedPaymentMethod,
+                selectedProduct.title,
+                selectedProduct.quantity
+                );
 
-        const checkBootPayReady = setInterval(() => {
-            if (typeof window.BootPay !== 'undefined') {
-                clearInterval(checkBootPayReady);
+                alert('상품 지급이 완료되었습니다.');
+                await loadInitialData();
 
-                window.BootPay.request({
-                    price: selectedProduct.amount,
-                    application_id: BOOTPAY_WEB_APPLICATION_ID,
-                    name: selectedProduct.title,
-                    pg: 'kcp',
-                    method: bootpayMethodCode,
-                    order_id: `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                    user_info: {
-                        username: userProfile.userName,
-                        email: userProfile.email,
-                        phone: userProfile.phoneNumber,
-                    },
-                    extra: {
-                        app_scheme: 'bootpayreactsample',
-                        card_quota: '0,2,3',
-                        confirm_url: `${API_BASE_URL}/mojadol/api/v1/payment/confirm`,
-                    },
-                    callbacks: {
-                        onDone: async function(data) {
-                            alert('결제가 성공적으로 완료되었습니다!');
-                            try {
-                                const backendResult = await requestPaymentApprovalToBackend(
-                                    data.receipt_id,
-                                    data.price,
-                                    selectedPaymentMethod,
-                                    selectedProduct.title,
-                                    selectedProduct.quantity
-                                );
-                                if (backendResult) {
-                                    loadInitialData();
-                                }
-                            } catch (error) {
-                                console.error('백엔드 결제 승인 후 처리 중 오류:', error);
-                                alert(`결제 후 처리 중 오류 발생: ${error.message}`);
-                            } finally {
-                                setShowPaymentPopup(false);
-                            }
-                        },
-                        onCancel: function(data) {
-                            alert('결제가 취소되었습니다.');
-                            setShowPaymentPopup(false);
-                        },
-                        onError: function(data) {
-                            alert(`결제 중 오류가 발생했습니다: ${data.message || JSON.stringify(data)}`);
-                            setShowPaymentPopup(false);
-                        }
-                    }
-                });
-            } else {
-                pollingAttempts++;
-                if (pollingAttempts >= maxPollingAttempts) {
-                    clearInterval(checkBootPayReady);
-                    alert('결제 모듈 로딩 시간이 초과되었습니다. 페이지를 새로고침 후 다시 시도해주세요.');
-                    setShowPaymentPopup(false);
-                }
+            } catch (error) {
+                alert(`백엔드 결제 승인 실패: ${error.message}`);
+            } finally {
+                setShowPaymentPopup(false);
             }
-        }, 100);
-    };
+            })
+            .confirm(function(data) {
+            this.transactionConfirm(data);
+            })
+            .close(function() {
+            setShowPaymentPopup(false);
+            });
+        };
 
     const handleProductChange = (e) => {
         const selectedId = Number(e.target.value);
         const product = availableProducts.find(p => p.id === selectedId);
         setSelectedProduct(product);
+    };
+
+    const isCancellable = (payment) => {
+        if (!payment.completed || !payment.voucher) return false;
+
+        const { voucher } = payment;
+        const isGoldType = voucher.type === 'GOLD';
+        const hasRemainingVoucher = voucher.totalCount > 0;
+        const isNotExpired = new Date(voucher.expiredAt) > new Date();
+
+        return isGoldType && hasRemainingVoucher && isNotExpired;
     };
 
     const handleCancelPayment = async (paymentId, title, amount, voucher) => {
@@ -327,7 +323,6 @@ function Payment() {
             alert('결제가 성공적으로 취소되었습니다.');
             loadInitialData(); 
         } catch (error) {
-            console.error('결제 취소 실패:', error);
             alert(`결제 취소에 실패했습니다: ${error.message}`);
         } finally {
             setLoading(false);
@@ -490,7 +485,9 @@ function Payment() {
                                                 <button
                                                     className="cancel-payment-button"
                                                     onClick={() => handleCancelPayment(payment.paymentId, payment.title, payment.amount, payment.voucher)}
-                                                    disabled={!payment.voucher || payment.voucher.totalCount === 0}>취소</button> 
+                                                    disabled={!isCancellable(payment)}>
+                                                    취소
+                                                </button> 
                                             )}
                                         </td>
                                     </tr>
