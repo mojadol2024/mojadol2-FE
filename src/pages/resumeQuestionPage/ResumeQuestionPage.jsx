@@ -19,6 +19,12 @@ function ResumeQuestionPage() {
 
 
   useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
     if (!coverLetterId) {
       alert('자소서 ID가 없습니다.');
       return;

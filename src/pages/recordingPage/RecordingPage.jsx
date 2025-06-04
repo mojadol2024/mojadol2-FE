@@ -60,9 +60,14 @@ function RecordingPage() {
           }
         }, 100);
       } catch (err) {
-        console.error('getUserMedia 실패:', err);
-        alert('카메라 또는 마이크에 접근할 수 없습니다.\n브라우저 설정 또는 장치를 확인해주세요.');
-        navigate(-1);
+        if (err.name === 'NotFoundError') {
+          alert("카메라 또는 마이크 장치를 찾을 수 없습니다. 장치 연결을 확인해주세요.");
+        } else if (err.name === 'NotAllowedError') {
+          alert("브라우저에서 카메라 또는 마이크 접근이 차단되었습니다. 권한 설정을 확인해주세요.");
+        } else {
+          alert("카메라 또는 마이크에 접근할 수 없습니다.");
+        }
+        navigate(`/ResumeQuestionPage?id=${coverLetterId}`);
       }
     };
 
@@ -157,7 +162,7 @@ function RecordingPage() {
     } catch (err) {
       console.error('카메라/마이크 접근 실패', err);
       alert("카메라 또는 마이크에 접근할 수 없습니다. 권한을 허용했는지 확인해주세요.");
-      navigate(-1); // 이전 페이지로 되돌리거나 원하는 fallback 처리
+      navigate(`/ResumeQuestionPage?id=${coverLetterId}`);
     }
   };
 
