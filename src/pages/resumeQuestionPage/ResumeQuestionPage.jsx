@@ -1,4 +1,4 @@
-// ✅ 통합된 ResumeQuestionPage.jsx
+// 면접 질문별 영상 업로드 및 분석 상태 관리 페이지 
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../lib/axiosInstance';
@@ -80,26 +80,69 @@ function ResumeQuestionPage() {
     try {
       const interviewId = videos[index]?.interviewId;
       if (!interviewId) return alert('영상 정보가 없습니다.');
+      
+      // AI 분석 결과가 준비될 때까지 polling
+      const maxRetries = 10;
+      const intervalMs = 2000;
+      let retryCount = 0;
+      let isReady = false;
 
-      // AI 분석 요청 API 호출
-      await axiosInstance.post('/mojadol/api/v1/interview/ai api 넣어야 함', { // 결과지 생성을 위한 ai 불러오기 | 서버에서 내부적으로 두 개의 AI 모델을 실행하고, 통합 결과를 DB에 저장하도록 해야함
-        interviewId,
-        coverLetterId,
-        questionIndex: index,
-      });
+      // 폴링 시작 전 사용자에게 알림
+      alert('AI 분석 중입니다. 잠시만 기다려주세요...');
 
-      setAnalysisResults((prev) => ({
-        ...prev,
-        [index]: { exists: true },
-      }));
-      setVideos((prev) => ({
-        ...prev,
-        [index]: { ...prev[index], confirmed: true },
-      }));
-      alert('AI 분석이 시작되었습니다.');
-    } catch (err) {
-      console.error('AI 분석 요청 실패:', err);
-      alert('AI 분석 요청에 실패했습니다.');
+      while (retryCount < maxRetries && !isReady) {
+        try {
+          const res = await axiosInstance.get(`/mojadol/api/v1/interview/detail/${interviewId}`);
+          const result = res.data.result;
+
+          // 영상 분석 완료 시 처리 로직
+          if (result?.tracking?.text) {
+            isReady = true;
+
+            // 1. UI 상태 업데이트
+            setAnalysisResults((prev) => ({
+              ...prev,
+              [index]: { exists: true },
+            }));
+            setVideos((prev) => ({
+              ...prev,
+              [index]: { ...prev[index], confirmed: true },
+            }));
+
+            // 2. 서버에 녹화 완료 상태 반영
+            try {
+              await axiosInstance.patch(`/mojadol/api/v1/interview/detail/${interviewId}`, {
+                isRecorded: true,
+              });
+              alert('AI 분석이 완료되었습니다.');
+            } catch (err) {
+              console.error('녹화 상태 업데이트 실패:', err);
+              alert('분석은 완료되었으나 서버 상태 업데이트에 실패했습니다.');
+            }
+            break;
+          }
+
+          retryCount++;
+          if (retryCount < maxRetries) {
+            await new Promise(resolve => setTimeout(resolve, intervalMs));
+          }
+        } catch (pollError) {
+          console.error(`폴링 ${retryCount + 1}차 시도 실패:`, pollError);
+          retryCount++;
+          if (retryCount < maxRetries) {
+            await new Promise(resolve => setTimeout(resolve, intervalMs));
+          }
+        }
+      }
+
+      // 최대 재시도 횟수 초과 시
+      if (!isReady) {
+        alert('AI 분석이 지연되고 있습니다. 잠시 후 다시 시도해주세요.');
+      }
+
+    } catch (error) {
+      console.error('영상 확인 처리 중 오류:', error);
+      alert('영상 확인 중 오류가 발생했습니다.');
     }
   };
 
