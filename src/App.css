@@ -44,6 +44,7 @@
 body.default-body {
   margin: 0;
   padding: 0;
+  overflow-y: auto;
 }
 
 /* 로그인, 회원가입, 아이디찾기 전용 페이지용 */

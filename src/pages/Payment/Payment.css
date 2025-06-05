@@ -9,8 +9,8 @@ html, body {
   min-height: 100%;
   width: 100%;
   box-sizing: border-box; 
-  padding-left: 20px; 
-  padding-right: 290px; /*뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
+  /*padding-left: 20px; */
+  /*padding-right: 290px; 뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
   padding-top: 20px;
   overflow-y: auto; /*body 에 overflow 적용했더니 이중으로 스크롤이 생겨서*/
   }
@@ -42,8 +42,8 @@ html, body {
   }
   
   .buy-info-button { 
-    color: #ccc; 
-    border: 2px solid #ccc; 
+    color: #999; 
+    border: 2px solid #999; 
     background-color: transparent;
     font-weight: bold;
     padding: 10px 15px;
@@ -55,7 +55,7 @@ html, body {
   
   .buy-info-button:hover {
     color: #fff; 
-    background-color: #ccc; 
+    background-color: #999; 
   }
 
   .buy-ticket-button {
@@ -102,7 +102,7 @@ html, body {
     font-size: 16px;
     text-align: center;
     border: none; 
-    background-color: #999;
+    background-color: #666;
   }
   
   .subscription-count {
@@ -116,6 +116,7 @@ html, body {
     width: 100%;
     border-collapse: collapse;
     overflow: hidden;
+    table-layout: fixed;
   }
   
   .subscription-table th,
@@ -132,7 +133,7 @@ html, body {
 
   .subscription-table th:nth-child(1), /* 내용 */
   .subscription-table td:nth-child(1) {
-    width: 35%; 
+    width: 30%; 
   }
 
   .subscription-table th:nth-child(2), /* gold*/
@@ -148,7 +149,7 @@ html, body {
 
   .subscription-table th:nth-child(4), /* 유효 기간 */
   .subscription-table td:nth-child(4) {
-    width: 25%; 
+    width: 30%; 
     
   }
   
@@ -184,6 +185,7 @@ html, body {
     width: 100%;
     border-collapse: collapse;
     overflow: hidden;
+    table-layout: fixed;
   }
   
   .payment-history th,
@@ -200,7 +202,7 @@ html, body {
   
   .payment-history th:nth-child(1), /* 일시 */
   .payment-history td:nth-child(1) {
-    width: 10%; 
+    width: 20%; 
   }
 
   .payment-history th:nth-child(2), /* 내용 */
@@ -208,19 +210,19 @@ html, body {
     width: 25%; 
   }
 
-  .payment-history th:nth-child(3), /* 이용권 횟수 */
+  .payment-history th:nth-child(3), /* 결제금액액 */
   .payment-history td:nth-child(3) {
-    width: 15%; 
+    width: 20%; 
   }
 
-  .payment-history th:nth-child(4), /* 결제 금액 */
+  .payment-history th:nth-child(4), /* 결제수단단 */
   .payment-history td:nth-child(4) {
     width: 20%; 
   }
 
-  .payment-history th:nth-child(5), /* 결제 수단 */
+  .payment-history th:nth-child(5), /* 관리리*/
   .payment-history td:nth-child(5) {
-    width: 20%; 
+    width: 15%; 
   }
 
   .payment-history th {
@@ -231,8 +233,6 @@ html, body {
   .payment-history tbody tr:last-child td {
     border-bottom: none; /* 마지막 행의 아래쪽 가로 줄 제거 (선택 사항) */
   }
-  
-  
   
   /* 페이지네이션 */
   
@@ -325,7 +325,7 @@ html, body {
     border: 2px solid #ccc; 
     background-color: transparent;
     font-weight: bold;
-    padding: 10px 15px;
+    padding: 5px 10px;
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
@@ -391,7 +391,7 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .payment-popup-content label {
@@ -431,7 +431,7 @@ html, body {
 
 /* 팝업 버튼 기본 스타일 */
 .payment-popup-buttons button {
-    padding:10px 15px;
+    padding:5px 10px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
@@ -480,8 +480,8 @@ html, body {
   justify-content: center;
   min-height: 700px; /* 로딩 중에도 최소 높이를 유지하여 레이아웃 흔들림 방지 */
   color: #555;
-  padding-left: 20px; 
-  padding-right: 290px; 
+  /*padding-left: 20px; 
+  padding-right: 290px; */
 }
 
 /* 스피너 스타일 */
@@ -512,7 +512,36 @@ html, body {
   color: #e74c3c; 
   text-align: center;
   font-size: 18px;
-  padding-left: 20px; 
-  padding-right: 290px; 
+  /*padding-left: 20px; 
+  padding-right: 290px; */
   font-size: 25px;
+}
+
+/* 결제 취소 버튼 */
+.cancel-payment-button {
+    color: #333; 
+    border: 1px solid #333; 
+    background-color: transparent;
+    padding: 5x 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.cancel-payment-button:not(:disabled):hover {
+    color: #fff; 
+    background-color: #999;
+}
+
+.cancel-payment-button:disabled {
+    background-color: transparent;
+    border: transparent;
+    color: #999;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.cancelled-text {
+    font-style: italic;
+    color: #999;
 }

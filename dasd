@@ -1,0 +1,373 @@
+[1mdiff --git a/src/App.css b/src/App.css[m
+[1mindex aa8d4b5..999589a 100644[m
+[1m--- a/src/App.css[m
+[1m+++ b/src/App.css[m
+[36m@@ -44,7 +44,6 @@[m
+ body.default-body {[m
+   margin: 0;[m
+   padding: 0;[m
+[31m-  overflow-y: auto;[m
+ }[m
+ [m
+ /* 로그인, 회원가입, 아이디찾기 전용 페이지용 */[m
+[1mdiff --git a/src/lib/axiosInstance.js b/src/lib/axiosInstance.js[m
+[1mindex 10ce829..3ae9d4d 100644[m
+[1m--- a/src/lib/axiosInstance.js[m
+[1m+++ b/src/lib/axiosInstance.js[m
+[36m@@ -1,14 +1,10 @@[m
+ import axios from 'axios';[m
+[31m-import { getEnv } from './getEnv';[m
+[31m-[m
+[31m-const BASE_URL = getEnv('BASE_URL', 'http://localhost:4000');[m
+ [m
+ const axiosInstance = axios.create({[m
+[31m-  baseURL: BASE_URL,[m
+[32m+[m[32m  baseURL: process.env.REACT_APP_BASE_URL,[m
+   headers: {[m
+     'Content-Type': 'application/json',[m
+   },[m
+[31m-  withCredentials: true,[m
+ });[m
+ [m
+ // 요청 시 Authorization 헤더 자동 추가[m
+[36m@@ -23,4 +19,4 @@[m [maxiosInstance.interceptors.request.use([m
+   (error) => Promise.reject(error)[m
+ );[m
+ [m
+[31m-export default axiosInstance;[m
+\ No newline at end of file[m
+[32m+[m[32mexport default axiosInstance;[m
+[1mdiff --git a/src/lib/getEnv.js b/src/lib/getEnv.js[m
+[1mdeleted file mode 100644[m
+[1mindex 1ce4353..0000000[m
+[1m--- a/src/lib/getEnv.js[m
+[1m+++ /dev/null[m
+[36m@@ -1,6 +0,0 @@[m
+[31m-export const getEnv = (key, fallback = '') => {[m
+[31m-  if (typeof window !== 'undefined' && window._env_ && window._env_[key]) {[m
+[31m-    return window._env_[key];[m
+[31m-  }[m
+[31m-  return process.env[`REACT_APP_${key}`] || fallback;[m
+[31m-};[m
+\ No newline at end of file[m
+[1mdiff --git a/src/pages/Payment/Payment.css b/src/pages/Payment/Payment.css[m
+[1mindex 6d192f6..0a3a9f1 100644[m
+[1m--- a/src/pages/Payment/Payment.css[m
+[1m+++ b/src/pages/Payment/Payment.css[m
+[36m@@ -9,8 +9,8 @@[m [mhtml, body {[m
+   min-height: 100%;[m
+   width: 100%;[m
+   box-sizing: border-box; [m
+[31m-  /*padding-left: 20px; */[m
+[31m-  /*padding-right: 290px; 뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/[m
+[32m+[m[32m  padding-left: 20px;[m[41m [m
+[32m+[m[32m  padding-right: 290px; /*뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/[m
+   padding-top: 20px;[m
+   overflow-y: auto; /*body 에 overflow 적용했더니 이중으로 스크롤이 생겨서*/[m
+   }[m
+[36m@@ -480,8 +480,8 @@[m [mhtml, body {[m
+   justify-content: center;[m
+   min-height: 700px; /* 로딩 중에도 최소 높이를 유지하여 레이아웃 흔들림 방지 */[m
+   color: #555;[m
+[31m-  /*padding-left: 20px; [m
+[31m-  padding-right: 290px; */[m
+[32m+[m[32m  padding-left: 20px;[m[41m [m
+[32m+[m[32m  padding-right: 290px;[m[41m [m
+ }[m
+ [m
+ /* 스피너 스타일 */[m
+[36m@@ -512,7 +512,7 @@[m [mhtml, body {[m
+   color: #e74c3c; [m
+   text-align: center;[m
+   font-size: 18px;[m
+[31m-  /*padding-left: 20px; [m
+[31m-  padding-right: 290px; */[m
+[32m+[m[32m  padding-left: 20px;[m[41m [m
+[32m+[m[32m  padding-right: 290px;[m[41m [m
+   font-size: 25px;[m
+ }[m
+\ No newline at end of file[m
+[1mdiff --git a/src/pages/Payment/Payment.js b/src/pages/Payment/Payment.js[m
+[1mindex 575c433..7fe7569 100644[m
+[1m--- a/src/pages/Payment/Payment.js[m
+[1m+++ b/src/pages/Payment/Payment.js[m
+[36m@@ -1,7 +1,7 @@[m
+ import React, { useState, useEffect, useCallback } from 'react';[m
+ import './Payment.css';[m
+[31m-// import axios from 'axios'; [m
+[31m-import axiosInstance from '../../lib/axiosInstance'; [m
+[32m+[m[32mimport axios from 'axios';[m
+[32m+[m
+ /* global BootPay, bootpaySDKLoaded */[m
+ [m
+ // 환경 변수를 동적으로 가져오는 함수[m
+[36m@@ -14,17 +14,23 @@[m [mconst getEnvVariable = (key) => {[m
+     return process.env[key];[m
+ };[m
+ [m
+[31m-const API_BASE_URL = getEnvVariable('REACT_APP_BASE_URL');[m
+[32m+[m[32mconst API_BASE_URL = getEnvVariable('REACT_APP_API_BASE_URL');[m
+ const BOOTPAY_WEB_APPLICATION_ID = getEnvVariable('REACT_APP_BOOTPAY_WEB_APPLICATION_ID');[m
+ [m
+ async function fetchAllPaymentData(size = 1000) {[m
+[32m+[m[32m    const accessToken = localStorage.getItem('accessToken');[m
+     const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/list?page=0&size=${size}`;[m
+ [m
+     try {[m
+[31m-        const response = await axiosInstance.get(apiUrl); [m
+[32m+[m[32m        const response = await axios.get(apiUrl, {[m
+[32m+[m[32m            headers: {[m
+[32m+[m[32m                'Authorization': accessToken ? `Bearer ${accessToken}` : '',[m
+[32m+[m[32m            },[m
+[32m+[m[32m        });[m
+         return response.data.result;[m
+     } catch (error) {[m
+         console.error('결제 내역 API 호출 중 오류 발생:', error);[m
+[32m+[m[32m        // 에러 응답이 있을 경우 메시지를 확인하여 사용자에게 더 구체적인 정보를 제공할 수 있습니다.[m
+         if (error.response) {[m
+             console.error('Error response data:', error.response.data);[m
+             console.error('Error response status:', error.response.status);[m
+[36m@@ -36,16 +42,22 @@[m [masync function fetchAllPaymentData(size = 1000) {[m
+ }[m
+ [m
+ async function requestPaymentApprovalToBackend(receiptId, amount, paymentMethod, title, quantity) {[m
+[32m+[m[32m    const accessToken = localStorage.getItem('accessToken');[m
+     const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/pay`;[m
+ [m
+     try {[m
+[31m-        const response = await axiosInstance.post(apiUrl, { [m
+[32m+[m[32m        const response = await axios.post(apiUrl, {[m
+             receiptId: receiptId,[m
+             amount: amount,[m
+             paymentMethod: paymentMethod,[m
+             title: title,[m
+             quantity: quantity[m
+[31m-        }); [m
+[32m+[m[32m        }, {[m
+[32m+[m[32m            headers: {[m
+[32m+[m[32m                'Content-Type': 'application/json',[m
+[32m+[m[32m                'Authorization': accessToken ? `Bearer ${accessToken}` : '',[m
+[32m+[m[32m            },[m
+[32m+[m[32m        });[m
+         return response.data.result;[m
+     } catch (error) {[m
+         console.error('백엔드 결제 승인 중 오류 발생:', error);[m
+[36m@@ -56,34 +68,20 @@[m [masync function requestPaymentApprovalToBackend(receiptId, amount, paymentMethod,[m
+             errorMessage = `네트워크 오류: ${error.message}`;[m
+         }[m
+         alert(errorMessage);[m
+[31m-        throw new Error(errorMessage);[m
+[31m-    }[m
+[31m-}[m
+[31m-[m
+[31m-async function requestPaymentCancelToBackend(paymentId) {[m
+[31m-    const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/detail/${paymentId}`;[m
+[31m-[m
+[31m-    try {[m
+[31m-        const response = await axiosInstance.post(apiUrl); // POST 요청으로 변경[m
+[31m-        return response.data.result;[m
+[31m-    } catch (error) {[m
+[31m-        console.error(`결제 ID ${paymentId} 취소 중 오류 발생:`, error);[m
+[31m-        let errorMessage = '결제 취소 처리 중 오류 발생';[m
+[31m-        if (error.response) {[m
+[31m-            errorMessage = `결제 취소 실패: ${error.response.data.message || error.response.statusText}`;[m
+[31m-        } else {[m
+[31m-            errorMessage = `네트워크 오류: ${error.message}`;[m
+[31m-        }[m
+[31m-        alert(errorMessage);[m
+[31m-        throw new Error(errorMessage);[m
+[32m+[m[32m        throw new Error(errorMessage); // 오류를 다시 throw하여 호출자가 catch할 수 있도록 합니다.[m
+     }[m
+ }[m
+ [m
+ async function fetchUserProfile() {[m
+[32m+[m[32m    const accessToken = localStorage.getItem('accessToken');[m
+     const apiUrl = `${API_BASE_URL}/mojadol/api/v1/mypage/profile`;[m
+ [m
+     try {[m
+[31m-        const response = await axiosInstance.get(apiUrl);[m
+[32m+[m[32m        const response = await axios.get(apiUrl, {[m
+[32m+[m[32m            headers: {[m
+[32m+[m[32m                'Authorization': accessToken ? `Bearer ${accessToken}` : '',[m
+[32m+[m[32m            },[m
+[32m+[m[32m        });[m
+         return response.data.result;[m
+     } catch (error) {[m
+         console.error('사용자 프로필 API 호출 중 오류 발생:', error);[m
+[36m@@ -323,30 +321,6 @@[m [mfunction Payment() {[m
+         setSelectedProduct(product);[m
+     };[m
+ [m
+[31m-    const handleCancelPayment = async (paymentId, title, amount, voucher) => {[m
+[31m-        // 이미 사용된 이용권인지 확인 (프론트엔드 단에서 최대한의 필터링)[m
+[31m-        // 백엔드에서 voucher.usedCount를 제공하지 않으므로,[m
+[31m-        // completed === 1 이면서 voucher가 null이 아닌 경우, 그리고 totalCount가 0보다 큰 경우에만 취소 가능하다고 가정합니다.[m
+[31m-        // 실제 사용 여부는 백엔드에서 정확히 판단해야 합니다.[m
+[31m-        if (voucher && voucher.totalCount > 0 && !window.confirm(`${title} (${amount.toLocaleString()}원) 결제를 취소하시겠습니까?`)) {[m
+[31m-            return;[m
+[31m-        } else if (!voucher && !window.confirm(`${title} (${amount.toLocaleString()}원) 결제를 취소하시겠습니까?`)) {[m
+[31m-            return;[m
+[31m-        }[m
+[31m-[m
+[31m-        setLoading(true);[m
+[31m-        try {[m
+[31m-            await requestPaymentCancelToBackend(paymentId);[m
+[31m-            alert('결제가 성공적으로 취소되었습니다.');[m
+[31m-            loadInitialData(); // 취소 후 데이터 새로고침[m
+[31m-        } catch (error) {[m
+[31m-            console.error('결제 취소 실패:', error);[m
+[31m-            alert(`결제 취소에 실패했습니다: ${error.message}`);[m
+[31m-        } finally {[m
+[31m-            setLoading(false);[m
+[31m-        }[m
+[31m-    };[m
+[31m-[m
+     // 로딩 중일 때 로딩 메시지와 스피너 표시[m
+     if (loading) {[m
+         return ([m
+[36m@@ -382,13 +356,13 @@[m [mfunction Payment() {[m
+                     <div className="info-popup">[m
+                         <h2>이용권 안내</h2>[m
+                         <div className="info-popup-content">[m
+[31m-                            <p>FREE 이용권이 매달 1개씩 제공되며,<br /> 유효 기간이 지나면 소멸됩니다.<br />[m
+[31m-                            <strong>FREE 이용권</strong> 사용 시, 생성된 면접 질문을 전부<br />녹화해야만 분석 결과를 열람할 수 있습니다.</p>[m
+[31m-                            <p><strong>GOLD 이용권</strong>은 면접 질문 1개 이상 녹화시<br />바로 결과 열람이 가능합니다.<br />[m
+[31m-                            후에 답변하지 않았던 질문을 녹화하여<br />결과지를 업데이트하는 것도 가능합니다.</p>[m
+[31m-                            <p><strong>이미 자소서 분석을 시작한 경우 이용권 변경이 불가합니다.</strong><br />[m
+[31m-                            (FREE 이용권으로 면접 질문을 생성한 경우,<br />도중에 GOLD 이용권으로 변경하는 것 불가)</p>[m
+[31m-                            <p>모든 이용권은 구매일로부터 <strong>30일</strong>간 유효하며,<br />유효 기간이 지난 이용권은 자동으로 소멸됩니다.</p>[m
+[32m+[m[32m                          <p>FREE 이용권이 매달 1개씩 제공되며,<br /> 유효 기간이 지나면 소멸됩니다.<br />[m
+[32m+[m[32m                          <strong>FREE 이용권</strong> 사용 시, 생성된 면접 질문을 전부<br />녹화해야만 분석 결과를 열람할 수 있습니다.</p>[m
+[32m+[m[32m                          <p><strong>GOLD 이용권</strong>은 면접 질문 1개 이상 녹화시<br />바로 결과 열람이 가능합니다.<br />[m
+[32m+[m[32m                          후에 답변하지 않았던 질문을 녹화하여<br />결과지를 업데이트하는 것도 가능합니다.</p>[m
+[32m+[m[32m                          <p><strong>이미 자소서 분석을 시작한 경우 이용권 변경이 불가합니다.</strong><br />[m
+[32m+[m[32m                          (FREE 이용권으로 면접 질문을 생성한 경우,<br />도중에 GOLD 이용권으로 변경하는 것 불가)</p>[m
+[32m+[m[32m                          <p>모든 이용권은 구매일로부터 <strong>30일</strong>간 유효하며,<br />유효 기간이 지난 이용권은 자동으로 소멸됩니다.</p>[m
+                         </div>[m
+                         <button onClick={handleCloseInfoPopup}>닫기</button>[m
+                     </div>[m
+[36m@@ -483,9 +457,9 @@[m [mfunction Payment() {[m
+                                 <tr>[m
+                                     <th>일시</th>[m
+                                     <th>이용권 명</th>[m
+[32m+[m[32m                                    <th>구매 개수</th>[m
+                                     <th>결제 금액</th>[m
+                                     <th>결제 수단</th>[m
+[31m-                                    <th>관리</th>[m
+                                 </tr>[m
+                             </thead>[m
+                             <tbody>[m
+[36m@@ -493,23 +467,9 @@[m [mfunction Payment() {[m
+                                     <tr key={index}>[m
+                                         <td>{payment.paymentDate ? payment.paymentDate.split('T')[0] : ''}</td>[m
+                                         <td>{payment.title}</td>[m
+[31m-                                        {/*<td className="align-right">{payment.voucher ? payment.voucher.totalCount : 0}</td>*/}[m
+[32m+[m[32m                                        <td className="align-right">{payment.voucher ? payment.voucher.totalCount : 0}</td>[m
+                                         <td className="align-right">{payment.amount ? payment.amount.toLocaleString() : 0}원</td>[m
+                                         <td>{payment.paymentMethod}</td>[m
+[31m-                                        <td>[m
+[31m-                                            {payment.completed === 1 && payment.voucher && payment.voucher.totalCount > 0 ? ([m
+[31m-                                                <button[m
+[31m-                                                    className="cancel-payment-button"[m
+[31m-                                                    onClick={() => handleCancelPayment(payment.paymentId, payment.title, payment.amount, payment.voucher)}[m
+[31m-                                                >[m
+[31m-                                                    취소[m
+[31m-                                                </button>[m
+[31m-                                            ) : ([m
+[31m-                                                <button className="cancel-payment-button" disabled>[m
+[31m-                                                    취소 불가[m
+[31m-                                                </button>[m
+[31m-                                            )}[m
+[31m-                                        </td>[m
+                                     </tr>[m
+                                 ))}[m
+                             </tbody>[m
+[1mdiff --git a/src/pages/questionConfirmPage/QuestionConfirmPage.jsx b/src/pages/questionConfirmPage/QuestionConfirmPage.jsx[m
+[1mindex c529cf9..58dc3f8 100644[m
+[1m--- a/src/pages/questionConfirmPage/QuestionConfirmPage.jsx[m
+[1m+++ b/src/pages/questionConfirmPage/QuestionConfirmPage.jsx[m
+[36m@@ -10,8 +10,8 @@[m [mfunction QuestionConfirmPage() {[m
+   const location = useLocation();[m
+   const coverLetterId = new URLSearchParams(location.search).get('id');[m
+   const questionIndex = new URLSearchParams(location.search).get('q');[m
+[31m-  const questionText = location.state?.question?.content[m
+[31m-    ? `질문 ${parseInt(questionIndex, 10) + 1}: "${location.state.question.content}"`[m
+[32m+[m[32m  const questionText = location.state?.question[m
+[32m+[m[32m    ? `질문 ${parseInt(questionIndex, 10) + 1}: "${location.state.question}"`[m
+     : `질문 ${parseInt(questionIndex, 10) + 1}: "질문 내용을 불러올 수 없습니다."`;[m
+ [m
+   const handleNavigateBack = () => {[m
+[1mdiff --git a/src/pages/recordingPage/RecordingPage.jsx b/src/pages/recordingPage/RecordingPage.jsx[m
+[1mindex e8e2b98..2746913 100644[m
+[1m--- a/src/pages/recordingPage/RecordingPage.jsx[m
+[1m+++ b/src/pages/recordingPage/RecordingPage.jsx[m
+[36m@@ -5,8 +5,7 @@[m [mimport './RecordingPage.css';[m
+ function RecordingPage() {[m
+   const location = useLocation();[m
+   const navigate = useNavigate();[m
+[31m-  const questionObj = location.state?.question;[m
+[31m-  const questionText = questionObj?.content || '질문이 없습니다.';[m
+[32m+[m[32m  const question = location.state?.question || '질문이 없습니다.';[m
+ [m
+   const videoRef = useRef(null);[m
+   const mediaRecorderRef = useRef(null);[m
+[36m@@ -54,7 +53,7 @@[m [mfunction RecordingPage() {[m
+         const blob = new Blob(chunks, { type: 'video/webm' });[m
+         setRecordedChunks(chunks);[m
+         console.log('녹화 완료, 영상 크기:', blob.size);[m
+[31m-        navigate('/TakeSelect', { state: { videoBlob: blob, question: questionText } });[m
+[32m+[m[32m        navigate('/TakeSelect', { state: { videoBlob: blob, question } });[m
+       };[m
+ [m
+       mediaRecorder.start();[m
+[36m@@ -122,7 +121,7 @@[m [mfunction RecordingPage() {[m
+         {step === 'recording' && ([m
+           <>[m
+             <div className="recording-top-bar">[m
+[31m-              <div className="question-text">{questionText}</div>[m
+[32m+[m[32m              <div className="question-text">{question}</div>[m
+ [m
+               <div className="timer-box">[m
+                 <button className="recording-stop-button" onClick={stopRecording}>⏹</button>[m
+[1mdiff --git a/src/pages/resumeQuestionPage/ResumeQuestionPage.jsx b/src/pages/resumeQuestionPage/ResumeQuestionPage.jsx[m
+[1mindex 78cab3f..a626fc8 100644[m
+[1m--- a/src/pages/resumeQuestionPage/ResumeQuestionPage.jsx[m
+[1m+++ b/src/pages/resumeQuestionPage/ResumeQuestionPage.jsx[m
+[36m@@ -7,8 +7,8 @@[m [mimport './ResumeQuestionPage.css';[m
+ function ResumeQuestionPage() {[m
+   const location = useLocation();[m
+   const navigate = useNavigate();[m
+[31m-  const [loading, setLoading] = useState(true); // 로딩 상태 추가[m
+   const coverLetterId = new URLSearchParams(location.search).get('id');[m
+[32m+[m[32m  const [loading, setLoading] = useState(true); // 로딩 상태 추가[m
+ [m
+   const [title, setTitle] = useState('');[m
+   const [questions, setQuestions] = useState([]);[m
+[36m@@ -17,26 +17,28 @@[m [mfunction ResumeQuestionPage() {[m
+   const [voucherType, setVoucherType] = useState(null); // 'FREE' or 'GOLD' 사용자 선택에 따라 달라짐[m
+   const [pendingAI, setPendingAI] = useState({}); // { index: boolean }[m
+ [m
+[31m-[m
+   useEffect(() => {[m
+[31m-    if (!coverLetterId) {[m
+[31m-      alert('자소서 ID가 없습니다.');[m
+[31m-      return;[m
+[31m-    }[m
+[31m-    fetchLetterDetail();[m
+[32m+[m[32m    fetchCoverLetter();[m
+[32m+[m[32m    fetchQuestions();[m
+   }, []);[m
+ [m
+[31m-  const fetchLetterDetail = async () => {[m
+[32m+[m[32m  const fetchCoverLetter = async () => {[m
+     try {[m
+       const response = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);[m
+[31m-      const result = response.data.result;[m
+[31m-[m
+[31m-      setTitle(result.coverLetter?.title || '자소서 제목 없음');[m
+[31m-      setVoucherType(result.coverLetter?.useVoucher || 'FREE');[m
+[31m-      setQuestions(Array.isArray(result.questions) ? result.questions : []);[m
+[32m+[m[32m      setTitle(response.data.result.title || '자소서 제목 없음');[m
+[32m+[m[32m      setVoucherType(response.data.result.voucherType); // 백엔드에서 받은 'FREE' 또는 'GOLD'[m
+     } catch (error) {[m
+       console.error('자소서 정보 조회 실패:', 

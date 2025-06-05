@@ -1,25 +1,21 @@
-//.env에서 됨됨
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
-
-// ✅ 환경변수에서 API 주소 읽기
+import PasswordResetModal from './PasswordResetModal';
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function Login() {
   const [userLoginId, setUserLoginId] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showResetModal, setShowResetModal] = useState(false);
+
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     const url = `${API_BASE_URL}/mojadol/api/v1/auth/login`;
-    console.log("▶ 로그인 요청 시작:", {
-      url,
-      payload: { userLoginId, userPw: password },
-    });
-
     try {
       const response = await axios.post(
         url,
@@ -29,22 +25,35 @@ function Login() {
           headers: { 'Content-Type': 'application/json' },
         }
       );
+      console.log("🧾 응답 헤더:", response.headers);
 
-      
-      const { accessToken } = response.data;
-      localStorage.setItem('accessToken', accessToken);
-      alert('로그인 성공!');
-      navigate('/');
+// ✅ 헤더에서 accessToken 추출 (헤더 이름은 실제 서버에 따라 다름)
+const token = response.headers['authorization'];
+
+ // ✅ 헤더에서 토큰 받기
+
+console.log("✅ 받아온 accessToken from headers:", token);
+
+if (!token) {
+  alert("토큰이 응답 헤더에 없습니다.");
+  return;
+}
+
+// ✅ 'Bearer ' 접두사 제거
+const accessToken = token.startsWith('Bearer ') ? token.slice(7) : token;
+
+localStorage.setItem('accessToken', accessToken);
+alert('로그인 성공!');
+navigate('/InterviewMain');
+
+
     } catch (error) {
-      
       if (error.response) {
-        
         alert(
           error.response.data.message ||
           `로그인 실패 (status ${error.response.status})`
         );
       } else {
-        
         alert('서버에 연결할 수 없습니다.');
       }
     }
@@ -68,7 +77,7 @@ function Login() {
       <div className="passwordWrapper">
         <input
           type={showPassword ? 'text' : 'password'}
-          placeholder="영문, 숫자, 특수문자 포함 (8~20자)"
+          placeholder="비밀번호"
           value={password}
           onChange={e => setPassword(e.target.value)}
           className="input"
@@ -87,16 +96,23 @@ function Login() {
       </button>
 
       <div className="linkContainer">
-  <div className="leftLinks">
-    <span className="link" onClick={() => navigate('/find-id')}>
-      아이디 찾기
-    </span>
-  </div>
-  <span className="signupLink" onClick={() => navigate('/sign-up')}>
-    회원가입
-  </span>
-</div>
+        <div className="leftLinks">
+          <span className="link" onClick={() => navigate('/find-id')}>
+            아이디 찾기
+          </span>
+          <span className="divider">|</span>
+          <span className="link" onClick={() => setShowResetModal(true)}>
+            비밀번호 찾기
+          </span>
+        </div>
+        <span className="link" onClick={() => navigate('/sign-up')}>
+          회원가입
+        </span>
+      </div>
 
+      {showResetModal && (
+        <PasswordResetModal onClose={() => setShowResetModal(false)} />
+      )}
     </div>
   );
 }

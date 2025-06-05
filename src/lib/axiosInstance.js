@@ -1,10 +1,14 @@
 import axios from 'axios';
+import { getEnv } from './getEnv';
+
+const BASE_URL = getEnv('BASE_URL', 'http://localhost:4000');
 
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL,
+  baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // 요청 시 Authorization 헤더 자동 추가

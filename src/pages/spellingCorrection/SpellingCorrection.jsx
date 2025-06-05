@@ -96,6 +96,22 @@ function SelfIntroRegister() {
     }
   };
 
+  const waitForQuestions = async (id, timeout = 240000) => {
+    const start = Date.now();
+    while (Date.now() - start < timeout) {
+      try {
+        const res = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${id}`);
+        if (Array.isArray(res.data.result.questions) && res.data.result.questions.length > 0) {
+          return true; // 질문 생성 완료
+        }
+      } catch (e) {
+        // 무시하고 재시도
+      }
+      await new Promise(r => setTimeout(r, 2000)); // 1.5초마다 확인
+    }
+    return false; // 타임아웃
+  };
+
   // 자소서 저장 API 호출
   const handleSaveCoverLetter = async () => {
     if (!title.trim()) {
@@ -118,8 +134,8 @@ function SelfIntroRegister() {
         return;
       }      
 
-      if (cleanedText.length > 3000) {
-        alert("자소서는 최대 3000자까지만 저장할 수 있습니다. 내용을 줄여주세요.");
+      if (cleanedText.length > 1200) {
+        alert("자소서는 최대 1200자까지만 저장할 수 있습니다. 내용을 줄여주세요.");
         return;
       }
 
@@ -131,9 +147,20 @@ function SelfIntroRegister() {
           useVoucher: voucherType,
         }
       );
-      const savedId = response.data.id;
-      alert('자소서가 저장되었습니다. 질문 생성을 진행합니다.');
-      navigate('/ResumeQuestionPage', { state: { savedId } });
+      const savedId = response.data.result.coverLetterId; // ✅ 이렇게 수정
+      alert('자소서가 저장되었습니다. 질문 생성을 기다리는 중입니다...'); // 나중에 자소서가 저장됨과 동시에 뜨는 거라 애매하네..
+
+      const success = await waitForQuestions(savedId);
+      if (!success) {
+        alert('질문 생성에 실패했거나 시간이 초과되었습니다. 나중에 다시 시도해주세요.');
+        return;
+      }
+      // 🔽 ✅ 메인 페이지가 새 자소서를 반영하도록 플래그 저장
+      localStorage.setItem("shouldRefreshMainList", "true");
+
+      // ✅ 질문 생성이 완료되면 이동
+      navigate(`/ResumeQuestionPage?id=${savedId}`);
+      
     } catch (error) {
       console.error('자소서 저장 오류:', error);
       alert('자소서 저장에 실패했습니다.');
@@ -162,7 +189,7 @@ function SelfIntroRegister() {
                 if (text.length <= 3000) {
                   setOriginalText(text);
                 } else {
-                  alert("자소서는 최대 3000자까지만 입력 가능합니다.");
+                  alert("자소서는 최대 1200자까지만 입력 가능합니다.");
                 }
               }}
             />
@@ -173,9 +200,9 @@ function SelfIntroRegister() {
             <p style={{ fontSize: '13px'}}>
               글자 수: {sanitizeText(originalText).length} / 3000자
             </p>
-            {originalText.length > 3000 && (
+            {originalText.length > 1200 && (
               <p style={{ color: 'red', fontWeight: 'bold' }}>
-                ⚠ 자소서가 3000자를 초과하여 저장이 불가능합니다.
+                ⚠ 자소서가 1200자를 초과하여 저장이 불가능합니다.
               </p>
             )}
         </div>

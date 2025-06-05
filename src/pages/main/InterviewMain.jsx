@@ -19,7 +19,14 @@ function InterviewMain() {
   const paginated = results.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   useEffect(() => {
-    fetchCoverLetters();
+    // ResumeQuestionPage에서 저장된 flag가 있으면 리스트 다시 불러오기
+    const shouldRefresh = localStorage.getItem("shouldRefreshMainList");
+    if (shouldRefresh === "true") {
+      fetchCoverLetters(); // 다시 불러오기
+      localStorage.removeItem("shouldRefreshMainList"); // 초기화
+    } else {
+      fetchCoverLetters();
+    }
   }, []);
 
   const calculateDateFromPeriod = (period) => {
@@ -41,7 +48,17 @@ function InterviewMain() {
         size: 9
       };
       const response = await axiosInstance.get('/mojadol/api/v1/letter/list', { params });
-      setResults(response.data.content || []);
+      
+      // ✅ 응답 가공: result가 배열이고, 각 result는 coverLetter 정보를 포함하고 있음
+      const list = response.data.content || [];
+      const mapped = list.map(item => ({
+        coverLetterId: item.coverLetter?.coverLetterId,
+        title: item.coverLetter?.title,
+        useVoucher: item.coverLetter?.useVoucher,
+        hasVideo: item.hasVideo ?? false
+      }));
+
+      setResults(mapped);
     } catch (error) {
       console.error('자소서 리스트 불러오기 실패:', error);
     }
