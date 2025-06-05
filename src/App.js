@@ -3,20 +3,21 @@
   // index.js 또는 App.js 상단에 있어야 함
   import './App.css';
 
-  import Home from './pages/home/home';
-  import MyPage from './pages/mypage/mypage';
-  import Login from './screens/Login/Login';
-  import Main from './pages/main/InterviewMain';
-  import ResumeQuestionPage from './pages/resumeQuestionPage/ResumeQuestionPage';
-  import QuestionConfirmPage from './pages/questionConfirmPage/QuestionConfirmPage';
-  import RecordingPage from './pages/recordingPage/RecordingPage';
-  import TakeSelect from './pages/takeSelect/TakeSelect';
-  import Payment from './pages/Payment/Payment';
-  import SpellingCorrection from './pages/spellingCorrection/SpellingCorrection';
-  import SignUp from './screens/SignUp/SignUp';
-  import FindId from './screens/FindId/FindId';
-  import MainLayout from './components/layout/MainLayout';
-  import InterviewMain from './pages/main/InterviewMain';
+import Home from './pages/home/home';
+import MyPage from './pages/mypage/mypage';
+import Login from './screens/Login/Login';
+import Main from './pages/main/InterviewMain';
+import ResumeQuestionPage from './pages/resumeQuestionPage/ResumeQuestionPage';
+import QuestionConfirmPage from './pages/questionConfirmPage/QuestionConfirmPage';
+import RecordingPage from './pages/recordingPage/RecordingPage';
+import TakeSelect from './pages/takeSelect/TakeSelect';
+import Payment from './pages/Payment/Payment';
+import SpellingCorrection from './pages/spellingCorrection/SpellingCorrection';
+import SignUp from './screens/SignUp/SignUp';
+import FindId from './screens/FindId/FindId';
+import MainLayout from './components/layout/MainLayout';
+import Homepage from './screens/Home/homepage';
+import InterviewMain from './pages/main/InterviewMain';
 
 
   // ✅ 페이지에 따라 body 클래스 다르게 적용하는 컨트롤러
@@ -46,12 +47,13 @@
       <Router>
         <BodyClassController />
 
-        <Routes>
-          {/* ✅ 사이드바 없는 페이지들 */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/find-id" element={<FindId />} />
+<Routes>
+  {/* ✅ 사이드바 없는 페이지들 */}
+  <Route path="/" element={<Home />} />
+  <Route path="/homepage" element={<Homepage />} />
+  <Route path="/login" element={<Login />} />
+  <Route path="/sign-up" element={<SignUp />} />
+  <Route path="/find-id" element={<FindId />} />
 
           {/* ✅ 사이드바 포함된 레이아웃 페이지들 */}
           <Route path="/mypage" element={<MainLayout><MyPage /></MainLayout>} />
