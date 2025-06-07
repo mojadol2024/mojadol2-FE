@@ -1,14 +1,73 @@
-import React, { useEffect } from 'react';
+// src/HomePage.js
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../../lib/axiosInstance';
+import { getEnv } from '../../lib/getEnv';
 import './homepage.css';
+
+const API_BASE_URL = getEnv('BASE_URL');
+const AUTH_LOGOUT_URL = getEnv('AUTH_LOGOUT_URL') || '/mojadol/api/v1/auth/logout';
 
 function HomePage() {
   const navigate = useNavigate();
+
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return !!localStorage.getItem('accessToken');
+  });
+
+  useEffect(() => {
+    localStorage.setItem('isLoggedIn', isLoggedIn);
+  }, [isLoggedIn]);
 
   useEffect(() => {
     document.body.classList.add('homepage-body');
     return () => document.body.classList.remove('homepage-body');
   }, []);
+
+  const handleLogout = useCallback(async () => {
+    const confirmLogout = window.confirm('정말 로그아웃하시겠습니까?');
+    if (!confirmLogout) {
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.post(
+        `${API_BASE_URL}${AUTH_LOGOUT_URL}`,
+        {}
+      );
+
+      if (response.data.isSuccess) {
+        alert('로그아웃 성공!');
+        localStorage.removeItem('accessToken');
+        setIsLoggedIn(false);
+        navigate('/homepage');
+      } else {
+        alert('로그아웃 실패: ' + response.data.message);
+        console.error('백엔드 로그아웃 실패:', response.data.message);
+      }
+    } catch (error) {
+      console.error('로그아웃 중 에러 발생:', error);
+      if (error.response && error.response.data && error.response.data.message) {
+        alert('로그아웃 실패: ' + error.response.data.message);
+      } else {
+        alert('로그아웃 실패: 네트워크 오류 또는 알 수 없는 오류가 발생했습니다.');
+      }
+      localStorage.removeItem('accessToken');
+      setIsLoggedIn(false);
+      navigate('/homepage');
+    }
+  }, [navigate]);
+
+  const navigateIfLoggedIn = (path) => {
+    if (isLoggedIn) {
+      navigate(path);
+    } else {
+      alert('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.');
+      // 사용자가 가려던 경로를 로컬 스토리지에 저장
+      localStorage.setItem('redirectAfterLogin', path);
+      navigate('/login');
+    }
+  };
 
   return (
     <div className="home-container">
@@ -20,11 +79,19 @@ function HomePage() {
         </div>
         <nav className="nav-menu">
           <button className="nav-button active" onClick={() => navigate('/')}>홈</button>
-          <button className="nav-button" onClick={() => navigate('/SpellingCorrection')}>면접</button>
-          <button className="nav-button" onClick={() => navigate('/Payment')}>이용권 확인</button>
-          <button className="nav-button" onClick={() => navigate('/mypage')}>마이페이지</button>
+          <button className="nav-button" onClick={() => navigateIfLoggedIn('/SpellingCorrection')}>면접</button>
+          <button className="nav-button" onClick={() => navigateIfLoggedIn('/Payment')}>이용권 확인</button>
+          <button className="nav-button" onClick={() => navigateIfLoggedIn('/mypage')}>마이페이지</button>
         </nav>
-        <button className="btn-primary" onClick={() => navigate('/login')}>로그인하기</button>
+        {isLoggedIn ? (
+          <button className="btn-primary" onClick={handleLogout}>
+            로그아웃
+          </button>
+        ) : (
+          <button className="btn-primary" onClick={() => navigate('/login')}>
+            로그인하기
+          </button>
+        )}
       </header>
 
       {/* Hero Section */}
@@ -39,8 +106,8 @@ function HomePage() {
             면접의 정석은 당신이 쓴 자기소개서에 맞게 질문을 생성하고, 시선 목소리를 분석해 도와드립니다.
           </p>
           <div className="hero-buttons">
-            <button className="btn-primary" onClick={() => navigate('/ResumeQuestionPage')}>자기소개서 작성하기</button>
-            <button className="btn-outline" onClick={() => navigate('/mypage')}>나의 활동</button>
+            <button className="btn-primary" onClick={() => navigateIfLoggedIn('/ResumeQuestionPage')}>자기소개서 작성하기</button>
+            <button className="btn-outline" onClick={() => navigateIfLoggedIn('/mypage')}>나의 활동</button>
           </div>
         </div>
       </section>
@@ -49,7 +116,7 @@ function HomePage() {
       <section className="deadline">
         <div className="deadline-header">
           <h2>AI 면접 코칭, 지금 시작하세요</h2>
-          <button className="purchase-link" onClick={() => navigate('/Payment')}>이용권 결제하기</button>
+          <button className="purchase-link" onClick={() => navigateIfLoggedIn('/Payment')}>이용권 결제하기</button>
         </div>
         <p className="section-title">🔥 단 9,900원으로 완성되는 AI 면접 코칭</p>
         <div className="half-circle-wrapper">
@@ -107,7 +174,20 @@ function HomePage() {
             ['회사 소개', '/homepage'],
             ['마이 페이지', '/mypage']
           ].map(([label, path], i) => (
-            <button className="footer-link" key={i} onClick={() => navigate(path)}>{label}</button>
+            <button
+              className="footer-link"
+              key={i}
+              onClick={() => {
+                if (label === '홈' || label === '회사 소개') {
+                  navigate(path);
+                } else {
+                  // ✅ 푸터 링크도 로그인 전 경로 저장 로직을 따르도록 변경
+                  navigateIfLoggedIn(path);
+                }
+              }}
+            >
+              {label}
+            </button>
           ))}
         </div>
         <div className="footer-copy">© MOJDADOL</div>
