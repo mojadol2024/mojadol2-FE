@@ -111,8 +111,28 @@ LoginScreen.css
   font-size: 13px;
   background-color: #eee;
   border: 1px solid #aaa;
-  border-radius: 4px;
+  color: #333;
+  border-radius: 5px;
   cursor: pointer;
 }
 
-  
+.duplicate-check-button:hover {
+  background-color: #ddd;
+}
+
+.cancel-button {
+    background-color: #ccc; /* 취소 버튼의 기본 색상 */
+    color: #fff; /* 글자색 */
+    width: 500px;
+    height: 45px;
+    font-weight: bold;
+    font-size: 18px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    margin-bottom: -3px;
+}
+
+.cancel-button:hover {
+    background-color: #bbb; /* 마우스 오버 시 변경될 색상 */
+}
