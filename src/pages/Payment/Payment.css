@@ -9,7 +9,7 @@ html, body {
   min-height: 100%;
   width: 100%;
   box-sizing: border-box; 
-  /*padding-left: 20px; */
+  padding-left: 25px;
   /*padding-right: 290px; 뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
   padding-top: 20px;
   overflow-y: auto; /*body 에 overflow 적용했더니 이중으로 스크롤이 생겨서*/
@@ -31,6 +31,7 @@ html, body {
     font-weight: 700; /* mypage.css의 content h1 font-weight 적용 */
     color: #333;
     margin: 0;
+    margin-top: 20px;
     margin-bottom: 20px;
   }
 
