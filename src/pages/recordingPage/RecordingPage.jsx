@@ -5,6 +5,20 @@ import './RecordingPage.css';
 function RecordingPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  useEffect(() => {
+    const incomingQuestions = location.state?.questions;
+    const storedQuestions = JSON.parse(localStorage.getItem('questions') || '[]');
+
+    if (incomingQuestions && incomingQuestions.length > 0) {
+      console.log('📦 RecordingPage에서 전달된 questions:', incomingQuestions);
+      localStorage.setItem('questions', JSON.stringify(incomingQuestions));
+    } else if (storedQuestions.length > 0) {
+      console.log('📦 RecordingPage: localStorage fallback 사용');
+    } else {
+      console.warn('❌ RecordingPage: 질문 리스트 없음!');
+    }
+  }, []);
+  
   const questionObj = location.state?.question;
   const coverLetterId = location.state?.coverLetterId;
   const questions = location.state?.questions || JSON.parse(localStorage.getItem('questions') || '[]');
@@ -37,12 +51,25 @@ function RecordingPage() {
     const key = `videoTakes_${coverLetterId}_${questionIndex}`;
     const prevTakes = JSON.parse(localStorage.getItem(key) || '[]');
     if (prevTakes.length >= 3) {
-      alert('이 질문에 대한 최대 3개의 녹화가 이미 완료되었습니다.');
-      navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
-        state: { coverLetterId, questionIndex, question: questionObj, questions }
-      });
-      return;
-    }
+  const storedQuestions = JSON.parse(localStorage.getItem('questions') || '[]');
+
+  console.log("📦 questions from state:", questions);
+  console.log("🗃️ questions from localStorage:", storedQuestions);
+  console.log("➡️ TakeSelect로 navigate 시 전달할 questions:", questions.length > 0 ? questions : storedQuestions);
+
+  alert('이 질문에 대한 최대 3개의 녹화가 이미 완료되었습니다.');
+
+  navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
+    state: {
+      coverLetterId,
+      questionIndex,
+      question: questionObj,
+      questions: questions.length > 0 ? questions : storedQuestions,  // ✅ fallback 처리까지
+    },
+  });
+
+  return;
+}
     const checkDevices = async () => {
       try {
         const userStream = await navigator.mediaDevices.getUserMedia({
@@ -78,30 +105,32 @@ function RecordingPage() {
 
 
   const extractThumbnail = (blob) => {
-    return new Promise((resolve) => {
-      const video = document.createElement('video');
-      video.src = URL.createObjectURL(blob);
-      video.currentTime = 0;
-      video.muted = true;
-      video.playsInline = true;
+  return new Promise((resolve) => {
+    const video = document.createElement('video');
+    video.src = URL.createObjectURL(blob);
+    video.muted = true;
+    video.playsInline = true;
 
-      video.onloadeddata = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = 240;
-        canvas.height = 240;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, 240, 240);
-        const base64 = canvas.toDataURL('image/png');
-        resolve(base64);
-      };
-      video.onerror = () => {
-        console.error("❌ 썸네일 생성 실패");
-        resolve(null);
-      };
+    video.onloadedmetadata = () => {
+      video.currentTime = 0; // 영상 시작 시점으로 이동
+    };
 
-      video.load(); // ✅ 명시적으로 로드 시도
-    });
-  };
+    video.onseeked = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 240;
+      canvas.height = 240;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, 240, 240);
+      const base64 = canvas.toDataURL('image/png');
+      resolve(base64);
+    };
+
+    video.onerror = () => {
+      console.error("❌ 썸네일 생성 실패");
+      resolve(null);
+    };
+  });
+};
 
   const startRecording = async () => {
     try {
@@ -139,6 +168,8 @@ function RecordingPage() {
         const key = `videoTakes_${coverLetterId}_${questionIndex}`;
         const prevTakes = JSON.parse(localStorage.getItem(key) || '[]');
         localStorage.setItem(key, JSON.stringify([...prevTakes, newTake]));
+        const storedQuestions = JSON.parse(localStorage.getItem('questions') || '[]');
+
 
         // 영상 저장 후 navigate
         navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {

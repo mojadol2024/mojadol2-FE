@@ -32,10 +32,17 @@ function TakeSelect({ videoTakes, questions }) {
     const saved = JSON.parse(
       localStorage.getItem(`videoTakes_${coverLetterId}_${questionIndex}`) || '[]'
     );
-    if (incomingQuestions) {
-      localStorage.setItem('questions', JSON.stringify(incomingQuestions));
-      setQuestionList(incomingQuestions);
-    }
+    if (incomingQuestions && incomingQuestions.length > 0) {
+  console.log("✅ incomingQuestions로 설정됨");
+  localStorage.setItem('questions', JSON.stringify(incomingQuestions));
+  setQuestionList(incomingQuestions);
+} else if (storedQuestions && storedQuestions.length > 0) {
+  console.log("✅ storedQuestions로 fallback");
+  setQuestionList(storedQuestions);
+} else {
+  console.warn("❌ 질문 리스트 없음 (state도 localStorage도 실패)");
+}
+
     setTakes(saved);
     console.log('불러온 takes:', saved);
   }, [coverLetterId, questionIndex]);
@@ -87,15 +94,24 @@ function TakeSelect({ videoTakes, questions }) {
     });
   };
 
-  const handleNewQuestion = () => {
-    if (!questionList  || !questionList [questionIndex]) {
-      alert('질문을 찾을 수 없습니다.');
-      return;
+const handleNewQuestion = () => {
+  console.log("👉 [handleNewQuestion] questionList:", questionList);
+  console.log("👉 [handleNewQuestion] questionIndex:", questionIndex);
+
+  if (!questionList || questionList.length === 0) {
+    alert('질문을 찾을 수 없습니다.');
+    return;
+  }
+
+  navigate(`/ResumeQuestionPage?id=${coverLetterId}`, {
+    state: {
+      questions: questionList
     }
-    navigate(`/ResumeQuestionPage?id=${coverLetterId}&q=${questionIndex}`, { // 새 질문 녹화하기
-      state: { question: questionList[questionIndex], questions: questionList }  // ✅ 함께 전달
-    });
-  };
+  });
+};
+
+
+
 
   return (
     <div className="take-select-container">

@@ -10,7 +10,7 @@ function InterviewMain() {
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [searchType, setSearchType] = useState('전체');
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectAll, setSelectAll] = useState(false);
 
@@ -21,9 +21,10 @@ function InterviewMain() {
   useEffect(() => {
     // ResumeQuestionPage에서 저장된 flag가 있으면 리스트 다시 불러오기
     const shouldRefresh = localStorage.getItem("shouldRefreshMainList");
+    // navigate('/InterviewMain');
     if (shouldRefresh === "true") {
       fetchCoverLetters(); // 다시 불러오기
-      localStorage.removeItem("shouldRefreshMainList"); // 초기화
+       localStorage.removeItem("shouldRefreshMainList"); // 초기화
     } else {
       fetchCoverLetters();
     }
@@ -45,18 +46,25 @@ function InterviewMain() {
     try {
       const params = {
         page: 0,
-        size: 9
+        size: 1000
       };
       const response = await axiosInstance.get('/mojadol/api/v1/letter/list', { params });
       
+    console.log("✅ 리스트 API 응답 확인:", response.data); 
+      
       // ✅ 응답 가공: result가 배열이고, 각 result는 coverLetter 정보를 포함하고 있음
-      const list = response.data.content || [];
-      const mapped = list.map(item => ({
-        coverLetterId: item.coverLetter?.coverLetterId,
-        title: item.coverLetter?.title,
-        useVoucher: item.coverLetter?.useVoucher,
-        hasVideo: item.hasVideo ?? false
-      }));
+       const list = response.data.result?.content || [];             /*여기를 수정함*/
+      const mapped = list.map(item => {
+  const c = item.coverLetter || item;  // coverLetter가 있으면 그걸, 없으면 item 자체 사용
+  return {
+    coverLetterId: c.coverLetterId,
+    title: c.title,
+    useVoucher: c.useVoucher,
+    hasVideo: item.hasVideo ?? false,
+    resultAvailable: item.resultAvailable ?? false,
+  };
+});
+      mapped.sort((a, b) => b.coverLetterId - a.coverLetterId);
 
       setResults(mapped);
     } catch (error) {
@@ -94,24 +102,6 @@ function InterviewMain() {
       alert('결과지를 확인하는 데 실패했습니다.');
     }
   };
-
-  // const handleNavigateToVideoResult = async (coverLetterId) => {
-  //   try {
-  //     if (data.voucherType === 'FREE' || data.voucherType === 'GOLD') {
-  //       const totalQuestions = data.questions.length;
-  //       const totalAnalyzed = data.questions.filter(q => q.analyzed === true).length;
-
-  //       if (totalAnalyzed < totalQuestions) {
-  //         alert('결과지가 아직 생성되지 않았습니다. 모든 질문에 대한 영상 등록 후 결과 확인이 가능합니다.');
-  //         return;
-  //       }
-  //     }
-  //     navigate(`/results/${coverLetterId}`);  // pdf 결과지 페이지가 따로 만들어지는건가요? api?를 받은 어떤 페이지가 생성이 되는건가..?
-  //   } catch (error) {
-  //     console.error('결과지 확인 오류:', error);
-  //     alert('결과지를 확인하는 데 실패했습니다.');
-  //   }
-  // };
 
   const handleSearch = async () => {
     try {
@@ -197,6 +187,7 @@ function InterviewMain() {
           <button className="search-btn" onClick={handleSearch}>조회</button>
 
           <select value={perPage} onChange={e => { setPerPage(Number(e.target.value)); setCurrentPage(1); }}>
+            <option value={8}>8 개</option> 
             <option value={10}>10 개</option>
             <option value={50}>50 개</option>
             <option value={100}>100 개</option>
@@ -208,12 +199,19 @@ function InterviewMain() {
         {paginated.map((data, index) => (
           <div key={data.coverLetterId} className="card-container">
             <h4 className="card-title">{data.title || `결과지 ${index + 1}`}</h4>
+             
             <ResultCard
-              highlight={data.hasVideo}
-              onCheckQuestion={() => handleNavigateToQuestions(data.coverLetterId)}
-              onCheckResult={() => handleNavigateToVideoResult(data.coverLetterId, data.hasVideo)}
-              onDelete={() => handleDelete(data.coverLetterId)}
-            />
+  highlight={data.hasVideo}
+  onCheckQuestion={() => handleNavigateToQuestions(data.coverLetterId)}
+  onCheckResult={() => {
+    if (data.resultAvailable) {
+      handleNavigateToVideoResult(data.coverLetterId);
+    } else {
+      alert("모든 질문에 대한 영상이 등록되지 않았습니다.");
+    }
+  }}
+  onDelete={() => handleDelete(data.coverLetterId)}
+/>
           </div>
         ))}
       </div>

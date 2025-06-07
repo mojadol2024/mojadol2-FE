@@ -27,20 +27,24 @@ function ResumeQuestionPage() {
   }, []);
 
   const fetchLetterDetail = async () => {
-    try {
-      const response = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
-      const result = response.data.result;
+  try {
+    const response = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
+    const result = response.data.result;
 
-      setTitle(result.coverLetter?.title || '자소서 제목 없음');
-      setVoucherType(result.coverLetter?.useVoucher || 'FREE');
-      setQuestions(Array.isArray(result.questions) ? result.questions : []);
-    } catch (error) {
-      console.error('자소서 정보 조회 실패:', error);
-      alert('자소서 정보를 불러오는 데 실패했습니다.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    setTitle(result.coverLetter?.title || '자소서 제목 없음');
+    setVoucherType(result.coverLetter?.useVoucher || 'FREE');
+    const qList = Array.isArray(result.questions) ? result.questions : [];
+    setQuestions(qList);
+
+    localStorage.setItem('questions', JSON.stringify(qList));  // ✅ 요거 추가!!
+  } catch (error) {
+    console.error('자소서 정보 조회 실패:', error);
+    alert('자소서 정보를 불러오는 데 실패했습니다.');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleVideoUpload = async (index) => {
     const fileInput = document.createElement('input');
@@ -124,7 +128,11 @@ function ResumeQuestionPage() {
 
   const handleNavigateToRecord = (index) => {
     navigate(`/QuestionConfirmPage?id=${coverLetterId}&q=${index}`, {
-      state: { question: questions[index] }
+       state: {
+    question: questions[index],
+    questions: questions,            // ✅ 이 줄 추가!
+    coverLetterId: coverLetterId     // ✅ 혹시 몰라서 함께 넘겨주면 좋음
+  }
     });
   };
 
