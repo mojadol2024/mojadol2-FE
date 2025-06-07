@@ -415,7 +415,7 @@ function Payment() {
                         </div>
                         <div className="payment-popup-buttons">
                             <button className="confirm-button" onClick={handleConfirmPayment}>결제하기</button>
-                            <button className="cancel-button" onClick={handleClosePaymentPopup}>취소</button>
+                            <button className="p-cancel-button" onClick={handleClosePaymentPopup}>취소</button>
                         </div>
                     </div>
                 </div>
