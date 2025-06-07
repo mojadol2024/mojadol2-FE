@@ -177,7 +177,7 @@ function SignUp() {
       </div>
       <h3 className="title">회원가입</h3>
 
-      <div style={{ position: 'relative', width: '500px', marginBottom: '20px' }}>
+      <div style={{ position: 'relative', width: '500px', marginBottom: '15px' }}>
         <input
           type="text"
           name="userLoginId"
@@ -191,7 +191,7 @@ function SignUp() {
         </button>
       </div>
 
-      <div style={{ marginBottom: '10px' }}>
+      <div style={{ marginBottom: '15px' }}>
         <input
           type="password"
           name="userPw"
@@ -205,7 +205,7 @@ function SignUp() {
         )}
       </div>
 
-      <div style={{ marginBottom: '10px' }}>
+      <div style={{ marginBottom: '15px' }}>
         <input
           type="password"
           name="confirmPw"
@@ -221,7 +221,7 @@ function SignUp() {
         )}
       </div>
 
-      <div style={{ marginBottom: '20px' }}>
+      <div style={{ marginBottom: '15px' }}>
         <input
           type="text"
           name="userName"
@@ -232,7 +232,7 @@ function SignUp() {
         />
       </div>
 
-      <div style={{ position: 'relative', width: '500px', marginBottom: '20px' }}>
+      <div style={{ position: 'relative', width: '500px', marginBottom: '15px' }}>
         <input
           type="text"
           name="nickname"
@@ -246,7 +246,7 @@ function SignUp() {
         </button>
       </div>
 
-      <div style={{ marginBottom: '20px' }}>
+      <div style={{ marginBottom: '15px' }}>
         <input
           type="tel"
           name="phoneNumber"
@@ -272,7 +272,7 @@ function SignUp() {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '500px', gap: '16px' }}>
-        <button className="button" style={{ backgroundColor: '#ccc', color: '#000' }} onClick={() => navigate(-1)}>
+        <button className="cancel-button" onClick={() => navigate(-1)}>
           취소
         </button>
         <button className="button" onClick={handleSignup}>
