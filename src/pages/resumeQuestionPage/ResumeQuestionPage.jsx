@@ -48,7 +48,7 @@ function ResumeQuestionPage() {
     }
   };
 
-  const handleVideoUpload = async (index) => {
+  const handleVideoUpload = async (index) => {    {/*ㅇㅕㅇ상첨부*/}
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = 'video/*';
@@ -159,9 +159,9 @@ function ResumeQuestionPage() {
     <main className="resume-question-main">
       <div className="resume-header">
         <input className="resume-title" value={title} disabled />
-        <div className="button-group">
-          <button className="btn confirm" onClick={handleConfirm} disabled={voucherType === 'FREE' && !questions.every((_, i) => analysisResults[i]?.exists)}>결과 확인</button>
-          <button className="btn save" onClick={handleSave}>저장</button>
+        <div className="button-group-r">
+          <button className="btn-confirm" onClick={handleConfirm} disabled={voucherType === 'FREE' && !questions.every((_, i) => analysisResults[i]?.exists)}>결과 확인</button>
+          <button className="btn-save" onClick={handleSave}>저장</button>
         </div>
       </div>
       {loading ? (
@@ -170,26 +170,21 @@ function ResumeQuestionPage() {
         <div className="question-list">
           {questions.map((q, i) => (
             <div className="question-item" key={i}>
-              <div className="question-text">
+              <div className="question-text-r">
                 <span className="play-icon">▶</span>
                 질문 {i + 1}: "{q.content}"
               </div>
               <div className="question-actions">
                 <button
-                  className="btn attach"
-                  onClick={() => handleVideoUpload(i)}
-                  disabled={analysisResults[i]?.exists}
-                >영상 첨부</button>
-                <button
-                  className="btn record"
+                  className="btn-record"
                   onClick={() => handleNavigateToRecord(i)}
                   disabled={analysisResults[i]?.exists}
                 >영상 녹화</button>
                 {videos[i]?.uploaded && !videos[i]?.confirmed && !analysisResults[i]?.exists && (
                   <>
                     <span className="video-preview">첨부됨: {videos[i]?.url.split('/').pop()}</span>
-                    <button className="btn redo" onClick={() => handleDeleteVideo(i)}>재첨부</button>
-                    <button className="btn confirm" onClick={() => handleConfirmVideo(i)}>✓ 확인</button>
+                    <button className="btn-redo" onClick={() => handleDeleteVideo(i)}>재첨부</button>
+                    <button className="btn-confirm" onClick={() => handleConfirmVideo(i)}>✓ 확인</button>
                   </>
                 )}
               </div>
