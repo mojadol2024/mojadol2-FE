@@ -28,71 +28,51 @@ function QuestionConfirmPage() {
     });
   };
 
+  // // handleVideoUpload
+  // const handleVideoUpload = async () => {
+  //   const fileInput = document.createElement('input');
+  //   fileInput.type = 'file';
+  //   fileInput.accept = 'video/*';
+  //   fileInput.onchange = async (event) => {
+  //     const file = event.target.files[0];
+  //     if (!file) return;
 
-  // handleVideoUpload
-  const handleVideoUpload = async () => {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'video/*';
-    fileInput.onchange = async (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
+  //     const formData = new FormData();
+  //     formData.append('video', file);
+  //     formData.append('id', Number(coverLetterId));
 
-      const formData = new FormData();
-      formData.append('video', file);
-      formData.append('id', Number(coverLetterId));
+  //     try {
+  //       const response = await axiosInstance.post('/mojadol/api/v1/interview/upload', formData);
 
-      try {
-        const response = await axiosInstance.post('/mojadol/api/v1/interview/upload', formData);
+  //       // 서버에서 받은 interviewId 등 저장 (이건 상위에서 props로 받아야 할 수도 있음) - 이 코드가 필요한건지 고민해봐야할듯
+  //       setVideoInfo({
+  //         uploaded: true,
+  //         interviewId: response.data.result.interviewId,
+  //         url: response.data.result.videoUrl,
+  //         confirmed: false,
+  //       });
 
-        // 서버에서 받은 interviewId 등 저장 (이건 상위에서 props로 받아야 할 수도 있음) - 이 코드가 필요한건지 고민해봐야할듯
-        setVideoInfo({
-          uploaded: true,
-          interviewId: response.data.result.interviewId,
-          url: response.data.result.videoUrl,
-          confirmed: false,
-        });
-
-        alert('영상이 업로드되었습니다. 아래 확인 버튼을 눌러 AI 분석을 시작하세요.');
-      } catch (error) {
-        console.error('업로드 실패:', error.response?.data || error);
-        alert('영상 업로드 실패');
-      }
-    };
-    fileInput.click();
-  };
-
-  // handleConfirmVideo - 이것도 ai api..? 아닌가..
-  // const handleConfirmVideo = async () => {
-  //   if (!videoInfo?.interviewId) return alert('업로드된 영상이 없습니다.');
-
-  //   try {
-  //     await axiosInstance.post('/mojadol/api/v1/interview/분석 ai api', {
-  //       interviewId: videoInfo.interviewId,
-  //       coverLetterId,
-  //       questionIndex,
-  //     });
-
-  //     setVideoInfo((prev) => ({ ...prev, confirmed: true }));
-  //     alert('AI 분석이 시작되었습니다.');
-  //   } catch (err) {
-  //     console.error('AI 분석 실패:', err);
-  //     alert('AI 분석 요청 중 오류가 발생했습니다.');
-  //   }
+  //       alert('영상이 업로드되었습니다. 아래 확인 버튼을 눌러 AI 분석을 시작하세요.');
+  //     } catch (error) {
+  //       console.error('업로드 실패:', error.response?.data || error);
+  //       alert('영상 업로드 실패');
+  //     }
+  //   };
+  //   fileInput.click();
   // };
 
-  // handleDeleteVideo
-  const handleDeleteVideo = async () => {
-    if (!videoInfo?.interviewId) return alert('삭제할 영상이 없습니다.');
+  // // handleDeleteVideo
+  // const handleDeleteVideo = async () => {
+  //   if (!videoInfo?.interviewId) return alert('삭제할 영상이 없습니다.');
 
-    try {
-      await axiosInstance.delete(`/mojadol/api/v1/interview/delete/${videoInfo.interviewId}`);
-      setVideoInfo(null);
-      alert('영상이 삭제되었습니다.');
-    } catch (error) {
-      console.error('영상 삭제 실패:', error);
-    }
-  };
+  //   try {
+  //     await axiosInstance.delete(`/mojadol/api/v1/interview/delete/${videoInfo.interviewId}`);
+  //     setVideoInfo(null);
+  //     alert('영상이 삭제되었습니다.');
+  //   } catch (error) {
+  //     console.error('영상 삭제 실패:', error);
+  //   }
+  // };
 
   return (
     <div className="question-confirm-container">
@@ -112,7 +92,7 @@ function QuestionConfirmPage() {
           <p>녹화 시작 버튼 클릭 시 3초 카운트다운 후 녹화가 시작됩니다.</p>
         </div>
 
-        <div className="attach-wrapper">
+        {/* <div className="attach-wrapper">
           {!videoInfo?.url && (
             <button className="btn attach" onClick={handleVideoUpload}>영상 첨부</button>
           )}
@@ -125,7 +105,7 @@ function QuestionConfirmPage() {
           {videoInfo?.confirmed && (
             <div className="question-status done">분석 완료</div>
           )}
-        </div>
+        </div> */}
       </main>
     </div>
   );

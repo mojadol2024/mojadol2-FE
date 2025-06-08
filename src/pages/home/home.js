@@ -331,6 +331,21 @@ function Home() {
         cursor: 'pointer',
       }
     }, 'take선택지로 이동'),
+
+    h('button', {
+      onClick: () => navigate('/HomePage'),
+      style: {
+        padding: '10px 20px',
+        fontSize: '16px',
+        backgroundColor: '#10b981',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        marginTop: '10px',
+      }
+    }, '홈페이지로 이동'),
+
     
     h('button', {
       onClick: () => navigate('/Payment'), 

@@ -7,23 +7,19 @@ function TakeSelect({ videoTakes, questions }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedTake, setSelectedTake] = useState(null);
-  const [takes, setTakes] = useState([]); // Array of video data (base64 or thumbnail URLs)
+  const [takes, setTakes] = useState([]);
   const coverLetterId = new URLSearchParams(location.search).get('id');
   const questionIndex = new URLSearchParams(location.search).get('q');
   const questionObj = location.state?.question;
   const incomingQuestions = location.state?.questions;
   const storedQuestions = JSON.parse(localStorage.getItem('questions') || '[]');
   const [questionList, setQuestionList] = useState(questions || storedQuestions);
+
   const questionText = questionObj?.content
     ? `질문 ${parseInt(questionIndex, 10) + 1}: "${questionObj.content}"`
     : `질문 ${parseInt(questionIndex, 10) + 1}: "질문 내용을 불러올 수 없습니다."`;
 
-
   useEffect(() => {
-    console.log('coverLetterId:', coverLetterId);
-    console.log('questionIndex:', questionIndex);
-    console.log('question:', questionObj);
-
     if (!coverLetterId || !questionIndex || !questionObj) {
       alert('잘못된 접근입니다. 홈으로 이동합니다.');
       navigate('/');
@@ -44,7 +40,6 @@ function TakeSelect({ videoTakes, questions }) {
 }
 
     setTakes(saved);
-    console.log('불러온 takes:', saved);
   }, [coverLetterId, questionIndex]);
 
   const handleSelect = (index) => {
@@ -55,15 +50,14 @@ function TakeSelect({ videoTakes, questions }) {
     if (selectedTake === null) return;
 
     const selected = takes[selectedTake];
-
     if (!coverLetterId) {
       alert('coverLetterId를 찾을 수 없습니다.');
       return;
     }
 
     const formData = new FormData();
-    formData.append('video', selected.file);       // ✅ 'video' 필드명
-    formData.append('id', coverLetterId);          // ✅ 'id' 필드명
+    formData.append('video', selected.file);
+    formData.append('id', coverLetterId);
 
     try {
       const response = await axiosInstance.post(
@@ -75,8 +69,7 @@ function TakeSelect({ videoTakes, questions }) {
           },
         }
       );
-
-      const interviewId = response.data.result.interviewId; // ✅ 응답 구조 반영
+      const interviewId = response.data.result.interviewId;
       navigate(`/interview/result/${interviewId}`);
     } catch (error) {
       console.error('Upload failed:', error);
@@ -89,29 +82,49 @@ function TakeSelect({ videoTakes, questions }) {
       state: {
         coverLetterId,
         questionIndex,
-        question: questionObj,  // 변수 이름도 정확히 맞춰야 TakeSelect에서 받을 수 있음
+        question: questionObj,
       },
     });
   };
 
-const handleNewQuestion = () => {
-  console.log("👉 [handleNewQuestion] questionList:", questionList);
-  console.log("👉 [handleNewQuestion] questionIndex:", questionIndex);
-
-  if (!questionList || questionList.length === 0) {
-    alert('질문을 찾을 수 없습니다.');
-    return;
-  }
-
-  navigate(`/ResumeQuestionPage?id=${coverLetterId}`, {
-    state: {
-      questions: questionList
+  const handleNewQuestion = async () => {
+    if (!questionList || !questionList[questionIndex]) {
+      alert('질문을 찾을 수 없습니다.');
+      return;
     }
-  });
-};
 
+    if (selectedTake === null) {
+      alert('새로운 질문으로 이동하려면 업로드할 영상을 선택하세요.');
+      return;
+    }
 
+    const selected = takes[selectedTake];
+    const formData = new FormData();
+    formData.append('video', selected.file);
+    formData.append('id', coverLetterId);
 
+    try {
+      const response = await axiosInstance.post(
+        '/mojadol/api/v1/interview/upload',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      alert('영상 업로드 성공. 새 질문으로 이동합니다.');
+    } catch (error) {
+      console.error('Upload before new question failed:', error);
+      alert('업로드에 실패했습니다. 새 질문으로 이동하지 않습니다.');
+      return;
+    }
+
+    navigate(`/ResumeQuestionPage?id=${coverLetterId}&q=${questionIndex}`, {
+      state: { question: questionList[questionIndex], questions: questionList },
+    });
+  };
 
   return (
     <div className="take-select-container">
@@ -137,14 +150,19 @@ const handleNewQuestion = () => {
                 onClick={() => handleSelect(index)}
               ></div>
               <span>Take {index + 1}</span>
-              <img src={take.imageUrl} alt={`Take ${index + 1}`} className="take-image" onError={() => console.warn(`❗ 이미지 로드 실패: Take ${index + 1}`)}/>
+              <img
+                src={take.imageUrl}
+                alt={`Take ${index + 1}`}
+                className="take-image"
+                onError={() => console.warn(`❗ 이미지 로드 실패: Take ${index + 1}`)}
+              />
             </div>
           ))}
         </div>
 
         <div className="take-buttons">
           <button className="outline" onClick={handleNewQuestion}>
-            새로운 질문 선택 (새 질문 선택시 녹화 결과는 누적됩니다)
+            새로운 질문 선택 (녹화 영상은 자동 업로드됨)
           </button>
           <button
             className={selectedTake !== null ? 'active' : 'disabled'}

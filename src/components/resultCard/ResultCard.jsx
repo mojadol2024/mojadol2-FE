@@ -27,11 +27,7 @@ function ResultCard({ highlight, onCheckQuestion, onCheckResult, onDelete }) {
   return (
     <div className="result-card">
       <div className="user-icon">👤</div>
-      <div className="bar-wrapper">
-        <div className="bar blue" />
-        <div className="bar green" />
-      </div>
-
+      
       <button className="question-btn" onClick={onCheckQuestion}>
         자소서 질문 확인
       </button>
