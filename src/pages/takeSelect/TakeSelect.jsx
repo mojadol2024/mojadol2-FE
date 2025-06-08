@@ -24,22 +24,15 @@ function TakeSelect() {
     const incoming = location.state?.questions || [];
     const stored = JSON.parse(localStorage.getItem('questions') || '[]');
 
-    if (incoming.length > 0) {
-      localStorage.setItem('questions', JSON.stringify(incoming));
-      setQuestionList(incoming);
-      if (!questionObj || !questionObj.id) {
-        const fallback = incoming[questionIndex];
-        if (fallback) {
-          setQuestionObj({
-            id: fallback.questionId,
-            content: fallback.content,
-          });
-        }
+    const source = incoming.length > 0 ? incoming : stored;
+
+    if (source.length > 0) {
+      if (incoming.length > 0) {
+        localStorage.setItem('questions', JSON.stringify(incoming));
       }
-    } else if (stored.length > 0) {
-      setQuestionList(stored);
+      setQuestionList(source);
       if (!questionObj || !questionObj.id) {
-        const fallback = stored[questionIndex];
+        const fallback = source[questionIndex];
         if (fallback) {
           setQuestionObj({
             id: fallback.questionId,
@@ -60,7 +53,6 @@ function TakeSelect() {
     setSelectedTake(index);
   };
 
-  // ✅ 공통 업로드 함수로 정리
   const uploadSelectedTake = async () => {
     if (selectedTake === null) {
       alert("업로드할 영상을 선택해주세요.");
@@ -76,18 +68,9 @@ function TakeSelect() {
     formData.append('video', file);
     formData.append('id', questionObj.id);
 
-    console.log("🟨 업로드 실행");
-    console.log("questionObj.id:", questionObj?.id);
-    console.log("video:", file);
-
     try {
       const response = await axiosInstance.post('/mojadol/api/v1/interview/upload', formData);
-
-      console.log("✅ 서버 응답:", response.data);
-      console.log("📁 저장된 interviewId:", response.data?.result?.interviewId);
-      console.log("🎬 저장된 videoUrl:", response.data?.result?.videoUrl);
-
-      return response.data.result.interviewId;
+      return response.data.result?.interviewId || null;
     } catch (error) {
       console.error('❌ 업로드 실패:', error.response || error);
       alert('영상 업로드에 실패했습니다.');
@@ -95,41 +78,28 @@ function TakeSelect() {
     }
   };
 
-  const handleUpload = async () => {
-    const interviewId = await uploadSelectedTake();
-    if (interviewId) {
-      alert("업로드 성공! 결과지로 이동합니다.");
-      navigate(`/interview/result/${interviewId}`);
+  const fetchAnalysisResults = async () => {
+    try {
+      const res = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
+      return res.data.result.analysisResults || {};
+    } catch (err) {
+      console.error("❌ 분석 결과 갱신 실패", err);
+      return {};
     }
   };
 
-  const handleNewQuestion = async () => {
-    if (!questionList || questionList.length === 0) {
-      alert('질문을 찾을 수 없습니다.');
-      return;
-    }
-
-    const nextIndex = questionIndex + 1;
-    const nextQuestion = questionList[nextIndex];
-
-    if (!nextQuestion) {
-      alert('더 이상 남은 질문이 없습니다.');
-      return;
-    }
-
+  const handleUploadAndReturn = async () => {
     const interviewId = await uploadSelectedTake();
     if (!interviewId) return;
 
-    alert('영상 업로드 성공. 다음 질문으로 이동합니다.');
+    const analysisResults = await fetchAnalysisResults();
 
-    navigate(`/ResumeQuestionPage?id=${coverLetterId}&q=${nextIndex}`, {
+    alert("영상 업로드 성공! 질문 선택 화면으로 돌아갑니다.");
+    navigate(`/ResumeQuestionPage?id=${coverLetterId}`, {
       state: {
-        question: {
-          id: nextQuestion.questionId,
-          content: nextQuestion.content,
-        },
         questions: questionList,
-      },
+        analysisResults,
+      }
     });
   };
 
@@ -177,15 +147,12 @@ function TakeSelect() {
         </div>
 
         <div className="take-buttons">
-          <button className="outline" onClick={handleNewQuestion}>
-            새로운 질문 선택 (녹화 영상은 자동 업로드됨)
-          </button>
           <button
             className={selectedTake !== null ? 'active' : 'disabled'}
-            onClick={handleUpload}
+            onClick={handleUploadAndReturn}
             disabled={selectedTake === null}
           >
-            결과지 생성
+            업로드 완료하고 돌아가기
           </button>
         </div>
       </main>

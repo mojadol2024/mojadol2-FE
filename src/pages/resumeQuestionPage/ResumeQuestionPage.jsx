@@ -13,7 +13,6 @@ function ResumeQuestionPage() {
   const [title, setTitle] = useState('');
   const [questions, setQuestions] = useState([]);
   const [videos, setVideos] = useState({});
-  const [analysisResults, setAnalysisResults] = useState({});
   const [voucherType, setVoucherType] = useState(null);
 
   useEffect(() => {
@@ -25,10 +24,12 @@ function ResumeQuestionPage() {
       navigate('/login');
       return;
     }
+
     if (!coverLetterId) {
       alert('자소서 ID가 없습니다.');
       return;
     }
+
     fetchLetterDetail();
   }, [location, coverLetterId]);
 
@@ -36,12 +37,10 @@ function ResumeQuestionPage() {
     try {
       const response = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
       const result = response.data.result;
+
       setTitle(result.coverLetter?.title || '자소서 제목 없음');
       setVoucherType(result.coverLetter?.useVoucher || 'FREE');
       setQuestions(Array.isArray(result.questions) ? result.questions : []);
-      if (result.analysisResults) {
-        setAnalysisResults(result.analysisResults);
-      }
     } catch (error) {
       console.error('자소서 정보 조회 실패:', error);
       alert('자소서 정보를 불러오는 데 실패했습니다.');
@@ -58,7 +57,7 @@ function ResumeQuestionPage() {
         state: {
           question: questions[index],
           questions: questions,
-          coverLetterId: coverLetterId,
+          coverLetterId,
         }
       });
     } else {
@@ -66,7 +65,7 @@ function ResumeQuestionPage() {
         state: {
           question: questions[index],
           questions: questions,
-          coverLetterId: coverLetterId,
+          coverLetterId,
           questionIndex: index,
         }
       });
@@ -74,19 +73,22 @@ function ResumeQuestionPage() {
   };
 
   const handleConfirm = () => {
+    const isUploaded = (q) => q.is_answered === 1;
+
     if (voucherType === 'FREE') {
-      const allAnalyzed = questions.every((_, i) => analysisResults[i]?.exists);
-      if (!allAnalyzed) {
+      const allUploaded = questions.every(isUploaded);
+      if (!allUploaded) {
         alert('모든 질문에 대해 영상이 등록되어야 결과 확인이 가능합니다.');
         return;
       }
     } else if (voucherType === 'GOLD') {
-      const anyAnalyzed = questions.some((_, i) => analysisResults[i]?.exists);
-      if (!anyAnalyzed) {
+      const anyUploaded = questions.some(isUploaded);
+      if (!anyUploaded) {
         alert('최소 한 개 이상의 질문에 대해 영상이 등록되어야 결과 확인이 가능합니다.');
         return;
       }
     }
+
     navigate(`/PdfView/${coverLetterId}`);
   };
 
@@ -102,37 +104,45 @@ function ResumeQuestionPage() {
           <button
             className="btn-confirm"
             onClick={handleConfirm}
-            disabled={voucherType === 'FREE' && !questions.every((_, i) => analysisResults[i]?.exists)}
+            disabled={
+              voucherType === 'FREE' &&
+              !questions.every(q => q.is_answered === 1)
+            }
           >
             결과 확인
           </button>
           <button className="btn-save" onClick={handleSave}>저장</button>
         </div>
       </div>
+
       {loading ? (
         <p className="loading">질문을 불러오는 중입니다...</p>
       ) : (
         <div className="question-list">
-          {questions.map((q, i) => (
-            <div className="question-item" key={i}>
-              <div className="question-text-r">
-                <span className="play-icon">▶</span>
-                질문 {i + 1}: "{q.content}"
+          {questions.map((q, i) => {
+            const isUploaded = q.is_answered === 1;
+
+            return (
+              <div className="question-item" key={i}>
+                <div className="question-text-r">
+                  <span className="play-icon">▶</span>
+                  질문 {i + 1}: "{q.content}"
+                </div>
+                <div className="question-actions">
+                  <button
+                    className="btn-record"
+                    onClick={() => handleNavigateToRecord(i)}
+                    disabled={isUploaded}
+                  >
+                    {isUploaded ? '녹화 완료' : '영상 녹화'}
+                  </button>
+                </div>
+                {isUploaded && (
+                  <div className="question-status done">녹화 완료</div>
+                )}
               </div>
-              <div className="question-actions">
-                <button
-                  className="btn-record"
-                  onClick={() => handleNavigateToRecord(i)}
-                  disabled={analysisResults[i]?.exists}
-                >
-                  영상 녹화
-                </button>
-              </div>
-              {analysisResults[i]?.exists && (
-                <div className="question-status done">분석 완료</div>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </main>
