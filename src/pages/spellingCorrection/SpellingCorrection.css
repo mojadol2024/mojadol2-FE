@@ -27,7 +27,7 @@ html, body {
 .register-page input[type="text"] {
   font-size: 18px;
   padding: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
   width: 95%;
@@ -121,7 +121,7 @@ html, body {
 }
 
 .editor-box textarea {
-  height: 300px;
+  height: 200px;
   padding: 16px;
   font-size: 16px;
   resize: vertical;
@@ -133,7 +133,7 @@ html, body {
   padding: 10px;
   /*min-height: 150px;
   max-height: 300px;*/
-  height: 300px;
+  height: 200px;
   overflow-y: auto;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -183,14 +183,14 @@ textarea {
   text-decoration: underline wavy red;
 }
 
-.button-section {
+.button-section-s {
   display: flex;
   gap: 16px;
   justify-content: center;  /* 가운데 정렬 */
-  margin-top: 24px;         /* 위쪽 여백 추가 (선택) */
+  margin-top: 10px;         /* 위쪽 여백 추가 (선택) */
 }
 
-.button-section button {
+.button-section-s button {
   background-color: #51E0C4;
   color: #fff;
   border: none;
@@ -202,6 +202,6 @@ textarea {
 
 }
 
-.button-section button:hover {
+.button-section-s button:hover {
   background-color: #3cc7a9;
 }
