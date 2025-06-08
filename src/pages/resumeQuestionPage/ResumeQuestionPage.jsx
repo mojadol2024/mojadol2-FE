@@ -135,10 +135,16 @@ function ResumeQuestionPage() {
   };
 
   const handleNavigateToRecord = (index) => {
-    navigate(`/QuestionConfirmPage?id=${coverLetterId}&q=${index}`, {
-      state: { question: questions[index] }
+    navigate(`/RecordingPage`, {
+      state: {
+        question: questions[index],
+        questions: questions,
+        coverLetterId: coverLetterId,
+        questionIndex: index,
+      }
     });
   };
+
 
   const handleConfirm = () => {
     if (voucherType === 'FREE') {

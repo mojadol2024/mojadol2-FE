@@ -3,17 +3,16 @@ import './TakeSelect.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axiosInstance from '../../lib/axiosInstance';
 
-function TakeSelect({ videoTakes, questions }) {
+function TakeSelect() {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedTake, setSelectedTake] = useState(null);
-  const [takes, setTakes] = useState([]);
   const coverLetterId = new URLSearchParams(location.search).get('id');
   const questionIndex = new URLSearchParams(location.search).get('q');
   const questionObj = location.state?.question;
-  const incomingQuestions = location.state?.questions;
-  const storedQuestions = JSON.parse(localStorage.getItem('questions') || '[]');
-  const [questionList, setQuestionList] = useState(questions || storedQuestions);
+  const initialTakes = location.state?.takes || [];
+  const [takes, setTakes] = useState(initialTakes);
+  const [questionList, setQuestionList] = useState(location.state?.questions || []);
 
   const questionText = questionObj?.content
     ? `질문 ${parseInt(questionIndex, 10) + 1}: "${questionObj.content}"`
@@ -23,46 +22,36 @@ function TakeSelect({ videoTakes, questions }) {
     if (!coverLetterId || !questionIndex || !questionObj) {
       alert('잘못된 접근입니다. 홈으로 이동합니다.');
       navigate('/');
-      return;
     }
-    const saved = JSON.parse(
-      localStorage.getItem(`videoTakes_${coverLetterId}_${questionIndex}`) || '[]'
-    );
-    if (incomingQuestions) {
-      localStorage.setItem('questions', JSON.stringify(incomingQuestions));
-      setQuestionList(incomingQuestions);
-    }
-    setTakes(saved);
-  }, [coverLetterId, questionIndex]);
+  }, []);
 
   const handleSelect = (index) => {
     setSelectedTake(index);
   };
 
   const handleUpload = async () => {
-    if (selectedTake === null) return;
-
-    const selected = takes[selectedTake];
-    if (!coverLetterId) {
-      alert('coverLetterId를 찾을 수 없습니다.');
+    if (selectedTake === null) {
+      alert("업로드할 영상을 선택해주세요.");
       return;
     }
 
+    const selected = takes[selectedTake];
+    const file = new File([selected.file], `question_${questionIndex}.webm`, {
+      type: 'video/webm',
+    });
+
     const formData = new FormData();
-    formData.append('video', selected.file);
+    formData.append('video', file);
     formData.append('id', coverLetterId);
 
     try {
       const response = await axiosInstance.post(
         '/mojadol/api/v1/interview/upload',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
+        formData
       );
+
       const interviewId = response.data.result.interviewId;
+      alert("업로드 성공! 결과지로 이동합니다.");
       navigate(`/interview/result/${interviewId}`);
     } catch (error) {
       console.error('Upload failed:', error);
@@ -70,47 +59,27 @@ function TakeSelect({ videoTakes, questions }) {
     }
   };
 
-  const handleNavigateToRecording = () => {
-    navigate(`/RecordingPage?id=${coverLetterId}&q=${questionIndex}`, {
-      state: {
-        coverLetterId,
-        questionIndex,
-        question: questionObj,
-      },
-    });
-  };
-
   const handleNewQuestion = async () => {
-    if (!questionList || !questionList[questionIndex]) {
-      alert('질문을 찾을 수 없습니다.');
-      return;
-    }
-
     if (selectedTake === null) {
-      alert('새로운 질문으로 이동하려면 업로드할 영상을 선택하세요.');
+      alert("새 질문으로 이동하려면 업로드할 영상을 선택하세요.");
       return;
     }
 
     const selected = takes[selectedTake];
+    const file = new File([selected.file], `question_${questionIndex}.webm`, {
+      type: 'video/webm',
+    });
+
     const formData = new FormData();
-    formData.append('video', selected.file);
+    formData.append('video', file);
     formData.append('id', coverLetterId);
 
     try {
-      const response = await axiosInstance.post(
-        '/mojadol/api/v1/interview/upload',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-
+      await axiosInstance.post('mojadol/api/v1/interview/upload', formData);
       alert('영상 업로드 성공. 새 질문으로 이동합니다.');
     } catch (error) {
       console.error('Upload before new question failed:', error);
-      alert('업로드에 실패했습니다. 새 질문으로 이동하지 않습니다.');
+      alert('업로드 실패. 이동 취소.');
       return;
     }
 
@@ -119,12 +88,21 @@ function TakeSelect({ videoTakes, questions }) {
     });
   };
 
+  const handleNavigateToRecording = () => {
+    navigate(`/RecordingPage?id=${coverLetterId}&q=${questionIndex}`, {
+      state: {
+        coverLetterId,
+        questionIndex,
+        question: questionObj,
+        takes: takes, // 기존 takes 유지
+      },
+    });
+  };
+
   return (
     <div className="take-select-container">
       <main className="take-main">
-        <div className="take-question">
-          {questionText}
-        </div>
+        <div className="take-question">{questionText}</div>
 
         {takes.length < 3 && (
           <button className="take-rec-btn" onClick={handleNavigateToRecording}>

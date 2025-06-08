@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../lib/axiosInstance';
 import './RecordingPage.css';
 
 function RecordingPage() {
@@ -8,8 +7,9 @@ function RecordingPage() {
   const navigate = useNavigate();
   const questionObj = location.state?.question;
   const coverLetterId = location.state?.coverLetterId;
-  const questions = location.state?.questions || JSON.parse(localStorage.getItem('questions') || '[]');
+  const questions = location.state?.questions || [];
   const questionIndex = location.state?.questionIndex;
+
   const questionText = questionObj?.content
     ? `질문 ${parseInt(questionIndex, 10) + 1}: "${questionObj.content}"`
     : `질문 ${parseInt(questionIndex, 10) + 1}: "질문 내용을 불러올 수 없습니다."`;
@@ -19,18 +19,11 @@ function RecordingPage() {
   const audioContextRef = useRef(null);
   const [recording, setRecording] = useState(false);
   const [stream, setStream] = useState(null);
-  const [recordedChunks, setRecordedChunks] = useState([]);
   const [countdown, setCountdown] = useState(3);
   const [step, setStep] = useState('ready');
   const [timer, setTimer] = useState(0);
   const [silenceCount, setSilenceCount] = useState(0);
   const maxRecordingSeconds = 5;
-
-  // ✅ 로그 확인용 useEffect
-  useEffect(() => {
-    console.log("✅ coverLetterId:", coverLetterId);
-    console.log("✅ questionObj:", questionObj);
-  }, []);
 
   useEffect(() => {
     const streamRef = { current: null };
@@ -38,16 +31,6 @@ function RecordingPage() {
     if (!coverLetterId || !questionObj) {
       alert('잘못된 접근입니다. 다시 질문을 선택해주세요.');
       navigate(`/ResumeQuestionPage?id=${coverLetterId}`);
-      return;
-    }
-
-    const key = `videoTakes_${coverLetterId}_${questionIndex}`;
-    const prevTakes = JSON.parse(localStorage.getItem(key) || '[]');
-    if (prevTakes.length >= 3) {
-      alert('이 질문에 대한 최대 3개의 녹화가 이미 완료되었습니다.');
-      navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
-        state: { coverLetterId, questionIndex, question: questionObj, questions }
-      });
       return;
     }
 
@@ -115,41 +98,22 @@ function RecordingPage() {
 
       mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'video/webm' });
-        setRecordedChunks(chunks);
         const thumbnail = await extractThumbnail(blob);
 
-        const formData = new FormData();
-        formData.append('video', blob, `question_${questionIndex}.webm`);
-        formData.append('id', coverLetterId);
+        const newTake = {
+          file: blob,
+          imageUrl: thumbnail,
+        };
 
-        try {
-          const response = await axiosInstance.post('/interview/upload', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
-
-          const { interviewId, videoUrl } = response.data.result;
-
-          const newTake = {
-            takeNumber: Date.now(),
-            file: blob,
-            imageUrl: thumbnail,
-            interviewId,
-            videoUrl,
-          };
-
-          const key = `videoTakes_${coverLetterId}_${questionIndex}`;
-          const prevTakes = JSON.parse(localStorage.getItem(key) || '[]');
-          localStorage.setItem(key, JSON.stringify([...prevTakes, newTake]));
-
-          navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
-            state: { coverLetterId, questionIndex, question: questionObj },
-          });
-        } catch (err) {
-          console.error('영상 업로드 실패:', err);
-          alert('영상 업로드에 실패했습니다.');
-        }
+        navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
+          state: {
+            coverLetterId,
+            questionIndex,
+            question: questionObj,
+            takes: [newTake], // 반드시 전달
+            questions,
+          },
+        });
       };
 
       mediaRecorder.start();
