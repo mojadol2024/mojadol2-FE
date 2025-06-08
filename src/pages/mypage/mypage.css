@@ -21,7 +21,7 @@
 /* 상단 버튼 섹션 */
 .mypage-top-buttons {
     text-align: right;
-    margin-bottom: 25px;
+    margin-bottom: 10px;
 }
 
 .mypage-edit-button,
@@ -34,7 +34,7 @@
     font-size: 20px; 
     cursor: pointer;
     transition: background-color 0.2s ease; 
-    margin-right:10px;
+    margin-right:20px;
 }
 
 .mypage-edit-button:hover,
@@ -44,7 +44,7 @@
 
 /* 폼 테이블 스타일 */
 .mypage-form-table {
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .mypage-form-row {
@@ -69,7 +69,7 @@
 
 .mypage-form-input input[type="text"],
 .mypage-form-input input[type="password"] {
-    width: 85%; 
+    width: 90%; 
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 7px;
@@ -160,8 +160,8 @@
     display: flex; 
     justify-content: flex-end; 
     align-items: center; 
-    margin-top: 20px;
-    padding-top: 20px;
+    margin-top: 5px;
+    padding-top: 10px;
     width: 96%; 
     box-sizing: border-box; 
 }

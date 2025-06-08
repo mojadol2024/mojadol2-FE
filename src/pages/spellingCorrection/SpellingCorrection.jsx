@@ -14,6 +14,8 @@ function SelfIntroRegister() {
   const [showVoucherModal, setShowVoucherModal] = useState(false);
   const [freeVouchers, setFreeVouchers] = useState([]);
   const [goldVouchers, setGoldVouchers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingS, setIsLoadingS] = useState(false);
 
   useEffect(() => {
     fetchVoucherList();
@@ -83,6 +85,7 @@ function SelfIntroRegister() {
       return; // 여기서 중단
     }
     try {
+      setIsLoadingS(true);
       const response = await axiosInstance.post(
         '/mojadol/api/v1/letter/spell-checker',
         { data: organizedText }
@@ -93,6 +96,8 @@ function SelfIntroRegister() {
     } catch (error) {
       console.error('맞춤법 검사 오류:', error);
       alert('맞춤법 검사에 실패했습니다.');
+    } finally {
+      setIsLoadingS(false);
     }
   };
 
@@ -126,6 +131,8 @@ function SelfIntroRegister() {
       if (!confirmContinue) return;
     }
 
+    setIsLoading(true);
+
     try {
       const cleanedText = originalText;
 
@@ -148,7 +155,7 @@ function SelfIntroRegister() {
         }
       );
       const savedId = response.data.result.coverLetterId; // ✅ 이렇게 수정
-      alert('자소서가 저장되었습니다. 질문 생성을 기다리는 중입니다...'); // 나중에 자소서가 저장됨과 동시에 뜨는 거라 애매하네..
+      alert('자소서가 저장되었습니다.'); // 나중에 자소서가 저장됨과 동시에 뜨는 거라 애매하네..
 
       const success = await waitForQuestions(savedId);
       if (!success) {
@@ -164,8 +171,28 @@ function SelfIntroRegister() {
     } catch (error) {
       console.error('자소서 저장 오류:', error);
       alert('자소서 저장에 실패했습니다.');
+    } finally {
+      setIsLoading(false); // ✅ 로딩 종료
     }
   };
+
+  if (isLoadingS) {
+    return (
+      <div className="loading-state-container">
+        <div className="spinner"></div>
+        <p className="loading-message">맞춤법 검사 중입니다...</p>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="loading-state-container">
+        <div className="spinner"></div>
+        <p className="loading-message">맞춤형 면접 질문을 생성 중입니다...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="register-page">
@@ -245,7 +272,7 @@ function SelfIntroRegister() {
         )}
       </div>
 
-      <div className="button-section">
+      <div className="button-section-s">
         <button onClick={handleSpellCheck}>맞춤법 검사</button>
         <button onClick={handleSaveClick}>문서 평가 및 질문 생성</button>
       </div>

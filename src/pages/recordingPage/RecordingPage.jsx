@@ -21,29 +21,28 @@ function RecordingPage() {
   
   const questionObj = location.state?.question;
   const coverLetterId = location.state?.coverLetterId;
-  const questions = location.state?.questions || JSON.parse(localStorage.getItem('questions') || '[]');
+  const questions = location.state?.questions || [];
   const questionIndex = location.state?.questionIndex;
-  const questionText = location.state?.question?.content
-    ? `질문 ${parseInt(questionIndex, 10) + 1}: "${location.state.question.content}"`
+  const prevTakes = location.state?.takes || [];
+
+  const realQuestion = questions[questionIndex];
+  const questionText = realQuestion?.content
+    ? `질문 ${parseInt(questionIndex, 10) + 1}: "${realQuestion.content}"`
     : `질문 ${parseInt(questionIndex, 10) + 1}: "질문 내용을 불러올 수 없습니다."`;
 
   const videoRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const audioContextRef = useRef(null);
+  const streamRef = useRef(null); // ✅ stream을 ref로 관리
   const [recording, setRecording] = useState(false);
-  const [stream, setStream] = useState(null);
-  const [recordedChunks, setRecordedChunks] = useState([]);
   const [countdown, setCountdown] = useState(3);
   const [step, setStep] = useState('ready');
   const [timer, setTimer] = useState(0);
   const [silenceCount, setSilenceCount] = useState(0);
-  const maxRecordingSeconds = 5; // 5 minutes
-  let silenceCounter = 0;
+  const maxRecordingSeconds = 300;
 
   useEffect(() => {
-    const streamRef = { current: null };
-
-    if (!coverLetterId || !questionObj) {
+    if (!coverLetterId || !realQuestion) {
       alert('잘못된 접근입니다. 다시 질문을 선택해주세요.');
       navigate(`/ResumeQuestionPage?id=${coverLetterId}`);
       return;
@@ -51,25 +50,25 @@ function RecordingPage() {
     const key = `videoTakes_${coverLetterId}_${questionIndex}`;
     const prevTakes = JSON.parse(localStorage.getItem(key) || '[]');
     if (prevTakes.length >= 3) {
-  const storedQuestions = JSON.parse(localStorage.getItem('questions') || '[]');
+      const storedQuestions = JSON.parse(localStorage.getItem('questions') || '[]');
 
-  console.log("📦 questions from state:", questions);
-  console.log("🗃️ questions from localStorage:", storedQuestions);
-  console.log("➡️ TakeSelect로 navigate 시 전달할 questions:", questions.length > 0 ? questions : storedQuestions);
+      console.log("📦 questions from state:", questions);
+      console.log("🗃️ questions from localStorage:", storedQuestions);
+      console.log("➡️ TakeSelect로 navigate 시 전달할 questions:", questions.length > 0 ? questions : storedQuestions);
 
-  alert('이 질문에 대한 최대 3개의 녹화가 이미 완료되었습니다.');
+      alert('이 질문에 대한 최대 3개의 녹화가 이미 완료되었습니다.');
 
-  navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
-    state: {
-      coverLetterId,
-      questionIndex,
-      question: questionObj,
-      questions: questions.length > 0 ? questions : storedQuestions,  // ✅ fallback 처리까지
-    },
-  });
+      navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
+        state: {
+          coverLetterId,
+          questionIndex,
+          question: questionObj,
+          questions: questions.length > 0 ? questions : storedQuestions,  // ✅ fallback 처리까지
+        },
+      });
 
-  return;
-}
+      return;
+    }
     const checkDevices = async () => {
       try {
         const userStream = await navigator.mediaDevices.getUserMedia({
@@ -98,11 +97,11 @@ function RecordingPage() {
     return () => {
       // ✅ 페이지 떠날 때 마이크/카메라 스트림 정지
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
       }
     };
-  }, [navigate, coverLetterId, questionObj]);
-
+  }, []);
 
   const extractThumbnail = (blob) => {
   return new Promise((resolve) => {
@@ -134,67 +133,80 @@ function RecordingPage() {
 
   const startRecording = async () => {
     try {
-      const userStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      setStream(userStream);
-      videoRef.current.srcObject = userStream;
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      if (!stream) {
+        alert("카메라 스트림이 없습니다. 새로고침 해주세요.");
+        return;
+      }
 
-      const mediaRecorder = new MediaRecorder(userStream);
+      streamRef.current = stream;
+      setStream(stream);
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+
+      const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
-
       const chunks = [];
+
       mediaRecorder.ondataavailable = (e) => {
         if (e.data.size > 0) chunks.push(e.data);
       };
 
       mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'video/webm' });
-        setRecordedChunks(chunks);
-        console.log('녹화 완료, 영상 크기:', blob.size);
+
+        if (blob.size === 0) {
+          alert("녹화된 데이터가 없습니다. 다시 시도해주세요.");
+          return;
+        }
 
         const thumbnail = await extractThumbnail(blob);
-        console.log("생성된 썸네일:", thumbnail);
+        const key = `videoTakes_${coverLetterId}_${questionIndex}`;
+        const prevTakes = JSON.parse(localStorage.getItem(key) || '[]');
 
         const newTake = {
           takeNumber: Date.now(),
           file: blob,
           imageUrl: thumbnail,
         };
-        console.log("newTake:", newTake);
+
+        localStorage.setItem(key, JSON.stringify([...prevTakes, newTake]));
 
         if (!coverLetterId || !questionIndex) {
           alert('녹화 데이터를 저장할 수 없습니다. 필수 정보 누락');
           return;
         }
-        const key = `videoTakes_${coverLetterId}_${questionIndex}`;
-        const prevTakes = JSON.parse(localStorage.getItem(key) || '[]');
-        localStorage.setItem(key, JSON.stringify([...prevTakes, newTake]));
-        const storedQuestions = JSON.parse(localStorage.getItem('questions') || '[]');
 
-
-        // 영상 저장 후 navigate
         navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
           state: {
             coverLetterId,
             questionIndex,
-            question: questionObj,
+            question: {
+              id: realQuestion?.questionId,
+              content: realQuestion?.content,
+            },
+            questions,
+            takes: [...prevTakes, newTake],
           },
         });
       };
 
       mediaRecorder.start();
       setRecording(true);
-      monitorSilence(userStream);
-
+      monitorSilence(stream);
     } catch (err) {
       console.error('카메라/마이크 접근 실패', err);
       alert("카메라 또는 마이크에 접근할 수 없습니다. 권한을 허용했는지 확인해주세요.");
-      navigate(-1); // 이전 페이지로 되돌리거나 원하는 fallback 처리
+      navigate(-1);
     }
   };
 
+
   const stopRecording = () => {
     mediaRecorderRef.current?.stop();
-    stream?.getTracks().forEach(track => track.stop());
+    streamRef.current?.getTracks().forEach(track => track.stop());
   };
 
   const monitorSilence = (stream) => {
@@ -210,7 +222,6 @@ function RecordingPage() {
       analyser.getByteTimeDomainData(buffer);
       const silent = buffer.every(val => Math.abs(val - 128) < 2);
       setSilenceCount(prev => silent ? prev + 1 : 0);
-
       setTimer(prev => {
         const next = prev + 1;
         if (next >= maxRecordingSeconds || silenceCount >= 3) {
@@ -228,7 +239,9 @@ function RecordingPage() {
       return () => clearTimeout(timer);
     } else if (step === 'countdown' && countdown === 0) {
       setStep('recording');
-      startRecording();
+      setTimeout(() => {
+        startRecording();
+      }, 200);
     }
   }, [step, countdown]);
 

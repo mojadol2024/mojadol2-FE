@@ -10,7 +10,7 @@ function InterviewMain() {
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [searchType, setSearchType] = useState('전체');
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectAll, setSelectAll] = useState(false);
 
@@ -21,9 +21,10 @@ function InterviewMain() {
   useEffect(() => {
     // ResumeQuestionPage에서 저장된 flag가 있으면 리스트 다시 불러오기
     const shouldRefresh = localStorage.getItem("shouldRefreshMainList");
+    // navigate('/InterviewMain');
     if (shouldRefresh === "true") {
       fetchCoverLetters(); // 다시 불러오기
-      localStorage.removeItem("shouldRefreshMainList"); // 초기화
+       localStorage.removeItem("shouldRefreshMainList"); // 초기화
     } else {
       fetchCoverLetters();
     }
@@ -45,19 +46,26 @@ function InterviewMain() {
     try {
       const params = {
         page: 0,
-        size: 9
+        size: 1000
       };
       const response = await axiosInstance.get('/mojadol/api/v1/letter/list', { params });
       console.log('📦 불러온 리스트:', response.data.content);
 
       // ✅ 응답 가공: result가 배열이고, 각 result는 coverLetter 정보를 포함하고 있음
       const list = response.data.result?.content || []; // ✅ 이렇게 바꿔야 실제 리스트를 가져옴
+      // const mapped = list.map(item => ({
+      //   coverLetterId: item.coverLetterId,
+      //   title: item.title,                                                 얘로 하면 제일 최근에 올린에가 뒤로 가서 바꿨는데 필요하면 이걸로 써요
+      //   useVoucher: item.useVoucher ?? 'FREE',
+      //   hasVideo: true // 💡 지금 이 응답에는 hasVideo 정보가 없어서 임의로 true 지정 (혹시 추후에 따로 추가 필요!) 
+      // }));
       const mapped = list.map(item => ({
-        coverLetterId: item.coverLetterId,
-        title: item.title,
-        useVoucher: item.useVoucher ?? 'FREE',
-        hasVideo: true // 💡 지금 이 응답에는 hasVideo 정보가 없어서 임의로 true 지정 (혹시 추후에 따로 추가 필요!)
-      }));
+  coverLetterId: item.coverLetterId,
+  title: item.title,
+  useVoucher: item.useVoucher ?? 'FREE',
+  hasVideo: true
+})).reverse(); // 👉 최신순 정렬
+
       setResults(mapped);
       console.log('🔍 전체 results:', mapped);
       console.log('🧾 paginated:', paginated);
@@ -87,33 +95,40 @@ function InterviewMain() {
 
 
   const handleSearch = async () => {
-    try {
-      const params = {
-        page: currentPage - 1,
-        size: perPage, // 유저가 선택한 값: 10, 50, 100 등
-      };
+  try {
+    const params = {
+      page: currentPage - 1,
+      size: perPage,
+    };
 
-      if (selectedPeriod !== '전체' && selectedPeriod !== '직접입력') {
-        const from = calculateDateFromPeriod(selectedPeriod);
-        params.startDate = from.toISOString().slice(0, 10);
-        params.endDate = new Date().toISOString().slice(0, 10);
-      } else if (selectedPeriod === '직접입력' && dateRange.start && dateRange.end) {
-        params.startDate = dateRange.start;
-        params.endDate = dateRange.end;
-      }
-
-      if (searchType !== '전체' && searchKeyword) {
-        params.searchType = searchType;
-        params.keyword = searchKeyword;
-      }
-
-      const response = await axiosInstance.get('/mojadol/api/v1/letter/list', { params });
-      setResults(response.data.content || []);
-      setCurrentPage(1);
-    } catch (error) {
-      console.error('검색 실패:', error);
+    // 날짜 조건 처리
+    if (selectedPeriod !== '전체' && selectedPeriod !== '직접입력') {
+      const from = calculateDateFromPeriod(selectedPeriod);
+      params.startDate = from.toISOString().slice(0, 10);
+      params.endDate = new Date().toISOString().slice(0, 10);
+    } else if (selectedPeriod === '직접입력' && dateRange.start && dateRange.end) {
+      params.startDate = dateRange.start;
+      params.endDate = dateRange.end;
     }
-  };
+
+    const response = await axiosInstance.get('/mojadol/api/v1/letter/list', { params });
+
+    let filtered = response.data.result?.content || [];
+
+    if (searchType === '문서명' && searchKeyword.trim() !== '') {
+      const keyword = searchKeyword.toLowerCase();
+      filtered = filtered.filter(item =>
+        item.title?.toLowerCase().includes(keyword)
+      );
+    }
+
+    setResults(filtered);
+    setCurrentPage(1);
+  } catch (error) {
+    console.error('검색 실패:', error);
+  }
+};
+
 
   const handleSelectAll = (e) => {
     setSelectAll(e.target.checked);
@@ -170,6 +185,7 @@ function InterviewMain() {
           <button className="search-btn" onClick={handleSearch}>조회</button>
 
           <select value={perPage} onChange={e => { setPerPage(Number(e.target.value)); setCurrentPage(1); }}>
+            <option value={8}>8 개</option> 
             <option value={10}>10 개</option>
             <option value={50}>50 개</option>
             <option value={100}>100 개</option>
@@ -181,6 +197,7 @@ function InterviewMain() {
         {paginated.map((data, index) => (
           <div key={data.coverLetterId} className="card-container">
             <h4 className="card-title">{data.title || `결과지 ${index + 1}`}</h4>
+             
             <ResultCard
               highlight={data.hasVideo}
               onCheckQuestion={() => handleNavigateToQuestions(data.coverLetterId)}

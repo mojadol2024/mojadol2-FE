@@ -85,13 +85,12 @@ html, body {
 
 /* '저장' 버튼 */
 .btn-save {
-    color: #bbb;
-    background-color: transparent;
-    border: 1.5px solid #bbb; 
+background-color: #dcdcdc;
+  color: #555;
+  border: #dcdcdc;
 }
 .btn-save:hover {
-    color: #fff; 
-    background-color: #ccc; 
+    background-color: #c7c7c7;
 }
 
 /* 질문 목록 컨테이너 */
