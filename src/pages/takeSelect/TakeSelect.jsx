@@ -152,7 +152,7 @@ function TakeSelect() {
             onClick={handleUploadAndReturn}
             disabled={selectedTake === null}
           >
-            업로드 완료하고 돌아가기
+            영상 저장
           </button>
         </div>
       </main>
