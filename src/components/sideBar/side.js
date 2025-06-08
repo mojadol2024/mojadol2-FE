@@ -1,11 +1,13 @@
-import React from 'react'; import { useNavigate } from 'react-router-dom'; // ✅ 추가 import axios from 'axios'; import { FaFileAlt, FaEdit, FaTicketAlt, FaUserCog, FaHeadset, FaSignOutAlt } from 'react-icons/fa'; import logo from '../../assets/logo.png'; import './side.css'; function Sidebar() { const navigate = useNavigate(); // ✅ 추가 const handleLogout = async () => { const confirmLogout = window.confirm('정말 로그아웃하시겠습니까?'); if (!confirmLogout) return; try { const token = localStorage.getItem('accessToken'); if (!token) { alert('로그인 정보가 없습니다.'); return; } const response = await axios.post( 'https://myeonjub.store/api/mojadol/api/v1/auth/logout', {}, { headers: { Authorization: `Bearer ${token}`, }, } ); if (response.data.isSuccess) { alert('로그아웃 성공!'); localStorage.removeItem('accessToken'); window.location.href = '/login'; } else { alert('로그아웃 실패: ' + response.data.message); } } catch (error) { console.error('로그아웃 중 에러 발생:', error); alert('로그아웃 실패'); } }; return ( <div className="sidebar"> <div className="logo" onClick={() => navigate('/InterviewMain')} style={{ cursor: 'pointer' }}> <img src={logo} alt="로고" className="logo-image" /> </div> <ul className="menu top-menu"> {/* ✅ 자소서 검사 → SpellingCorrection 이동 */} <li onClick={() => navigate('/SpellingCorrection')} style={{ cursor: 'pointer' }}> <FaFileAlt size={20} style={{ marginRight: '10px' }} /> 자소서 검사 </li> {/* <li><FaEdit size={20} style={{ marginRight: '10px' }} /> 첨삭현황</li>}    #우선 첨삭?은 저희가 하는게 없으니까 주석으로 없애놨습니다. {/* ✅ 이용권 관리 클릭 시 /Payment로 이동 */} <li onClick={() => navigate('/Payment')} style={{ cursor: 'pointer' }}> <FaTicketAlt size={20} style={{ marginRight: '10px' }} /> 이용권 관리 </li> </ul> <ul className="menu bottom-menu"> <li onClick={() => navigate('/mypage')} style={{ cursor: 'pointer' }}> <FaUserCog size={20} style={{ marginRight: '10px' }} /> 개인정보 관리     {/*근데 애는 안쓰는? 형태만 있고 기능은 없는거 같긴한데 일단 페이지는 있어서 연결은 했어요 안쓸거면 지우면 될거같아요*/} </li> {/* <li><FaHeadset size={20} style={{ marginRight: '10px' }} /> 고객 센터</li>    고객 센터도 일단 안쓰는거같아 주석처리 했습니다 */} <li onClick={handleLogout} style={{ cursor: 'pointer' }}> <FaSignOutAlt size={20} style={{ marginRight: '10px' }} /> 로그아웃 </li> </ul> </div> ); } export default Sidebar;import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FaFileAlt, FaEdit, FaTicketAlt, FaUserCog, FaHeadset, FaSignOutAlt } from 'react-icons/fa';
-import logo from '../../assets/logo.png';
+import { FaFileAlt, FaEdit, FaTicketAlt, FaUserCog, FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa';
+import logo from '../../assets/logo_h.png';
 import './side.css';
 
-function Sidebar() {
-  const navigate = useNavigate(); // ✅ 추가
+function Sidebar({ onToggle }) {
+  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(true);
 
   const handleLogout = async () => {
     const confirmLogout = window.confirm('정말 로그아웃하시겠습니까?');
@@ -41,40 +43,67 @@ function Sidebar() {
     }
   };
 
+  const toggleSidebar = () => {
+    const newState = !isOpen;
+    setIsOpen(newState);
+    if (onToggle) { // onToggle prop이 존재하면 호출
+      onToggle(newState); // 변경된 상태 전달
+    }
+  };
+
   return (
-    <div className="sidebar">
-      <div
-        className="logo"
-        onClick={() => navigate('/InterviewMain')}
-        style={{ cursor: 'pointer' }}
-      >
-        <img src={logo} alt="로고" className="logo-image" />
+    <div className={`sidebar-wrapper ${isOpen ? '' : 'sidebar-collapsed'}`}>
+      {/* 토글 버튼을 sidebar-wrapper의 직계 자식으로 배치 */}
+      <button className="sidebar-toggle-button" onClick={toggleSidebar}>
+        {isOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+      </button>
+
+      <div className="sidebar-logo-section">
+        <div
+          className="sidebar-logo"
+          onClick={() => navigate('/homepage')}
+          style={{ cursor: 'pointer' }}
+        >
+          <img src={logo} alt="로고" className="sidebar-logo-image" />
+        </div>
       </div>
 
-      <ul className="menu top-menu">
-        {/* ✅ 자소서 검사 → SpellingCorrection 이동 */}
-        <li onClick={() => navigate('/SpellingCorrection')} style={{ cursor: 'pointer' }}>
-          <FaFileAlt size={20} style={{ marginRight: '10px' }} /> 자소서 검사
+      <ul className="sidebar-menu sidebar-top-menu">
+        <li className="sidebar-menu-item" onClick={() => navigate('/InterviewMain')} style={{ cursor: 'pointer' }}>
+          <FaFileAlt size={20} className="sidebar-menu-icon" />
+          <div className="sidebar-menu-text-wrapper">
+            <span className="sidebar-menu-text">면접 목록</span>
+          </div>
         </li>
 
-        {/* <li><FaEdit size={20} style={{ marginRight: '10px' }} /> 첨삭현황</li> #우선 첨삭?은 저희가 하는게 없으니까 주석으로 없애놨습니다. */}
+        <li className="sidebar-menu-item" onClick={() => navigate('/SpellingCorrection')} style={{ cursor: 'pointer' }}>
+          <FaEdit size={20} className="sidebar-menu-icon" />
+          <div className="sidebar-menu-text-wrapper">
+            <span className="sidebar-menu-text">자기소개서 등록</span>
+          </div>
+        </li>
 
-        {/* ✅ 이용권 관리 클릭 시 /Payment로 이동 */}
-        <li onClick={() => navigate('/Payment')} style={{ cursor: 'pointer' }}>
-          <FaTicketAlt size={20} style={{ marginRight: '10px' }} /> 이용권 관리
+        <li className="sidebar-menu-item" onClick={() => navigate('/Payment')} style={{ cursor: 'pointer' }}>
+          <FaTicketAlt size={20} className="sidebar-menu-icon" />
+          <div className="sidebar-menu-text-wrapper">
+            <span className="sidebar-menu-text">이용권 관리</span>
+          </div>
         </li>
       </ul>
 
-      <ul className="menu bottom-menu">
-        <li onClick={() => navigate('/mypage')} style={{ cursor: 'pointer' }}>
-          <FaUserCog size={20} style={{ marginRight: '10px' }} /> 개인정보 관리
-          {/*근데 애는 안쓰는? 형태만 있고 기능은 없는거 같긴한데 일단 페이지는 있어서 연결은 했어요 안쓸거면 지우면 될거같아요*/}
+      <ul className="sidebar-menu sidebar-bottom-menu">
+        <li className="sidebar-menu-item" onClick={() => navigate('/mypage')} style={{ cursor: 'pointer' }}>
+          <FaUserCog size={20} className="sidebar-menu-icon" />
+          <div className="sidebar-menu-text-wrapper">
+            <span className="sidebar-menu-text">개인정보 관리</span>
+          </div>
         </li>
 
-        {/* <li><FaHeadset size={20} style={{ marginRight: '10px' }} /> 고객 센터</li> 고객 센터도 일단 안쓰는거같아 주석처리 했습니다 */}
-
-        <li onClick={handleLogout} style={{ cursor: 'pointer' }}>
-          <FaSignOutAlt size={20} style={{ marginRight: '10px' }} /> 로그아웃
+        <li className="sidebar-menu-item" onClick={handleLogout} style={{ cursor: 'pointer' }}>
+          <FaSignOutAlt size={20} className="sidebar-menu-icon" />
+          <div className="sidebar-menu-text-wrapper">
+            <span className="sidebar-menu-text">로그아웃</span>
+          </div>
         </li>
       </ul>
     </div>
