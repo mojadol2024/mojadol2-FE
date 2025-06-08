@@ -57,8 +57,8 @@
 
 /* 사이드바가 접혔을 때 로고 섹션의 마진 조정 */
 .sidebar-collapsed .sidebar-logo-section {
-    margin-top: 35px; 
-    margin-bottom: 20px; 
+    margin-top: 43px; 
+    margin-bottom: 15px; 
 }
 
 /* 로고 스타일 */
@@ -79,7 +79,7 @@
 .sidebar-logo-image {
   width: 100px;
   height: auto;
-  transition: width 0.3s ease;
+  transition: width 0.8s ease;
 }
 
 /* 사이드바가 접혔을 때 로고 이미지 크기 조정 */
