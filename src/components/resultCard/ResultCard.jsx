@@ -1,9 +1,16 @@
 import './ResultCard.css';
-function ResultCard({ highlight, onCheckQuestion, onCheckResult, onDelete }) {
+
+// ⭐ useVoucher prop 추가
+function ResultCard({ highlight, useVoucher, onCheckQuestion, onCheckResult, onDelete }) {
+  const isGold = useVoucher === 'GOLD'; // ⭐ GOLD 이용권인지 확인하는 변수
+
   return (
-    <div className="result-card">
-      <div className="user-icon">👤</div>
-      
+    <div className={`result-card ${isGold ? 'gold-card' : ''}`}> {/* ⭐ gold-card 클래스 추가 */}
+      <div className="card-header"> {/* ⭐ 헤더를 감싸는 div 추가 */}
+        <div className="user-icon">👤</div>
+        {isGold && <span className="voucher-tag gold-tag">GOLD</span>} {/* ⭐ GOLD 태그 조건부 렌더링 */}
+      </div>
+
       <button className="question-btn" onClick={onCheckQuestion}>
         자소서 질문 확인
       </button>
