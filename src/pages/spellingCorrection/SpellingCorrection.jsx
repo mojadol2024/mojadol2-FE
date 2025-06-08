@@ -245,7 +245,7 @@ function SelfIntroRegister() {
         )}
       </div>
 
-      <div className="button-section">
+      <div className="button-section-s">
         <button onClick={handleSpellCheck}>맞춤법 검사</button>
         <button onClick={handleSaveClick}>문서 평가 및 질문 생성</button>
       </div>
