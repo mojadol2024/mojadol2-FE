@@ -81,10 +81,10 @@ function TakeSelect({ videoTakes, questions }) {
   };
 
   const handleNewQuestion = async () => {
-    if (!questionList || !questionList[questionIndex]) {
-      alert('질문을 찾을 수 없습니다.');
-      return;
-    }
+    // if (!questionList || !questionList[questionIndex]) {
+    //   alert('질문을 찾을 수 없습니다.');
+    //   return;
+    // }
 
     if (selectedTake === null) {
       alert('새로운 질문으로 이동하려면 업로드할 영상을 선택하세요.');
