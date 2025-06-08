@@ -205,3 +205,30 @@ textarea {
 .button-section-s button:hover {
   background-color: #3cc7a9;
 }
+
+.loading-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 700px; /* 로딩 중에도 최소 높이를 유지하여 레이아웃 흔들림 방지 */
+  color: #555;
+  /*padding-left: 20px; 
+  padding-right: 290px; */
+}
+
+/* 스피너 스타일 */
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #51E0C4; /* 스피너 색상 - 메인 색상으로 변경 */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto; /* 중앙 정렬 */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
