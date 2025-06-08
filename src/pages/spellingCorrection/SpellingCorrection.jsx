@@ -186,7 +186,7 @@ function SelfIntroRegister() {
               value={originalText}
               onChange={(e) => {
                 const text = e.target.value;
-                if (text.length <= 3000) {
+                if (text.length <= 1200) {
                   setOriginalText(text);
                 } else {
                   alert("자소서는 최대 1200자까지만 입력 가능합니다.");
@@ -198,7 +198,7 @@ function SelfIntroRegister() {
               ※ 맞춤법 검사는 1200자까지만 가능하며, 실제 저장은 원본 자소서를 기준으로 합니다.
             </p>            
             <p style={{ fontSize: '13px'}}>
-              글자 수: {sanitizeText(originalText).length} / 3000자
+              글자 수: {sanitizeText(originalText).length} / 1200자
             </p>
             {originalText.length > 1200 && (
               <p style={{ color: 'red', fontWeight: 'bold' }}>
