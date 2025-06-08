@@ -37,12 +37,7 @@ function RecordingPage() {
     if (prevTakes.length >= 3) {
       alert('이 질문에 대한 최대 3개의 녹화가 이미 완료되었습니다.');
       navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
-        state: {
-          coverLetterId,
-          questionIndex,
-          question: questionObj,
-          questions,
-        },
+        state: { coverLetterId, questionIndex, question: questionObj, questions },
       });
       return;
     }
@@ -60,10 +55,7 @@ function RecordingPage() {
     };
 
     checkDevices();
-
-    return () => {
-      stream?.getTracks().forEach(track => track.stop());
-    };
+    return () => stream?.getTracks().forEach(track => track.stop());
   }, [navigate, coverLetterId, questionObj, questionIndex]);
 
   const extractThumbnail = (blob) => {
@@ -72,9 +64,7 @@ function RecordingPage() {
       video.src = URL.createObjectURL(blob);
       video.muted = true;
       video.playsInline = true;
-      video.onloadedmetadata = () => {
-        video.currentTime = 0;
-      };
+      video.onloadedmetadata = () => (video.currentTime = 0);
       video.onseeked = () => {
         const canvas = document.createElement('canvas');
         canvas.width = 240;
@@ -84,6 +74,15 @@ function RecordingPage() {
         resolve(canvas.toDataURL('image/png'));
       };
       video.onerror = () => resolve(null);
+    });
+  };
+
+  const blobToBase64 = (blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result); // base64 string
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
     });
   };
 
@@ -103,10 +102,12 @@ function RecordingPage() {
 
       mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'video/webm' });
+        const base64 = await blobToBase64(blob); // ✅ base64 변환
         const thumbnail = await extractThumbnail(blob);
+
         const newTake = {
           takeNumber: Date.now(),
-          file: blob,
+          file: base64, // ✅ base64로 저장
           imageUrl: thumbnail,
         };
 
@@ -115,12 +116,7 @@ function RecordingPage() {
         localStorage.setItem(key, JSON.stringify([...prevTakes, newTake]));
 
         navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
-          state: {
-            coverLetterId,
-            questionIndex,
-            question: questionObj,
-            questions,
-          },
+          state: { coverLetterId, questionIndex, question: questionObj, questions },
         });
       };
 
@@ -180,9 +176,7 @@ function RecordingPage() {
             <button className="record-button" onClick={() => setStep('countdown')}>🎥 시작</button>
           </div>
         )}
-
         {step === 'countdown' && <div className="countdown-number">{countdown}</div>}
-
         {step === 'recording' && (
           <>
             <div className="recording-top-bar">

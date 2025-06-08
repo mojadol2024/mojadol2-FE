@@ -3,6 +3,18 @@ import './TakeSelect.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axiosInstance from '../../lib/axiosInstance';
 
+console.log('BaseURL:', axiosInstance.defaults.baseURL);
+
+
+// ✅ base64 문자열 → Blob 변환 함수
+function base64ToBlob(base64) {
+  const [meta, data] = base64.split(',');
+  const mime = meta.match(/:(.*?);/)[1];
+  const binary = atob(data);
+  const array = Uint8Array.from(binary, char => char.charCodeAt(0));
+  return new Blob([array], { type: mime });
+}
+
 function TakeSelect() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -55,12 +67,16 @@ function TakeSelect() {
     }
 
     const selected = takes[selectedTake];
-    const file = new File([selected.file], `question_${questionIndex}.webm`, {
+    const blob = base64ToBlob(selected.file); // ✅ base64 복원
+    const file = new File([blob], `question_${questionIndex}.webm`, {
       type: 'video/webm',
     });
+    console.log('coverLetterId:', coverLetterId);
+    console.log('file:', file);
+    console.log('file size:', file.size);
 
     const formData = new FormData();
-    formData.append('video', file);
+    formData.append('video', file); // ✅ filename 포함
     formData.append('id', coverLetterId);
 
     try {
@@ -76,6 +92,8 @@ function TakeSelect() {
       console.error('Upload failed:', error);
       alert('영상 업로드에 실패했습니다.');
     }
+
+
   };
 
   const handleNewQuestion = async () => {
@@ -98,8 +116,13 @@ function TakeSelect() {
     }
 
     const selected = takes[selectedTake];
+    const blob = base64ToBlob(selected.file);
+    const file = new File([blob], `question_${questionIndex}.webm`, {
+      type: 'video/webm',
+    });
+
     const formData = new FormData();
-    formData.append('video', selected.file);
+    formData.append('video', file);
     formData.append('id', coverLetterId);
 
     try {
