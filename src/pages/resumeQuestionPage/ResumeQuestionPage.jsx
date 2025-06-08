@@ -133,7 +133,11 @@ function ResumeQuestionPage() {
 
   const handleNavigateToRecord = (index) => {
     navigate(`/QuestionConfirmPage?id=${coverLetterId}&q=${index}`, {
-      state: { question: questions[index] }
+       state: {
+    question: questions[index],
+    questions: questions,            // ✅ 이 줄 추가!
+    coverLetterId: coverLetterId     // ✅ 혹시 몰라서 함께 넘겨주면 좋음
+  }
     });
   };
 

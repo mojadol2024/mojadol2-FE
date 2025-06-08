@@ -10,7 +10,7 @@ function InterviewMain() {
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [searchType, setSearchType] = useState('전체');
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectAll, setSelectAll] = useState(false);
 
@@ -21,9 +21,10 @@ function InterviewMain() {
   useEffect(() => {
     // ResumeQuestionPage에서 저장된 flag가 있으면 리스트 다시 불러오기
     const shouldRefresh = localStorage.getItem("shouldRefreshMainList");
+    // navigate('/InterviewMain');
     if (shouldRefresh === "true") {
       fetchCoverLetters(); // 다시 불러오기
-      localStorage.removeItem("shouldRefreshMainList"); // 초기화
+       localStorage.removeItem("shouldRefreshMainList"); // 초기화
     } else {
       fetchCoverLetters();
     }
@@ -45,7 +46,7 @@ function InterviewMain() {
     try {
       const params = {
         page: 0,
-        size: 9
+        size: 1000
       };
       const response = await axiosInstance.get('/mojadol/api/v1/letter/list', { params });
       console.log('📦 불러온 리스트:', response.data.content);
@@ -170,6 +171,7 @@ function InterviewMain() {
           <button className="search-btn" onClick={handleSearch}>조회</button>
 
           <select value={perPage} onChange={e => { setPerPage(Number(e.target.value)); setCurrentPage(1); }}>
+            <option value={8}>8 개</option> 
             <option value={10}>10 개</option>
             <option value={50}>50 개</option>
             <option value={100}>100 개</option>
@@ -181,6 +183,7 @@ function InterviewMain() {
         {paginated.map((data, index) => (
           <div key={data.coverLetterId} className="card-container">
             <h4 className="card-title">{data.title || `결과지 ${index + 1}`}</h4>
+             
             <ResultCard
               highlight={data.hasVideo}
               onCheckQuestion={() => handleNavigateToQuestions(data.coverLetterId)}
