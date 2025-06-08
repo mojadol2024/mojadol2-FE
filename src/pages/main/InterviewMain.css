@@ -1,20 +1,18 @@
-/* InterviewMain.css */
-
+html, body {  
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #fff;
+  /*margin-left: 130px; side 때문에 margin 줘야돼돼요*/
+}
 /* 전체 화면 채우기 */
 .main-content {
-  /* display: flex;
-  flex-direction: column;
-  justify-content: space-between; */
-  width: 100vw;
-  height: calc(100vh - 80px);
-  overflow-y: hidden;
-  overflow-x: hidden;
-  padding: 32px;
-  box-sizing: border-box;
-  font-family: 'Pretendard', sans-serif;
-  background-color: #fff;
-  padding-right: 340px;
-  padding-bottom: 80px;
+  flex-grow: 1;
+  min-height: 100%;
+  width: 100%;
+  box-sizing: border-box; 
+  padding-left: 25px;
+  /*padding-right: 290px; 뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
+  padding-top: 20px;
+  overflow-y: auto; 
 }
 
 /* 타이틀 & 버튼 */
@@ -97,7 +95,6 @@ select, input[type="date"], input[type="text"] {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 280px;
 }
 
 .card-title {
@@ -121,18 +118,6 @@ select, input[type="date"], input[type="text"] {
   overflow-y: auto;
 }
 
-.result-card {
-  background-color: #fcf9e6;
-  border-radius: 16px;
-  padding: 24px;
-  width: 280px;
-  height: 320px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
 
 .pagination {
   position: fixed;
