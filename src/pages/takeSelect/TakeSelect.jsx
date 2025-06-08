@@ -15,6 +15,7 @@ function TakeSelect({ videoTakes, questions }) {
   const storedQuestions = JSON.parse(localStorage.getItem('questions') || '[]');
   const [questionList, setQuestionList] = useState(questions || storedQuestions);
 
+
   const questionText = questionObj?.content
     ? `질문 ${parseInt(questionIndex, 10) + 1}: "${questionObj.content}"`
     : `질문 ${parseInt(questionIndex, 10) + 1}: "질문 내용을 불러올 수 없습니다."`;
