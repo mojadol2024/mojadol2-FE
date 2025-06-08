@@ -5,7 +5,7 @@ import { FaFileAlt, FaEdit, FaTicketAlt, FaUserCog, FaSignOutAlt, FaBars, FaTime
 import logo from '../../assets/logo_h.png';
 import './side.css';
 
-function Sidebar() {
+function Sidebar({ onToggle }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
 
@@ -44,7 +44,11 @@ function Sidebar() {
   };
 
   const toggleSidebar = () => {
-    setIsOpen(!isOpen);
+    const newState = !isOpen;
+    setIsOpen(newState);
+    if (onToggle) { // onToggle prop이 존재하면 호출
+      onToggle(newState); // 변경된 상태 전달
+    }
   };
 
   return (
