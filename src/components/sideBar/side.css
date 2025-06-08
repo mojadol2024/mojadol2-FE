@@ -1,5 +1,5 @@
-.sidebar {
-  position: fixed;
+.sidebar-wrapper {
+  position: fixed; 
   top: 0;
   left: 0;
   width: 250px;
@@ -13,46 +13,152 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
+
+  transition: width 0.3s ease-in-out, padding 0.3s ease-in-out;
+  overflow: hidden;
 }
 
-.logo {
+/* 사이드바가 접혔을 때의 스타일 */
+.sidebar-collapsed {
+  width: 80px;
+  padding: 28px 10px;
+}
+
+.sidebar-toggle-button {
+  position: absolute; 
+  top: 20px; 
+  right: 25px; 
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 5px;
   display: flex;
-  justify-content: center; /* 중앙 정렬 */
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease; 
+  z-index: 20; 
+}
+
+.sidebar-toggle-button:hover {
+  color: #51E0C4;
+}
+
+/* 로고 섹션 (로고만 포함) */
+.sidebar-logo-section {
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
+  align-items: center; 
+  width: 100%;
+  margin-bottom: 10px; 
+  margin-top: 10px; 
+}
+
+/* 사이드바가 접혔을 때 로고 섹션의 마진 조정 */
+.sidebar-collapsed .sidebar-logo-section {
+    margin-top: 35px; 
+    margin-bottom: 20px; 
+}
+
+/* 로고 스타일 */
+.sidebar-logo {
+  display: flex;
+  justify-content: center;
   align-items: center;
   width: 100%;
-  margin-bottom: 50px;
 }
 
-.logo img {
-  width: 150px; /* 로고 크기 조정 */
+/* 사이드바가 접혔을 때 로고 크기 조정 */
+.sidebar-collapsed .sidebar-logo {
+    max-width: 60px;
+    margin: 0 auto;
+}
+
+/* 로고 이미지 */
+.sidebar-logo-image {
+  width: 100px;
   height: auto;
+  transition: width 0.3s ease;
 }
 
-.menu {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
+/* 사이드바가 접혔을 때 로고 이미지 크기 조정 */
+.sidebar-collapsed .sidebar-logo-image {
+    width: 85%;
+    height: auto;
 }
 
-.top-menu {
-  flex-grow: 0;
-}
-
-.bottom-menu {
-  margin-top: auto;
-}
-
-.menu li {
+/* 메뉴 항목 */
+.sidebar-menu-item {
   font-size: 18px;
   padding: 15px 10px;
   cursor: pointer;
   display: flex;
   align-items: center;
   transition: background-color 0.3s;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.menu li:hover {
+/* 사이드바가 접혔을 때 메뉴 항목 스타일 */
+.sidebar-collapsed .sidebar-menu-item {
+  justify-content: center; /* 아이콘을 중앙으로 정렬 */
+  padding: 15px 0;
+}
+
+/* 아이콘 스타일 */
+.sidebar-menu-item .sidebar-menu-icon {
+  margin-right: 10px;
+  /*transition: margin-right 0.3s ease;*/
+}
+
+/* 사이드바가 접혔을 때 아이콘 마진은 그대로 유지 (텍스트 컨테이너로 조절) */
+.sidebar-collapsed .sidebar-menu-item .sidebar-menu-icon {
+    margin-right: 0; 
+}
+
+/* 메뉴 텍스트를 감싸는 컨테이너 */
+.sidebar-menu-text-wrapper {
+    flex-grow: 1;
+    overflow: hidden;
+    transition: max-width 0.4s ease; /*, opacity 0.3s ease, transform 0.3s ease*/
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+
+    transform: translateX(0); 
+    display: flex; 
+    align-items: center; 
+}
+
+/* 사이드바가 접혔을 때 텍스트 컨테이너 숨김 */
+.sidebar-collapsed .sidebar-menu-text-wrapper {
+    max-width: 0;
+    /*opacity: 0;
+    transform: translateX(-20px);*/
+}
+
+/* 메뉴 텍스트 자체 */
+.sidebar-menu-text {
+  white-space: nowrap;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.sidebar-top-menu {
+  flex-grow: 0;
+}
+
+.sidebar-bottom-menu {
+  margin-top: auto;
+}
+
+.sidebar-menu-item:hover {
   background-color: #e5e7eb;
   border-radius: 8px;
 }
