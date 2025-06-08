@@ -5,27 +5,31 @@ import './RecordingPage.css';
 function RecordingPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const coverLetterId = location.state?.coverLetterId;
-  const questions = location.state?.questions || [];
-  const questionIndex = location.state?.questionIndex;
-  const prevTakes = location.state?.takes || [];
 
-  const realQuestion = questions[questionIndex];
-  const questionText = realQuestion?.content
-    ? `질문 ${parseInt(questionIndex, 10) + 1}: "${realQuestion.content}"`
-    : `질문 ${parseInt(questionIndex, 10) + 1}: "질문 내용을 불러올 수 없습니다."`;
+  const coverLetterId = location.state?.coverLetterId;
+  const questionIndex = location.state?.questionIndex;
+  const questions = location.state?.questions || JSON.parse(localStorage.getItem('questions') || '[]');
+  const realQuestion = location.state?.question || questions[questionIndex];
 
   const videoRef = useRef(null);
   const mediaRecorderRef = useRef(null);
+  const streamRef = useRef(null);
   const audioContextRef = useRef(null);
-  const streamRef = useRef(null); // ✅ stream을 ref로 관리
+
   const [recording, setRecording] = useState(false);
   const [countdown, setCountdown] = useState(3);
   const [step, setStep] = useState('ready');
   const [timer, setTimer] = useState(0);
   const [silenceCount, setSilenceCount] = useState(0);
+  const [cameraReady, setCameraReady] = useState(false);
+
   const maxRecordingSeconds = 300;
 
+  const questionText = realQuestion?.content
+    ? `질문 ${parseInt(questionIndex, 10) + 1}: "${realQuestion.content}"`
+    : `질문 ${parseInt(questionIndex, 10) + 1}: "질문 내용을 불러올 수 없습니다."`;
+
+  // 📸 카메라 초기화
   useEffect(() => {
     if (!coverLetterId || !realQuestion) {
       alert('잘못된 접근입니다. 다시 질문을 선택해주세요.');
@@ -33,11 +37,27 @@ function RecordingPage() {
       return;
     }
 
+    const key = `videoTakes_${coverLetterId}_${questionIndex}`;
+    const prevTakes = JSON.parse(localStorage.getItem(key) || '[]');
+    if (prevTakes.length >= 3) {
+      alert('이 질문에 대해 이미 3개의 녹화를 완료했습니다.');
+      navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
+        state: {
+          coverLetterId,
+          questionIndex,
+          question: realQuestion,
+          questions,
+        },
+      });
+      return;
+    }
+
     const initCamera = async () => {
       try {
         const userStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        streamRef.current = userStream; // ✅ 저장
+        streamRef.current = userStream;
         if (videoRef.current) videoRef.current.srcObject = userStream;
+        setCameraReady(true);
       } catch (err) {
         console.error('getUserMedia 실패:', err);
         alert('카메라 또는 마이크 접근 실패. 브라우저 설정을 확인해주세요.');
@@ -77,11 +97,10 @@ function RecordingPage() {
   const startRecording = () => {
     const stream = streamRef.current;
     if (!stream) {
-      alert("카메라 스트림이 없습니다. 새로고침 해주세요.");
+      alert("카메라가 아직 준비되지 않았습니다. 새로고침 해주세요.");
       return;
     }
 
-    // ✅ 여기서 srcObject를 다시 연결해줍니다
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
     }
@@ -110,14 +129,16 @@ function RecordingPage() {
         imageUrl: thumbnail,
       };
 
+      // localStorage에 저장
+      const key = `videoTakes_${coverLetterId}_${questionIndex}`;
+      const prevTakes = JSON.parse(localStorage.getItem(key) || '[]');
+      localStorage.setItem(key, JSON.stringify([...prevTakes, newTake]));
+
       navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
         state: {
           coverLetterId,
           questionIndex,
-          question: {
-            id: realQuestion?.questionId,
-            content: realQuestion?.content,
-          },
+          question: realQuestion,
           questions,
           takes: [...prevTakes, newTake],
         },
@@ -174,7 +195,14 @@ function RecordingPage() {
       <main className="recording-main">
         {step === 'ready' && (
           <div className="recorder-header">
-            <button className="record-button" onClick={() => setStep('countdown')}>🎥 시작</button>
+            <button
+              className="record-button"
+              onClick={() => setStep('countdown')}
+              disabled={!cameraReady}
+            >
+              🎥 시작
+            </button>
+            {!cameraReady && <p>카메라 준비 중...</p>}
           </div>
         )}
         {step === 'countdown' && <div className="countdown-number">{countdown}</div>}
