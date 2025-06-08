@@ -171,111 +171,111 @@ function SignUp() {
   };
 
   return (
-    <div className="container">
-      <div className="logo">
-        면접의<span className="logoHighlight">정석</span>
+    <div className="signup-container">
+      <div className="signuplogo">
+        면접의<span className="signuplogoHighlight">정석</span>
       </div>
-      <h3 className="title">회원가입</h3>
+      <h3 className="signup-title">회원가입</h3>
 
-      <div style={{ position: 'relative', width: '500px', marginBottom: '15px' }}>
+      <div className="signup-field-wrapper">
         <input
           type="text"
           name="userLoginId"
           placeholder="로그인 아이디(4~12자의 영문,숫자만 가능)"
           value={formData.userLoginId}
           onChange={handleChange}
-          className="input"
+          className="signup-input"
         />
-        <button onClick={checkIdDuplicate} className="duplicate-check-button">
+        <button onClick={checkIdDuplicate} className="signup-duplicate-check-button">
           중복 확인
         </button>
       </div>
 
-      <div style={{ marginBottom: '15px' }}>
+      <div className="signup-field-wrapper">
         <input
           type="password"
           name="userPw"
           placeholder="비밀번호"
           value={formData.userPw}
           onChange={handleChange}
-          className="input"
+          className="signup-input"
         />
         {pwFormatError && (
-          <div style={{ color: 'red', marginTop: '5px', fontSize: '13px' }}>{pwFormatError}</div>
+          <div className="signup-error-text red">{pwFormatError}</div>
         )}
       </div>
 
-      <div style={{ marginBottom: '15px' }}>
+      <div className="signup-field-wrapper">
         <input
           type="password"
           name="confirmPw"
           placeholder="비밀번호 확인"
           value={formData.confirmPw}
           onChange={handleChange}
-          className="input"
+          className="signup-input"
         />
         {passwordError && (
-          <div style={{ color: passwordError.includes('일치하지') ? 'red' : 'green', marginTop: '5px', fontSize: '13px' }}>
+          <div className={`signup-error-text ${passwordError.includes('일치하지') ? 'red' : 'green'}`}>
             {passwordError}
           </div>
         )}
       </div>
 
-      <div style={{ marginBottom: '15px' }}>
+      <div className="signup-field-wrapper">
         <input
           type="text"
           name="userName"
           placeholder="이름"
           value={formData.userName}
           onChange={handleChange}
-          className="input"
+          className="signup-input"
         />
       </div>
 
-      <div style={{ position: 'relative', width: '500px', marginBottom: '15px' }}>
+      <div className="signup-field-wrapper">
         <input
           type="text"
           name="nickname"
           placeholder="닉네임"
           value={formData.nickname}
           onChange={handleChange}
-          className="input"
+          className="signup-input"
         />
-        <button onClick={checkNicknameDuplicate} className="duplicate-check-button">
+        <button onClick={checkNicknameDuplicate} className="signup-duplicate-check-button">
           중복 확인
         </button>
       </div>
 
-      <div style={{ marginBottom: '15px' }}>
+      <div className="signup-field-wrapper">
         <input
           type="tel"
           name="phoneNumber"
           placeholder="휴대폰 번호 (예: 010-1234-5678)"
           value={formData.phoneNumber}
           onChange={handleChange}
-          className="input"
+          className="signup-input"
         />
       </div>
 
-      <div style={{ position: 'relative', width: '500px', marginBottom: '20px' }}>
+      <div className="signup-field-wrapper">
         <input
           type="email"
           name="email"
           placeholder="이메일 주소"
           value={formData.email}
           onChange={handleChange}
-          className="input"
+          className="signup-input"
         />
-        <button onClick={checkEmailDuplicate} className="duplicate-check-button">
+        <button onClick={checkEmailDuplicate} className="signup-duplicate-check-button">
           중복 확인
         </button>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: '500px', gap: '16px' }}>
-        <button className="cancel-button" onClick={() => navigate(-1)}>
+      <div className="signup-flex-buttons">
+        <button className="signup-cancel-button" onClick={() => navigate(-1)}>
           취소
         </button>
-        <button className="button" onClick={handleSignup}>
+        <button className="signup-button" onClick={handleSignup}>
           가입하기
         </button>
       </div>

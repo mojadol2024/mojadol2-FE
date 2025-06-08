@@ -33,7 +33,7 @@ function Sidebar({ onToggle }) {
       if (response.data.isSuccess) {
         alert('로그아웃 성공!');
         localStorage.removeItem('accessToken');
-        window.location.href = '/login';
+        window.location.href = '/homepage';
       } else {
         alert('로그아웃 실패: ' + response.data.message);
       }

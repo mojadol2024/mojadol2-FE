@@ -5,7 +5,7 @@ import './Login.css';
 import PasswordResetModal from './PasswordResetModal';
 import { getEnv } from '../../lib/getEnv';
 
-const API_BASE_URL = getEnv('BASE_URL'); 
+const API_BASE_URL = getEnv('BASE_URL');
 
 function Login() {
   const [userLoginId, setUserLoginId] = useState('');
@@ -26,35 +26,20 @@ function Login() {
           headers: { 'Content-Type': 'application/json' },
         }
       );
-      //console.log("🧾 응답 헤더:", response.headers);
 
-      // ✅ 헤더에서 accessToken 추출 (헤더 이름은 실제 서버에 따라 다름)
       const token = response.headers['authorization'];
-
-      console.log("✅ 받아온 accessToken from headers:", token);
-
       if (!token) {
-        alert("토큰이 응답 헤더에 없습니다.");
+        alert('토큰이 응답 헤더에 없습니다.');
         return;
       }
 
-      // ✅ 'Bearer ' 접두사 제거
       const accessToken = token.startsWith('Bearer ') ? token.slice(7) : token;
-
       localStorage.setItem('accessToken', accessToken);
       alert('로그인 성공!');
 
-      // ✅ 로그인 성공 후 리다이렉션 로직 추가:
-      // 이전에 HomePage에서 저장한 'redirectAfterLogin' 경로를 확인합니다.
       const redirectPath = localStorage.getItem('redirectAfterLogin');
-      localStorage.removeItem('redirectAfterLogin'); // 사용 후 경로 삭제
-
-      if (redirectPath) {
-        navigate(redirectPath); 
-      } else {
-        navigate('/homepage'); 
-      }
-
+      localStorage.removeItem('redirectAfterLogin');
+      navigate(redirectPath || '/homepage');
     } catch (error) {
       if (error.response) {
         alert(
@@ -68,52 +53,52 @@ function Login() {
   };
 
   return (
-    <div className="container">
-      <div className="logo">
-        면접의<span className="logoHighlight">정석</span>
+    <div className="login-container">
+      <div className="login-logo">
+        면접의<span className="login-logo-highlight">정석</span>
       </div>
-      <h3 className="title">로그인</h3>
+      <h3 className="login-title">로그인</h3>
 
       <input
         type="email"
         placeholder="예) 1234@gmail.com"
         value={userLoginId}
         onChange={e => setUserLoginId(e.target.value)}
-        className="input"
+        className="login-input"
       />
 
-      <div className="passwordWrapper">
+      <div className="login-password-wrapper">
         <input
           type={showPassword ? 'text' : 'password'}
           placeholder="비밀번호"
           value={password}
           onChange={e => setPassword(e.target.value)}
-          className="input"
+          className="login-input"
         />
         <button
           onClick={() => setShowPassword(!showPassword)}
-          className="toggleButton"
+          className="login-toggle-button"
           type="button"
         >
           {showPassword ? '🕶️' : '👀'}
         </button>
       </div>
 
-      <button onClick={handleLogin} className="button">
+      <button onClick={handleLogin} className="login-button">
         로그인
       </button>
 
-      <div className="linkContainer">
-        <div className="leftLinks">
-          <span className="link" onClick={() => navigate('/find-id')}>
+      <div className="login-link-container">
+        <div className="login-left-links">
+          <span className="login-link" onClick={() => navigate('/find-id')}>
             아이디 찾기
           </span>
-          <span className="divider">|</span>
-          <span className="link" onClick={() => setShowResetModal(true)}>
+          <span className="login-divider">|</span>
+          <span className="login-link" onClick={() => setShowResetModal(true)}>
             비밀번호 찾기
           </span>
         </div>
-        <span className="link" onClick={() => navigate('/sign-up')}>
+        <span className="login-link" onClick={() => navigate('/sign-up')}>
           회원가입
         </span>
       </div>

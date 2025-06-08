@@ -509,12 +509,12 @@ html, body {
 }
 
 .error-message {
-  color: #e74c3c; 
+  color: #999; 
   text-align: center;
-  font-size: 18px;
+  font-size: 25px;
   /*padding-left: 20px; 
   padding-right: 290px; */
-  font-size: 25px;
+  margin-top: 10%;
 }
 
 /* 결제 취소 버튼 */
