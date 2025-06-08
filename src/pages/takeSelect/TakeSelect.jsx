@@ -3,58 +3,58 @@ import './TakeSelect.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axiosInstance from '../../lib/axiosInstance';
 
-console.log('BaseURL:', axiosInstance.defaults.baseURL);
-
-
-// ✅ base64 문자열 → Blob 변환 함수
-function base64ToBlob(base64) {
-  const [meta, data] = base64.split(',');
-  const mime = meta.match(/:(.*?);/)[1];
-  const binary = atob(data);
-  const array = Uint8Array.from(binary, char => char.charCodeAt(0));
-  return new Blob([array], { type: mime });
-}
-
 function TakeSelect() {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedTake, setSelectedTake] = useState(null);
   const coverLetterId = new URLSearchParams(location.search).get('id');
-  const questionIndex = new URLSearchParams(location.search).get('q');
-  const questionObj = location.state?.question;
+  const questionIndex = parseInt(new URLSearchParams(location.search).get('q'), 10);
+
   const [takes, setTakes] = useState(location.state?.takes || []);
   const [questionList, setQuestionList] = useState([]);
-
-  const questionText = questionObj?.content
-    ? `질문 ${parseInt(questionIndex, 10) + 1}: "${questionObj.content}"`
-    : `질문 ${parseInt(questionIndex, 10) + 1}: "질문 내용을 불러올 수 없습니다."`;
+  const [questionObj, setQuestionObj] = useState(location.state?.question || null);
 
   useEffect(() => {
-    if (!coverLetterId || !questionIndex || !questionObj) {
+    if (!coverLetterId || isNaN(questionIndex)) {
       alert('잘못된 접근입니다. 홈으로 이동합니다.');
       navigate('/');
       return;
     }
 
-    const saved = JSON.parse(
-      localStorage.getItem(`videoTakes_${coverLetterId}_${questionIndex}`) || '[]'
-    );
     const incoming = location.state?.questions || [];
     const stored = JSON.parse(localStorage.getItem('questions') || '[]');
 
     if (incoming.length > 0) {
-      console.log("✅ incomingQuestions로 설정됨");
       localStorage.setItem('questions', JSON.stringify(incoming));
       setQuestionList(incoming);
+      if (!questionObj || !questionObj.id) {
+        const fallback = incoming[questionIndex];
+        if (fallback) {
+          setQuestionObj({
+            id: fallback.questionId, // ✅ 서버가 요구하는 필드명으로 매핑
+            content: fallback.content,
+          });
+        }
+      }
     } else if (stored.length > 0) {
-      console.log("✅ storedQuestions로 fallback");
       setQuestionList(stored);
+      if (!questionObj || !questionObj.id) {
+        const fallback = stored[questionIndex];
+        if (fallback) {
+          setQuestionObj({
+            id: fallback.questionId,
+            content: fallback.content,
+          });
+        }
+      }
     } else {
       console.warn("❌ 질문 리스트 없음 (state도 localStorage도 실패)");
     }
-
-    setTakes(saved);
   }, [coverLetterId, questionIndex]);
+
+  const questionText = questionObj?.content
+    ? `질문 ${questionIndex + 1}: "${questionObj.content}"`
+    : `질문 ${questionIndex + 1}: "질문 내용을 불러올 수 없습니다."`;
 
   const handleSelect = (index) => {
     setSelectedTake(index);
@@ -67,33 +67,34 @@ function TakeSelect() {
     }
 
     const selected = takes[selectedTake];
-    const blob = base64ToBlob(selected.file); // ✅ base64 복원
-    const file = new File([blob], `question_${questionIndex}.webm`, {
+    const file = new File([selected.file], `question_${questionIndex}.webm`, {
       type: 'video/webm',
     });
-    console.log('coverLetterId:', coverLetterId);
-    console.log('file:', file);
-    console.log('file size:', file.size);
 
     const formData = new FormData();
-    formData.append('video', file); // ✅ filename 포함
-    formData.append('id', coverLetterId);
+    formData.append('video', file);
+    formData.append('id', questionObj.id); // ✅ 서버 요구 key로 정확히 전송
+
+    console.log("🟨 업로드 시도 중");
+    console.log("questionObj.id:", questionObj?.id);
+    console.log("video:", file);
+
+    for (let [key, val] of formData.entries()) {
+      console.log(`FormData: ${key} =>`, val);
+    }
 
     try {
       const response = await axiosInstance.post(
         '/mojadol/api/v1/interview/upload',
         formData
       );
-
       const interviewId = response.data.result.interviewId;
       alert("업로드 성공! 결과지로 이동합니다.");
       navigate(`/interview/result/${interviewId}`);
     } catch (error) {
-      console.error('Upload failed:', error);
+      console.error('Upload failed:', error.response || error);
       alert('영상 업로드에 실패했습니다.');
     }
-
-
   };
 
   const handleNewQuestion = async () => {
@@ -102,7 +103,7 @@ function TakeSelect() {
       return;
     }
 
-    const nextIndex = parseInt(questionIndex, 10) + 1;
+    const nextIndex = questionIndex + 1;
     const nextQuestion = questionList[nextIndex];
 
     if (!nextQuestion) {
@@ -116,14 +117,17 @@ function TakeSelect() {
     }
 
     const selected = takes[selectedTake];
-    const blob = base64ToBlob(selected.file);
-    const file = new File([blob], `question_${questionIndex}.webm`, {
+    const file = new File([selected.file], `question_${questionIndex}.webm`, {
       type: 'video/webm',
     });
 
     const formData = new FormData();
     formData.append('video', file);
-    formData.append('id', coverLetterId);
+    formData.append('id', questionObj.id); // ✅ 정확한 id 사용
+
+    console.log("🟩 새 질문 이동 직전 업로드");
+    console.log("questionObj.id:", questionObj?.id);
+    console.log("video:", file);
 
     try {
       await axiosInstance.post('/mojadol/api/v1/interview/upload', formData);
@@ -131,7 +135,10 @@ function TakeSelect() {
 
       navigate(`/ResumeQuestionPage?id=${coverLetterId}&q=${nextIndex}`, {
         state: {
-          question: nextQuestion,
+          question: {
+            id: nextQuestion.questionId,
+            content: nextQuestion.content,
+          },
           questions: questionList,
         },
       });
@@ -147,7 +154,8 @@ function TakeSelect() {
         coverLetterId,
         questionIndex,
         question: questionObj,
-        takes: takes,
+        takes,
+        questions: questionList,
       },
     });
   };
