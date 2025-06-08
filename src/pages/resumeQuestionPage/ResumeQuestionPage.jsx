@@ -17,7 +17,7 @@ function ResumeQuestionPage() {
   const [voucherType, setVoucherType] = useState(null);
 
   useEffect(() => {
-    localStorage.setItem("shouldRefreshMainList", "true"); // ✅ 리스트 갱신 플래그 설정
+    localStorage.setItem("shouldRefreshMainList", "true");
 
     const token = localStorage.getItem('accessToken');
     if (!token) {
@@ -30,7 +30,7 @@ function ResumeQuestionPage() {
       return;
     }
     fetchLetterDetail();
-  }, [location]);
+  }, [location, coverLetterId]);
 
   const fetchLetterDetail = async () => {
     try {
@@ -50,95 +50,27 @@ function ResumeQuestionPage() {
     }
   };
 
-  // const handleVideoUpload = async (index) => {
-  //   const fileInput = document.createElement('input');
-  //   fileInput.type = 'file';
-  //   fileInput.accept = 'video/*';
-  //   fileInput.onchange = async (event) => {
-  //     const file = event.target.files[0];
-  //     if (!file) return;
-  //     const formData = new FormData();
-  //     formData.append('video', file);
-  //     formData.append('id', coverLetterId);
-  //     try {
-  //       const response = await axiosInstance.post('/mojadol/api/v1/interview/upload', formData, {
-  //         headers: { 'Content-Type': 'multipart/form-data' },
-  //       });
-  //       setVideos((prev) => ({
-  //         ...prev,
-  //         [index]: {
-  //           uploaded: true,
-  //           url: response.data.result.videoUrl,
-  //           interviewId: response.data.result.interviewId,
-  //           confirmed: false,
-  //         },
-  //       }));
-  //       alert('영상이 업로드되었습니다. 확인 후 "확인" 버튼을 눌러주세요.');
-  //     } catch (error) {
-  //       alert('영상 업로드 실패');
-  //       console.error(error);
-  //     }
-  //   };
-  //   fileInput.click();
-  // };
-
-  // const handleConfirmVideo = async (index) => {
-  //   try {
-  //     const interviewId = videos[index]?.interviewId;
-  //     if (!interviewId) return alert('영상 정보가 없습니다.');
-
-  //     // AI 분석 요청 (서버에서 두 모델 실행 후 결과 저장)
-  //     await axiosInstance.post('/mojadol/api/v1/interview/ai', {
-  //       interviewId,
-  //       coverLetterId,
-  //       questionIndex: index,
-  //     });
-
-  //     setAnalysisResults((prev) => ({
-  //       ...prev,
-  //       [index]: { exists: true },
-  //     }));
-  //     setVideos((prev) => ({
-  //       ...prev,
-  //       [index]: { ...prev[index], confirmed: true },
-  //     }));
-
-  //     alert('AI 분석이 시작되었습니다. 결과는 잠시 후 확인 가능합니다.');
-  //   } catch (err) {
-  //     console.error('AI 분석 요청 실패:', err);
-  //     alert('AI 분석 요청에 실패했습니다.');
-  //   }
-  // };
-
-  // const handleDeleteVideo = async (index) => {
-  //   try {
-  //     const interviewId = videos[index]?.interviewId;
-  //     if (!interviewId) return alert('삭제할 영상이 없습니다.');
-  //     await axiosInstance.delete(`/mojadol/api/v1/interview/delete/${interviewId}`);
-  //     setVideos((prev) => {
-  //       const updated = { ...prev };
-  //       delete updated[index];
-  //       return updated;
-  //     });
-  //     setAnalysisResults((prev) => {
-  //       const updated = { ...prev };
-  //       delete updated[index];
-  //       return updated;
-  //     });
-  //     alert('영상이 삭제되었습니다.');
-  //   } catch (err) {
-  //     console.error('영상 삭제 실패:', err);
-  //   }
-  // };
-
   const handleNavigateToRecord = (index) => {
-    navigate(`/QuestionConfirmPage?id=${coverLetterId}&q=${index}`, {
-       state: {
-    question: questions[index],
-    questions: questions,            // ✅ 이 줄 추가!
-    coverLetterId: coverLetterId     // ✅ 혹시 몰라서 함께 넘겨주면 좋음
-  }
-    });
+    const isRecorded = videos[index]?.uploaded;
+
+    if (isRecorded) {
+      navigate(`/QuestionConfirmPage?id=${coverLetterId}&q=${index}`, {
+        state: {
+          question: questions[index],
+          questions: questions,
+          coverLetterId: coverLetterId,
+        }
+      });
+    } else {
+      navigate(`/RecordingPage`, {
+        state: {
+          question: questions[index],
+          questions: questions,
+          coverLetterId: coverLetterId,
+          questionIndex: index,
+        }
+      });
+    }
   };
 
   const handleConfirm = () => {
@@ -155,11 +87,8 @@ function ResumeQuestionPage() {
         return;
       }
     }
-
-    // ✅ 이제 직접 blob을 처리하지 않고 PdfView 페이지로 이동만 함
     navigate(`/PdfView/${coverLetterId}`);
   };
-
 
   const handleSave = async () => {
     alert('저장되었습니다. 이후에도 이어서 진행 가능합니다.');
@@ -170,7 +99,13 @@ function ResumeQuestionPage() {
       <div className="resume-header">
         <input className="resume-title" value={title} disabled />
         <div className="button-group-r">
-          <button className="btn-confirm" onClick={handleConfirm} disabled={voucherType === 'FREE' && !questions.every((_, i) => analysisResults[i]?.exists)}>결과 확인</button>
+          <button
+            className="btn-confirm"
+            onClick={handleConfirm}
+            disabled={voucherType === 'FREE' && !questions.every((_, i) => analysisResults[i]?.exists)}
+          >
+            결과 확인
+          </button>
           <button className="btn-save" onClick={handleSave}>저장</button>
         </div>
       </div>
@@ -185,23 +120,13 @@ function ResumeQuestionPage() {
                 질문 {i + 1}: "{q.content}"
               </div>
               <div className="question-actions">
-                {/* <button
-                  className="btn attach"
-                  onClick={() => handleVideoUpload(i)}
-                  disabled={analysisResults[i]?.exists}
-                > 영상 첨부</button> */}
                 <button
                   className="btn-record"
                   onClick={() => handleNavigateToRecord(i)}
                   disabled={analysisResults[i]?.exists}
-                > 영상 녹화</button>
-                {/* {videos[i]?.uploaded && !videos[i]?.confirmed && !analysisResults[i]?.exists && (
-                  <>
-                    <span className="video-preview">첨부됨: {videos[i]?.url.split('/').pop()}</span>
-                    <button className="btn-redo" onClick={() => handleDeleteVideo(i)}>재첨부</button>
-                    <button className="btn-confirm" onClick={() => handleConfirmVideo(i)}>✓ 확인</button>
-                  </>
-                )} */}
+                >
+                  영상 녹화
+                </button>
               </div>
               {analysisResults[i]?.exists && (
                 <div className="question-status done">분석 완료</div>
