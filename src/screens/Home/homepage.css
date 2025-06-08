@@ -3,7 +3,7 @@
   background-color: #F5FFFD;
   margin: 0;
   padding: 0;
-  overflow: auto; 
+  overflow: auto;
 }
 
 .home-container {
@@ -22,7 +22,8 @@
   padding: 1.25rem 2.5rem;
   background-color: white;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-  white-space: nowrap;
+  flex-wrap: wrap;  /* ✅ 줄바꿈 허용 */
+  row-gap: 1rem; 
 }
 
 .logo-section {
@@ -58,6 +59,7 @@
   gap: 2rem;
   font-size: 0.875rem;
   color: #1f2937;
+  flex-wrap: wrap;
   
 }
 
@@ -294,6 +296,19 @@
   margin-top: 2rem;
 }
 
+@media (max-width: 768px) {
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 화면이 더 작아지면 한 줄씩 세로 정렬 */
+@media (max-width: 480px) {
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .stat {
   background-color: #F5FFFD;
   padding: 1.5rem;
@@ -320,6 +335,19 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
+}
+
+@media (max-width: 768px) {
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 화면이 더 작아지면 세로로 한 줄씩 정렬 */
+@media (max-width: 480px) {
+  .category-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .category {
