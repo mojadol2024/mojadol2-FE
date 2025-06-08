@@ -1,277 +1,253 @@
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  font-family: 'Noto Sans KR', sans-serif;
-  background-color: #f3f4f6;
-}
-
-.container {
-  display: flex;
-  height: 100vh;
-}
-
-.content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 48px 64px;
-  background-color: #fff;
-  box-sizing: border-box;
-  overflow-y: auto;
-}
-
-.content h1 {
-  font-size: 30px;
-  font-weight: 700;
-  margin-bottom: 24px;
-}
-
-.top-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-bottom: 32px;
-}
-
-.date-button,
-.edit-button {
-  padding: 6px 14px;
-  font-size: 14px;
-  border-radius: 6px;
-  background-color: white;
-  border: 1px solid #d1d5db;
-}
-
-.edit-button {
-  color: #10b981;
-  border-color: #10b981;
-}
-
-.edit-button:hover {
-  background-color: #ecfdf5;
-}
-
-/* 폼 전체 구조 */
-.form-table {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  max-width: 1200px;
-  margin-top: 50px;
-}
-
-.form-row {
-  display: flex;
-  align-items: center;
-  min-height: 48px; 
-
-}
-
-.form-label {
-  width: 150px;
-  font-weight: 500;
-  font-size: 18px;
-  color: #333;
-  margin-right: 8px; 
-  gap: 40px; 
-}
-
-/* 입력칸/버튼 통일 정렬용 */
-.form-input {
-  flex: 1;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-/* ✅ 모든 input, select, button 크기 통일 */
-.form-input input,
-.form-input select,
-.form-input button {
-  height: 40px;
-  padding: 0 12px;
-  font-size: 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  box-sizing: border-box;
-  line-height: 1.5;
-  flex-shrink: 0;
-}
-
-/* 기본 너비 고정 */
-.form-input input,
-.form-input select {
-  width: 240px;
-  max-width: 240px;
-}
-
-/* 버튼은 고정 너비 */
-.form-input button {
-  width: 100px;
-  background-color: white;
-  color: #6b7280;
-  border: 1px solid #d1d5db;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.form-input button:hover {
-  background-color: #e5e7eb;
-}
-
-/* 이메일용 row 정렬 */
-.row-flex {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: nowrap;
-}
-
-.row-flex span {
-  font-size: 14px;
-  color: #444;
-  margin: 0 4px;
-  flex-shrink: 0;
-}
-
-.row-flex input,
-.row-flex select {
-  width: 240px;
-  min-width: 240px;
-  max-width: 240px;
-  flex-shrink: 0;
-}
-
-.row-flex button {
-  width: 100px;
-  flex-shrink: 0;
-}
-
-/* 스위치 */
-.toggle-switch {
-  position: relative;
-  width: 50px;
-  height: 28px;
-  display: inline-block;
-  margin-left: 8px; 
-}
-
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggle-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
-  border-radius: 28px;
-}
-
-.toggle-slider:before {
-  content: "";
-  position: absolute;
-  height: 22px;
-  width: 22px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-
-.toggle-switch input:checked + .toggle-slider {
-  background-color: #51E0C4;
-}
-
-.toggle-switch input:checked + .toggle-slider:before {
-  transform: translateX(22px);
-}
-
-/* 하단 고정 버튼 */
-.fixed-withdraw {
-  position: fixed;
-  bottom: 32px;
-  right: 32px;
-  z-index: 100;
-}
-
-.withdraw-button {
-  background-color: #d1d5db;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.withdraw-button:hover {
-  background-color: #9ca3af;
-}
-
-/* 모달 */
-/* 모달 배경 */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
+.mypage-content {
+    flex-grow: 1;
+  min-height: 100%;
   width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5); /* 반투명 배경 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
+  box-sizing: border-box; 
+  padding-left: 25px;
+  /*padding-right: 290px; 뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
+  padding-top: 20px;
+  overflow-y: auto; 
 }
 
-/* 모달 내용 박스 */
-.modal-content {
-  background-color: #fff;
-  padding: 30px 40px;
-  border-radius: 10px;
-  text-align: center; /* 안의 글자랑 버튼 모두 가운데 정렬 */
+.mypage-content h1 {
+    font-size: 30px; 
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
-/*모달 안 인풋 */
-.modal-content input[type="password"] {
-  margin-top: 15px;
-  padding: 10px;
-  width: 80%;
-  font-size: 16px;
+/* 상단 버튼 섹션 */
+.mypage-top-buttons {
+    text-align: right;
+    margin-bottom: 25px;
 }
 
-/* 모달 안 버튼 영역 */
-.modal-actions {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
+.mypage-edit-button,
+.mypage-save-button {
+    background-color: #51E0C4; /* 메인 색상 */
+    color: #fff;
+    border: none;
+    padding: 10px 15px; 
+    border-radius: 7px; 
+    font-size: 20px; 
+    cursor: pointer;
+    transition: background-color 0.2s ease; 
+    margin-right:10px;
 }
 
-/* "확인" 버튼 스타일 */
-.modal-actions button:first-child {
-  background-color: #51E0C4;
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 15px;
-  cursor: pointer;
+.mypage-edit-button:hover,
+.mypage-save-button:hover {
+    background-color: #3cc7a9;
 }
 
-/* "취소" 버튼 스타일 */
-.modal-actions button:last-child {
-  background-color: #eee;
-  color: #333;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 15px;
-  cursor: pointer;
+/* 폼 테이블 스타일 */
+.mypage-form-table {
+    margin-top: 20px;
 }
 
+.mypage-form-row {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+}
+
+.mypage-form-label { /*이름이메일이런이름*/
+    flex: 0 0 150px; /* 라벨 너비 고정 */
+    font-weight: 600;
+    color: #555;
+    font-size: 1.05em;
+    padding-left: 6%;
+}
+
+.mypage-form-input {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.mypage-form-input input[type="text"],
+.mypage-form-input input[type="password"] {
+    width: 85%; 
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+}
+
+.mypage-form-input input[type="text"]:focus,
+.mypage-form-input input[type="password"]:focus {
+    border-color: #ccc;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+.mypage-form-input input[disabled] {
+    background-color: #f9f9f9;
+    color: #888;
+    cursor: not-allowed;
+}
+
+/* 토글 스위치 (마케팅 정보 수신) */
+.mypage-toggle-row {
+    align-items: flex-start; /* 토글이 상단에 맞춰지도록 */
+}
+
+.mypage-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-top: 5px; /* 라벨과의 정렬을 위해 약간 조정 */
+}
+
+.mypage-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.mypage-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.mypage-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+.mypage-toggle-switch input:checked + .mypage-toggle-slider {
+    background-color: #51E0C4;
+}
+
+.mypage-toggle-switch input:focus + .mypage-toggle-slider {
+    box-shadow: 0 0 1px #51E0C4;
+}
+
+.mypage-toggle-switch input:checked + .mypage-toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.mypage-toggle-switch input:disabled + .mypage-toggle-slider {
+    background-color: #e0e0e0;
+    cursor: not-allowed;
+}
+
+.mypage-toggle-switch input:disabled + .mypage-toggle-slider:before {
+    background-color: #f0f0f0;
+}
+
+/*탈퇴버튼*/
+.mypage-fixed-withdraw {
+    display: flex; 
+    justify-content: flex-end; 
+    align-items: center; 
+    margin-top: 20px;
+    padding-top: 20px;
+    width: 96%; 
+    box-sizing: border-box; 
+}
+
+.mypage-withdraw-button {
+    background: none;
+    color: #999; 
+    border: none; 
+    padding: 0; 
+    cursor: pointer;
+    font-size: 16px; 
+    text-decoration: none; 
+    transition: color 0.3s ease, text-decoration-color 0.3s ease;
+}
+
+.mypage-withdraw-button:hover {
+    color: #777; 
+    text-decoration: underline;
+    text-decoration-color: #777; 
+    text-underline-offset: 4px; 
+}
+
+/* 모달 스타일 */
+.mypage-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.mypage-modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 7px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+}
+
+.mypage-modal-content p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.mypage-modal-content input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+.mypage-modal-actions button {
+    padding:5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    font-weight: bold;
+    background-color: #51E0C4;
+    color: #fff; 
+    border: none;
+}
+
+.mypage-modal-actions button:hover {
+  background-color: #3cc7a9;
+}
+
+.mypage-modal-actions button:last-child {
+  color: #ccc; 
+  border: 1px solid #ccc; 
+  background-color: transparent;
+  margin-left:10px;
+}
+
+.mypage-modal-actions button:last-child:hover {
+  color: #fff; 
+  background-color: #ccc;
+}

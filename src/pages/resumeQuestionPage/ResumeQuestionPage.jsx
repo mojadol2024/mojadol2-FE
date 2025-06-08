@@ -1,4 +1,3 @@
-// 면접 질문별 영상 업로드 및 분석 상태 관리 페이지 
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../lib/axiosInstance';
@@ -7,15 +6,15 @@ import './ResumeQuestionPage.css';
 function ResumeQuestionPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true); // 로딩 상태 추가
   const coverLetterId = new URLSearchParams(location.search).get('id');
+  const questionIndex = new URLSearchParams(location.search).get('q');
 
+  const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState('');
   const [questions, setQuestions] = useState([]);
-  const [videos, setVideos] = useState({}); // { index: { uploaded: boolean, url: string } }
-  const [analysisResults, setAnalysisResults] = useState({}); // { index: { exists: true } }
-  const [voucherType, setVoucherType] = useState(null); // 'FREE' or 'GOLD' 사용자 선택에 따라 달라짐
-  const [pendingAI, setPendingAI] = useState({}); // { index: boolean }
+  const [videos, setVideos] = useState({});
+  const [analysisResults, setAnalysisResults] = useState({});
+  const [voucherType, setVoucherType] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("shouldRefreshMainList", "true"); // ✅ 리스트 갱신 플래그 설정
@@ -31,16 +30,18 @@ function ResumeQuestionPage() {
       return;
     }
     fetchLetterDetail();
-  }, []);
+  }, [location]);
 
   const fetchLetterDetail = async () => {
     try {
       const response = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
       const result = response.data.result;
-
       setTitle(result.coverLetter?.title || '자소서 제목 없음');
       setVoucherType(result.coverLetter?.useVoucher || 'FREE');
       setQuestions(Array.isArray(result.questions) ? result.questions : []);
+      if (result.analysisResults) {
+        setAnalysisResults(result.analysisResults);
+      }
     } catch (error) {
       console.error('자소서 정보 조회 실패:', error);
       alert('자소서 정보를 불러오는 데 실패했습니다.');
@@ -158,26 +159,24 @@ function ResumeQuestionPage() {
 
   const handleSave = async () => {
     alert('저장되었습니다. 이후에도 이어서 진행 가능합니다.');
-  }
+  };
 
   return (
     <main className="resume-question-main">
       <div className="resume-header">
         <input className="resume-title" value={title} disabled />
-        <div className="button-group">
-          <button className="btn confirm" onClick={handleConfirm}>결과 확인</button>
-          <button className="btn save" onClick={handleSave}>저장</button>
+        <div className="button-group-r">
+          <button className="btn-confirm" onClick={handleConfirm} disabled={voucherType === 'FREE' && !questions.every((_, i) => analysisResults[i]?.exists)}>결과 확인</button>
+          <button className="btn-save" onClick={handleSave}>저장</button>
         </div>
       </div>
       {loading ? (
-        <p style={{ textAlign: 'center', fontSize: '16px', padding: '40px' }}>
-          질문을 불러오는 중입니다... 
-        </p>
+        <p className="loading">질문을 불러오는 중입니다...</p>
       ) : (
         <div className="question-list">
           {questions.map((q, i) => (
             <div className="question-item" key={i}>
-              <div className="question-text">
+              <div className="question-text-r">
                 <span className="play-icon">▶</span>
                 질문 {i + 1}: "{q.content}"
               </div>
@@ -195,8 +194,8 @@ function ResumeQuestionPage() {
                 {/* {videos[i]?.uploaded && !videos[i]?.confirmed && !analysisResults[i]?.exists && (
                   <>
                     <span className="video-preview">첨부됨: {videos[i]?.url.split('/').pop()}</span>
-                    <button className="btn redo" onClick={() => handleDeleteVideo(i)}>재첨부</button>
-                    <button className="btn confirm" onClick={() => handleConfirmVideo(i)}>✓ 확인</button>
+                    <button className="btn-redo" onClick={() => handleDeleteVideo(i)}>재첨부</button>
+                    <button className="btn-confirm" onClick={() => handleConfirmVideo(i)}>✓ 확인</button>
                   </>
                 )} */}
               </div>

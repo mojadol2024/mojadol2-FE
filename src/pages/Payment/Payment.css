@@ -1,7 +1,7 @@
 html, body {  
   font-family: 'Noto Sans KR', sans-serif;
   background-color: #fff;
-  margin-left: 130px; /*side 때문에 margin 줘야돼돼요*/
+  /*margin-left: 130px; side 때문에 margin 줘야돼돼요*/
 }
 
 .payment-container {
@@ -9,7 +9,7 @@ html, body {
   min-height: 100%;
   width: 100%;
   box-sizing: border-box; 
-  /*padding-left: 20px; */
+  padding-left: 25px;
   /*padding-right: 290px; 뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
   padding-top: 20px;
   overflow-y: auto; /*body 에 overflow 적용했더니 이중으로 스크롤이 생겨서*/
@@ -27,10 +27,11 @@ html, body {
   /* 상단 제목 및 구매 버튼 */
 
   .payment-header h1 {
-    font-size: 30px; /* mypage.css의 content h1 font-size 적용 */
-    font-weight: 700; /* mypage.css의 content h1 font-weight 적용 */
+    font-size: 30px; 
+    font-weight: 700; 
     color: #333;
     margin: 0;
+    margin-top: 20px;
     margin-bottom: 20px;
   }
 
@@ -39,33 +40,32 @@ html, body {
     gap: 10px; /* 버튼 사이 간격 조절 */
     justify-content: flex-end; /* 내용을 오른쪽으로 정렬 */
     margin-bottom: 20px;
+    margin-right:10px;
   }
   
   .buy-info-button { 
-    color: #999; 
-    border: 2px solid #999; 
+    color: #bbb; 
+    border: 1.5px solid #bbb; 
     background-color: transparent;
-    font-weight: bold;
     padding: 10px 15px;
-    border-radius: 10px;
-    font-size: 16px;
+    border-radius: 7px;
+    font-size: 18px;
     cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease;
   }
   
   .buy-info-button:hover {
     color: #fff; 
-    background-color: #999; 
+    background-color: #ccc; 
   }
 
   .buy-ticket-button {
     background-color: #51E0C4; /* 메인 색상 */
     color: #fff;
     border: none;
-    font-weight: bold;
     padding: 10px 15px; 
-    border-radius: 10px; 
-    font-size: 16px; 
+    border-radius: 7px; 
+    font-size: 18px; 
     cursor: pointer;
     transition: background-color 0.2s ease; /* mypage.css의 edit-button transition 적용 */
   }
@@ -98,7 +98,7 @@ html, body {
   .subscription-box {
     color: white;
     padding: 10px 15px;
-    border-radius: 10px;
+    border-radius: 7px;
     font-size: 16px;
     text-align: center;
     border: none; 
@@ -113,7 +113,7 @@ html, body {
   /* 이용권 목록 테이블 */
   
   .subscription-table {
-    width: 100%;
+    width: 98%;
     border-collapse: collapse;
     overflow: hidden;
     table-layout: fixed;
@@ -182,7 +182,7 @@ html, body {
   }
   
   .payment-history table {
-    width: 100%;
+    width: 98%;
     border-collapse: collapse;
     overflow: hidden;
     table-layout: fixed;
@@ -291,7 +291,7 @@ html, body {
 .info-popup {
   background-color: white;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 7px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   text-align: center;
   max-height: 80%;
@@ -326,7 +326,7 @@ html, body {
     background-color: transparent;
     font-weight: bold;
     padding: 5px 10px;
-    border-radius: 5px;
+    border-radius: 7px;
     font-size: 16px;
     cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease;
@@ -356,7 +356,7 @@ html, body {
 .payment-popup {
   background-color: white;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 7px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   text-align: center;
   max-height: 80%;
@@ -403,7 +403,7 @@ html, body {
 .payment-popup-content select {
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 7px;
     font-size: 18px;
     width: 100%; /* 너비를 100%로 설정 */
     box-sizing: border-box; /* 패딩과 보더가 너비에 포함되도록 */
@@ -432,7 +432,7 @@ html, body {
 /* 팝업 버튼 기본 스타일 */
 .payment-popup-buttons button {
     padding:5px 10px;
-    border-radius: 5px;
+    border-radius: 7px;
     cursor: pointer;
     font-size: 16px;
     transition: color 0.2s ease, border-color 0.2s ease;
@@ -449,13 +449,13 @@ html, body {
     background-color: #3cc7a9; 
 }
 
-.payment-popup-buttons .cancel-button {
+.payment-popup-buttons .p-cancel-button {
   color: #ccc; 
-  border: 2px solid #ccc; 
+  border: 1px solid #ccc; 
   background-color: transparent;
 }
 
-.payment-popup-buttons .cancel-button:hover {
+.payment-popup-buttons .p-cancel-button:hover {
   color: #fff; 
   background-color: #ccc;
 }
@@ -523,7 +523,7 @@ html, body {
     border: 1px solid #333; 
     background-color: transparent;
     padding: 5x 10px;
-    border-radius: 5px;
+    border-radius: 7px;
     cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease;
 }

@@ -1,8 +1,27 @@
+html, body {  
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #fff;
+  margin-left: 130px; /*side 때문에 margin 줘야돼돼요*/
+}
+
 .register-page {
-  padding: 40px;
-  max-width: 1200px;
-  margin: 0 auto;
-  margin-right: 400px;
+  flex-grow: 1;
+  min-height: 100%;
+  width: 100%;
+  box-sizing: border-box; 
+  padding-left: 25px;
+  /*padding-right: 290px; 뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
+  padding-top: 20px;
+  overflow-y: auto; 
+}
+
+.register-page h2 {
+  font-size: 30px; 
+    font-weight: 700; 
+    color: #333;
+    margin: 0;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .register-page input[type="text"] {
@@ -10,13 +29,14 @@
   padding: 12px;
   margin-bottom: 20px;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 5px;
+  width: 95%;
 }
 
 .editor-section {
   display: flex;
-  gap: 30px;
   margin-bottom: 30px;
+  width: 96%;
 }
 
 .voucher-modal {
@@ -40,11 +60,64 @@
   box-shadow: 0 6px 16px rgba(0,0,0,0.25);
 }
 
+.voucher-modal-b{
+  margin-top: 5px;  
+    color:  #fff;
+    border: 2px solid #51E0C4;
+    background-color: #51E0C4; 
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    align-self: center; 
+}
+
+.voucher-modal-b:hover{
+  background-color: #3cc7a9; 
+  border: 2px solid #3cc7a9; 
+}
+
+.voucher-modal-c{
+  margin-top: 5px;  
+    color: #ccc; 
+    border: 2px solid #ccc; 
+    background-color: transparent;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    align-self: center; 
+}
+
+.voucher-modal-c:hover{
+  color: #fff; 
+  background-color: #ccc; 
+}
+
+.radio-group-container{
+  display: flex;        
+    flex-direction: column;   
+    align-items: center;      
+    width: 100%;
+    margin-top:30px;  
+}
+
+.radio-label { 
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+}
+
 .editor-box {
   flex: 1;
-  min-width: 250px;
+  min-width: 260px;
   display: flex;
   flex-direction: column;
+  margin-right: 20px;
 }
 
 .editor-box textarea {
@@ -53,12 +126,14 @@
   font-size: 16px;
   resize: vertical;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 5px;
 }
+
 .correction-html-box {
-  padding: 16px;
-  min-height: 120px;
-  max-height: 300px;
+  padding: 10px;
+  /*min-height: 150px;
+  max-height: 300px;*/
+  height: 300px;
   overflow-y: auto;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -116,17 +191,17 @@ textarea {
 }
 
 .button-section button {
-  padding: 12px 20px;
-  font-size: 16px;
+  background-color: #51E0C4;
+  color: #fff;
   border: none;
-  border-radius: 6px;
-  background-color: #2b6cb0;
-  color: white;
+  padding: 10px 15px; 
+  border-radius: 7px; 
+  font-size: 16px; 
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease; 
 
 }
 
 .button-section button:hover {
-  background-color: #1a4f85;
+  background-color: #3cc7a9;
 }

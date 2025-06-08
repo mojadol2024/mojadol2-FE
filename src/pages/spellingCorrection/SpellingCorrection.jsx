@@ -33,11 +33,11 @@ function SelfIntroRegister() {
 
   const handleVoucherChoice = (type) => {
     if (type === 'FREE' && freeVouchers.length === 0) {
-      alert("무료 이용권이 없습니다. 유료 이용권을 사용하거나 결제해주세요.");
+      alert("FREE 이용권이 없습니다. GOLD 이용권을 사용하거나 결제해주세요.");
       return;
     }
     if (type === 'GOLD' && goldVouchers.length === 0) {
-      alert("유료 이용권이 없습니다. 결제 페이지로 이동합니다.");
+      alert("GOLD 이용권이 없습니다. 결제 페이지로 이동합니다.");
       navigate('/payment'); // 결제 페이지 경로
       return;
     }
@@ -175,7 +175,7 @@ function SelfIntroRegister() {
         placeholder="자소서 제목을 입력하세요"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        style={{ width: '100%', padding: '12px', marginBottom: '20px' }}
+        
       />
 
       <div className="editor-section">
@@ -209,7 +209,7 @@ function SelfIntroRegister() {
 
         {correctionResult && (
           <>
-            <div className="editor-box">
+            <div className="editor-box" style={{ marginLeft: '35px'}}>
             <h4>교정 결과</h4>
             <div
                 className="correction-html-box"
@@ -253,35 +253,37 @@ function SelfIntroRegister() {
       {showVoucherModal && (
         <div className="voucher-modal">
           <div className="voucher-modal-content">
-            <p>사용할 권한을 선택하세요</p>
-            <label>
-              <input
-                type="radio"
-                name="voucher"
-                value="FREE"
-                checked={voucherType === 'FREE'}
-                onChange={(e) => handleVoucherChoice(e.target.value)}
-              />
-              무료권 (FREE)
-            </label>
+            <p>사용할 이용권을 선택하세요.</p>
+            <div className="radio-group-container"> 
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="voucher"
+                  value="FREE"
+                  checked={voucherType === 'FREE'}
+                  onChange={(e) => handleVoucherChoice(e.target.value)}
+                />
+                FREE 이용권
+              </label>
+              <br />
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="voucher"
+                  value="GOLD"
+                  checked={voucherType === 'GOLD'}
+                  onChange={(e) => handleVoucherChoice(e.target.value)}
+                />
+                GOLD 이용권
+              </label>
+            </div>
             <br />
-            <label>
-              <input
-                type="radio"
-                name="voucher"
-                value="GOLD"
-                checked={voucherType === 'GOLD'}
-                onChange={(e) => handleVoucherChoice(e.target.value)}
-              />
-              유료권 (GOLD)
-            </label>
-            <br /><br />
             <p style={{ fontWeight: 'bold' }}>
-              현재 "{voucherType === 'FREE' ? '무료권' : '유료권'}"을 선택하셨습니다.<br />
+              현재 "{voucherType === 'FREE' ? 'FREE 이용권' : 'GOLD 이용권'}"을 선택하셨습니다.<br />
               이대로 진행하시겠습니까?
             </p>
-            <button onClick={handleVoucherConfirm}>확인</button>
-            <button onClick={() => setShowVoucherModal(false)} style={{ marginLeft: '10px' }}>
+            <button className="voucher-modal-b" onClick={handleVoucherConfirm}>확인</button>
+            <button className="voucher-modal-c" onClick={() => setShowVoucherModal(false)} style={{ marginLeft: '10px' }}>
               취소
             </button>
           </div>
