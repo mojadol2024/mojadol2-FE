@@ -48,10 +48,10 @@ function PasswordResetModal({ onClose }) {
 
     try {
       await axios.patch(`${API_BASE_URL}/mojadol/api/v1/mail/update-password`, {
-  userLoginId: userId,
-  email,
-  userPw: newPw,
-});
+        userLoginId: userId,
+        email,
+        userPw: newPw,
+      });
 
       alert('비밀번호가 변경되었습니다.');
       onClose();
@@ -68,26 +68,26 @@ function PasswordResetModal({ onClose }) {
   };
 
   return (
-    <div className="modalOverlay">
-      <div className="modalBox">
-        <h3 className="title">비밀번호 찾기</h3>
-        <input
-          type="text"
-          placeholder="로그인 아이디"
-          className="input"
-          value={userId}
-          onChange={e => setUserId(e.target.value)}
-        />
-        <input
-          type="email"
-          placeholder="가입된 이메일"
-          className="input"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
+    <div className="login-modal-overlay">
+      <div className="login-modal-box">
+        <h3 className="login-title">비밀번호 찾기</h3>
+          <input
+            type="text"
+            placeholder="로그인 아이디"
+            className="login-input"
+            value={userId}
+            onChange={e => setUserId(e.target.value)}
+          />
+          <input
+            type="email"
+            placeholder="가입된 이메일"
+            className="login-input"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
 
         {!codeSent ? (
-          <button className="button" onClick={handleSendCode}>
+          <button className="login-button" onClick={handleSendCode}>
             인증번호 전송
           </button>
         ) : !verified ? (
@@ -95,11 +95,11 @@ function PasswordResetModal({ onClose }) {
             <input
               type="text"
               placeholder="인증번호 입력"
-              className="input"
+              className="login-input"
               value={authCode}
               onChange={e => setAuthCode(e.target.value)}
             />
-            <button className="button" onClick={handleVerifyCode}>
+            <button className="login-button" onClick={handleVerifyCode}>
               인증 확인
             </button>
           </>
@@ -108,27 +108,33 @@ function PasswordResetModal({ onClose }) {
             <input
               type="password"
               placeholder="새 비밀번호 입력"
-              className="input"
+              className="login-input"
               value={newPw}
               onChange={e => setNewPw(e.target.value)}
             />
             <input
               type="password"
               placeholder="새 비밀번호 확인"
-              className="input"
+              className="login-input"
               value={confirmPw}
               onChange={e => setConfirmPw(e.target.value)}
             />
-            <div style={{ marginBottom: '10px', fontSize: '14px', color: newPw === confirmPw ? 'green' : 'red' }}>
+            <div
+              style={{
+                marginBottom: '10px',
+                fontSize: '14px',
+                color: newPw === confirmPw ? 'green' : 'red',
+              }}
+            >
               {getPasswordMatchMessage()}
             </div>
-            <button className="button" onClick={handleResetPassword}>
+            <button className="login-button" onClick={handleResetPassword}>
               비밀번호 변경
             </button>
           </>
         )}
 
-        <button className="backLink" onClick={onClose}>
+        <button className="login-back-link" onClick={onClose}>
           닫기
         </button>
       </div>

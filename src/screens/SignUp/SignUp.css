@@ -1,6 +1,6 @@
 
 .signup-container {
-  min-height: 100vh;
+  /*min-height: 100vh;*/
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -8,12 +8,14 @@
   background-color: #fff;
   font-family: sans-serif;
   padding: 20px;
+  overflow-y: hidden;
 }
 
 .signuplogo {
   font-size: 36px;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  margin-top:20px;
 }
 
 .signuplogoHighlight {
