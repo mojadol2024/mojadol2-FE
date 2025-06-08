@@ -31,7 +31,7 @@ function TakeSelect() {
         const fallback = incoming[questionIndex];
         if (fallback) {
           setQuestionObj({
-            id: fallback.questionId, // ✅ 서버가 요구하는 필드명으로 매핑
+            id: fallback.questionId,
             content: fallback.content,
           });
         }
@@ -60,10 +60,11 @@ function TakeSelect() {
     setSelectedTake(index);
   };
 
-  const handleUpload = async () => {
+  // ✅ 공통 업로드 함수로 정리
+  const uploadSelectedTake = async () => {
     if (selectedTake === null) {
       alert("업로드할 영상을 선택해주세요.");
-      return;
+      return null;
     }
 
     const selected = takes[selectedTake];
@@ -73,27 +74,32 @@ function TakeSelect() {
 
     const formData = new FormData();
     formData.append('video', file);
-    formData.append('id', questionObj.id); // ✅ 서버 요구 key로 정확히 전송
+    formData.append('id', questionObj.id);
 
-    console.log("🟨 업로드 시도 중");
+    console.log("🟨 업로드 실행");
     console.log("questionObj.id:", questionObj?.id);
     console.log("video:", file);
 
-    for (let [key, val] of formData.entries()) {
-      console.log(`FormData: ${key} =>`, val);
-    }
-
     try {
-      const response = await axiosInstance.post(
-        '/mojadol/api/v1/interview/upload',
-        formData
-      );
-      const interviewId = response.data.result.interviewId;
+      const response = await axiosInstance.post('/mojadol/api/v1/interview/upload', formData);
+
+      console.log("✅ 서버 응답:", response.data);
+      console.log("📁 저장된 interviewId:", response.data?.result?.interviewId);
+      console.log("🎬 저장된 videoUrl:", response.data?.result?.videoUrl);
+
+      return response.data.result.interviewId;
+    } catch (error) {
+      console.error('❌ 업로드 실패:', error.response || error);
+      alert('영상 업로드에 실패했습니다.');
+      return null;
+    }
+  };
+
+  const handleUpload = async () => {
+    const interviewId = await uploadSelectedTake();
+    if (interviewId) {
       alert("업로드 성공! 결과지로 이동합니다.");
       navigate(`/interview/result/${interviewId}`);
-    } catch (error) {
-      console.error('Upload failed:', error.response || error);
-      alert('영상 업로드에 실패했습니다.');
     }
   };
 
@@ -111,41 +117,20 @@ function TakeSelect() {
       return;
     }
 
-    if (selectedTake === null) {
-      alert('새로운 질문으로 이동하려면 업로드할 영상을 선택하세요.');
-      return;
-    }
+    const interviewId = await uploadSelectedTake();
+    if (!interviewId) return;
 
-    const selected = takes[selectedTake];
-    const file = new File([selected.file], `question_${questionIndex}.webm`, {
-      type: 'video/webm',
-    });
+    alert('영상 업로드 성공. 다음 질문으로 이동합니다.');
 
-    const formData = new FormData();
-    formData.append('video', file);
-    formData.append('id', questionObj.id); // ✅ 정확한 id 사용
-
-    console.log("🟩 새 질문 이동 직전 업로드");
-    console.log("questionObj.id:", questionObj?.id);
-    console.log("video:", file);
-
-    try {
-      await axiosInstance.post('/mojadol/api/v1/interview/upload', formData);
-      alert('영상 업로드 성공. 다음 질문으로 이동합니다.');
-
-      navigate(`/ResumeQuestionPage?id=${coverLetterId}&q=${nextIndex}`, {
-        state: {
-          question: {
-            id: nextQuestion.questionId,
-            content: nextQuestion.content,
-          },
-          questions: questionList,
+    navigate(`/ResumeQuestionPage?id=${coverLetterId}&q=${nextIndex}`, {
+      state: {
+        question: {
+          id: nextQuestion.questionId,
+          content: nextQuestion.content,
         },
-      });
-    } catch (error) {
-      console.error('Upload before new question failed:', error);
-      alert('업로드에 실패했습니다. 새 질문으로 이동하지 않습니다.');
-    }
+        questions: questionList,
+      },
+    });
   };
 
   const handleNavigateToRecording = () => {
@@ -165,12 +150,11 @@ function TakeSelect() {
       <main className="take-main">
         <div className="take-question">{questionText}</div>
 
-        {takes.length < 3 && (
+        {takes.length < 3 ? (
           <button className="take-rec-btn" onClick={handleNavigateToRecording}>
             Take {takes.length + 1} 녹화 시작
           </button>
-        )}
-        {takes.length >= 3 && (
+        ) : (
           <p className="take-limit-warning">최대 3개의 영상을 녹화할 수 있습니다.</p>
         )}
 
