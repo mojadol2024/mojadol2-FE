@@ -187,7 +187,7 @@ function ResumeQuestionPage() {
                   disabled={analysisResults[i]?.exists}
                 > 영상 첨부</button> */}
                 <button
-                  className="btn record"
+                  className="btn-record"
                   onClick={() => handleNavigateToRecord(i)}
                   disabled={analysisResults[i]?.exists}
                 > 영상 녹화</button>
