@@ -1,0 +1,22 @@
+.pdf-view-container {
+  padding: 20px;
+  text-align: center;
+}
+
+.pdf-frame {
+  width: 100%;
+  height: 800px;
+  border: 1px solid #ccc;
+  margin-top: 20px;
+}
+
+.download-button {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #51e0c4;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: bold;
+}

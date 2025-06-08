@@ -112,7 +112,6 @@ function Payment() {
         { id: 1, title: 'GOLD 이용권 (10개)', amount: 9900, quantity: 1, voucherCount: 10, voucherType: 'GOLD' },
         { id: 2, title: 'GOLD 이용권 (50개)', amount: 49000, quantity: 5, voucherCount: 50, voucherType: 'GOLD' },
         { id: 3, title: 'GOLD 이용권 (100개)', amount: 98000, quantity: 10, voucherCount: 100, voucherType: 'GOLD' },
-        { id: 4, title: 'GOLD 이용권 test (10개)', amount: 100, quantity: 1, voucherCount: 10, voucherType: 'GOLD' },
     ];
     const [selectedProduct, setSelectedProduct] = useState(availableProducts[0]);
 
@@ -416,7 +415,7 @@ function Payment() {
                         </div>
                         <div className="payment-popup-buttons">
                             <button className="confirm-button" onClick={handleConfirmPayment}>결제하기</button>
-                            <button className="cancel-button" onClick={handleClosePaymentPopup}>취소</button>
+                            <button className="p-cancel-button" onClick={handleClosePaymentPopup}>취소</button>
                         </div>
                     </div>
                 </div>

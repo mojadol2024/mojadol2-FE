@@ -10,7 +10,7 @@ function InterviewMain() {
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [searchType, setSearchType] = useState('전체');
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectAll, setSelectAll] = useState(false);
 
@@ -21,9 +21,10 @@ function InterviewMain() {
   useEffect(() => {
     // ResumeQuestionPage에서 저장된 flag가 있으면 리스트 다시 불러오기
     const shouldRefresh = localStorage.getItem("shouldRefreshMainList");
+    // navigate('/InterviewMain');
     if (shouldRefresh === "true") {
       fetchCoverLetters(); // 다시 불러오기
-      localStorage.removeItem("shouldRefreshMainList"); // 초기화
+       localStorage.removeItem("shouldRefreshMainList"); // 초기화
     } else {
       fetchCoverLetters();
     }
@@ -45,20 +46,23 @@ function InterviewMain() {
     try {
       const params = {
         page: 0,
-        size: 9
+        size: 1000
       };
       const response = await axiosInstance.get('/mojadol/api/v1/letter/list', { params });
-      
-      // ✅ 응답 가공: result가 배열이고, 각 result는 coverLetter 정보를 포함하고 있음
-      const list = response.data.content || [];
-      const mapped = list.map(item => ({
-        coverLetterId: item.coverLetter?.coverLetterId,
-        title: item.coverLetter?.title,
-        useVoucher: item.coverLetter?.useVoucher,
-        hasVideo: item.hasVideo ?? false
-      }));
+      console.log('📦 불러온 리스트:', response.data.content);
 
+      // ✅ 응답 가공: result가 배열이고, 각 result는 coverLetter 정보를 포함하고 있음
+      const list = response.data.result?.content || []; // ✅ 이렇게 바꿔야 실제 리스트를 가져옴
+      const mapped = list.map(item => ({
+        coverLetterId: item.coverLetterId,
+        title: item.title,
+        useVoucher: item.useVoucher ?? 'FREE',
+        hasVideo: true // 💡 지금 이 응답에는 hasVideo 정보가 없어서 임의로 true 지정 (혹시 추후에 따로 추가 필요!)
+      }));
       setResults(mapped);
+      console.log('🔍 전체 results:', mapped);
+      console.log('🧾 paginated:', paginated);
+
     } catch (error) {
       console.error('자소서 리스트 불러오기 실패:', error);
     }
@@ -78,40 +82,10 @@ function InterviewMain() {
     navigate(`/ResumeQuestionPage?id=${coverLetterId}`);
   };
 
-  const handleNavigateToVideoResult = async (coverLetterId) => {
-    try {
-      const res = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
-      const data = res.data.result;
-
-      if (!data.resultAvailable) {
-        alert('결과지가 아직 생성되지 않았습니다. 모든 질문에 대한 영상 등록 후 결과 확인이 가능합니다.');
-        return;
-      }
-
-      navigate(`/results/${coverLetterId}`);  // pdf 결과지 페이지가 따로 만들어지는건가요? api?를 받은 어떤 페이지가 생성이 되는건가..?
-    } catch (error) {
-      console.error('결과지 확인 오류:', error);
-      alert('결과지를 확인하는 데 실패했습니다.');
-    }
+  const handleNavigateToVideoResult = (coverLetterId) => {
+    navigate(`/PdfView/${coverLetterId}`);
   };
 
-  // const handleNavigateToVideoResult = async (coverLetterId) => {
-  //   try {
-  //     if (data.voucherType === 'FREE' || data.voucherType === 'GOLD') {
-  //       const totalQuestions = data.questions.length;
-  //       const totalAnalyzed = data.questions.filter(q => q.analyzed === true).length;
-
-  //       if (totalAnalyzed < totalQuestions) {
-  //         alert('결과지가 아직 생성되지 않았습니다. 모든 질문에 대한 영상 등록 후 결과 확인이 가능합니다.');
-  //         return;
-  //       }
-  //     }
-  //     navigate(`/results/${coverLetterId}`);  // pdf 결과지 페이지가 따로 만들어지는건가요? api?를 받은 어떤 페이지가 생성이 되는건가..?
-  //   } catch (error) {
-  //     console.error('결과지 확인 오류:', error);
-  //     alert('결과지를 확인하는 데 실패했습니다.');
-  //   }
-  // };
 
   const handleSearch = async () => {
     try {
@@ -197,6 +171,7 @@ function InterviewMain() {
           <button className="search-btn" onClick={handleSearch}>조회</button>
 
           <select value={perPage} onChange={e => { setPerPage(Number(e.target.value)); setCurrentPage(1); }}>
+            <option value={8}>8 개</option> 
             <option value={10}>10 개</option>
             <option value={50}>50 개</option>
             <option value={100}>100 개</option>
@@ -208,10 +183,11 @@ function InterviewMain() {
         {paginated.map((data, index) => (
           <div key={data.coverLetterId} className="card-container">
             <h4 className="card-title">{data.title || `결과지 ${index + 1}`}</h4>
+             
             <ResultCard
               highlight={data.hasVideo}
               onCheckQuestion={() => handleNavigateToQuestions(data.coverLetterId)}
-              onCheckResult={() => handleNavigateToVideoResult(data.coverLetterId, data.hasVideo)}
+              onCheckResult={() => handleNavigateToVideoResult(data.coverLetterId)}
               onDelete={() => handleDelete(data.coverLetterId)}
             />
           </div>

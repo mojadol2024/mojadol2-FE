@@ -7,6 +7,7 @@ import Home from './pages/home/home';
 import MyPage from './pages/mypage/mypage';
 import Login from './screens/Login/Login';
 import Main from './pages/main/InterviewMain';
+import PdfView from './pages/pdfView/PdfView';
 import ResumeQuestionPage from './pages/resumeQuestionPage/ResumeQuestionPage';
 import QuestionConfirmPage from './pages/questionConfirmPage/QuestionConfirmPage';
 import RecordingPage from './pages/recordingPage/RecordingPage';
@@ -58,6 +59,7 @@ import InterviewMain from './pages/main/InterviewMain';
           {/* ✅ 사이드바 포함된 레이아웃 페이지들 */}
           <Route path="/mypage" element={<MainLayout><MyPage /></MainLayout>} />
           <Route path="/InterviewMain" element={<MainLayout><Main /></MainLayout>} />
+          <Route path="/PdfView/:coverLetterId" element={<PdfView />} />
           <Route path="/SpellingCorrection" element={<MainLayout><SpellingCorrection /></MainLayout>} />
           <Route path="/ResumeQuestionPage" element={<MainLayout><ResumeQuestionPage /></MainLayout>} />
           <Route path="/QuestionConfirmPage" element={<MainLayout><QuestionConfirmPage /></MainLayout>} />

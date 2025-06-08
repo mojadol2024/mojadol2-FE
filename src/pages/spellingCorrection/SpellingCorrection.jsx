@@ -14,6 +14,8 @@ function SelfIntroRegister() {
   const [showVoucherModal, setShowVoucherModal] = useState(false);
   const [freeVouchers, setFreeVouchers] = useState([]);
   const [goldVouchers, setGoldVouchers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingS, setIsLoadingS] = useState(false);
 
   useEffect(() => {
     fetchVoucherList();
@@ -33,11 +35,11 @@ function SelfIntroRegister() {
 
   const handleVoucherChoice = (type) => {
     if (type === 'FREE' && freeVouchers.length === 0) {
-      alert("무료 이용권이 없습니다. 유료 이용권을 사용하거나 결제해주세요.");
+      alert("FREE 이용권이 없습니다. GOLD 이용권을 사용하거나 결제해주세요.");
       return;
     }
     if (type === 'GOLD' && goldVouchers.length === 0) {
-      alert("유료 이용권이 없습니다. 결제 페이지로 이동합니다.");
+      alert("GOLD 이용권이 없습니다. 결제 페이지로 이동합니다.");
       navigate('/payment'); // 결제 페이지 경로
       return;
     }
@@ -83,6 +85,7 @@ function SelfIntroRegister() {
       return; // 여기서 중단
     }
     try {
+      setIsLoadingS(true);
       const response = await axiosInstance.post(
         '/mojadol/api/v1/letter/spell-checker',
         { data: organizedText }
@@ -93,6 +96,8 @@ function SelfIntroRegister() {
     } catch (error) {
       console.error('맞춤법 검사 오류:', error);
       alert('맞춤법 검사에 실패했습니다.');
+    } finally {
+      setIsLoadingS(false);
     }
   };
 
@@ -126,6 +131,8 @@ function SelfIntroRegister() {
       if (!confirmContinue) return;
     }
 
+    setIsLoading(true);
+
     try {
       const cleanedText = originalText;
 
@@ -148,7 +155,7 @@ function SelfIntroRegister() {
         }
       );
       const savedId = response.data.result.coverLetterId; // ✅ 이렇게 수정
-      alert('자소서가 저장되었습니다. 질문 생성을 기다리는 중입니다...'); // 나중에 자소서가 저장됨과 동시에 뜨는 거라 애매하네..
+      alert('자소서가 저장되었습니다.'); // 나중에 자소서가 저장됨과 동시에 뜨는 거라 애매하네..
 
       const success = await waitForQuestions(savedId);
       if (!success) {
@@ -164,8 +171,28 @@ function SelfIntroRegister() {
     } catch (error) {
       console.error('자소서 저장 오류:', error);
       alert('자소서 저장에 실패했습니다.');
+    } finally {
+      setIsLoading(false); // ✅ 로딩 종료
     }
   };
+
+  if (isLoadingS) {
+    return (
+      <div className="loading-state-container">
+        <div className="spinner"></div>
+        <p className="loading-message">맞춤법 검사 중입니다...</p>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="loading-state-container">
+        <div className="spinner"></div>
+        <p className="loading-message">맞춤형 면접 질문을 생성 중입니다...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="register-page">
@@ -175,7 +202,7 @@ function SelfIntroRegister() {
         placeholder="자소서 제목을 입력하세요"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        style={{ width: '100%', padding: '12px', marginBottom: '20px' }}
+        
       />
 
       <div className="editor-section">
@@ -186,7 +213,7 @@ function SelfIntroRegister() {
               value={originalText}
               onChange={(e) => {
                 const text = e.target.value;
-                if (text.length <= 3000) {
+                if (text.length <= 1200) {
                   setOriginalText(text);
                 } else {
                   alert("자소서는 최대 1200자까지만 입력 가능합니다.");
@@ -198,7 +225,7 @@ function SelfIntroRegister() {
               ※ 맞춤법 검사는 1200자까지만 가능하며, 실제 저장은 원본 자소서를 기준으로 합니다.
             </p>            
             <p style={{ fontSize: '13px'}}>
-              글자 수: {sanitizeText(originalText).length} / 3000자
+              글자 수: {sanitizeText(originalText).length} / 1200자
             </p>
             {originalText.length > 1200 && (
               <p style={{ color: 'red', fontWeight: 'bold' }}>
@@ -209,7 +236,7 @@ function SelfIntroRegister() {
 
         {correctionResult && (
           <>
-            <div className="editor-box">
+            <div className="editor-box" style={{ marginLeft: '35px'}}>
             <h4>교정 결과</h4>
             <div
                 className="correction-html-box"
@@ -245,7 +272,7 @@ function SelfIntroRegister() {
         )}
       </div>
 
-      <div className="button-section">
+      <div className="button-section-s">
         <button onClick={handleSpellCheck}>맞춤법 검사</button>
         <button onClick={handleSaveClick}>문서 평가 및 질문 생성</button>
       </div>
@@ -253,35 +280,37 @@ function SelfIntroRegister() {
       {showVoucherModal && (
         <div className="voucher-modal">
           <div className="voucher-modal-content">
-            <p>사용할 권한을 선택하세요</p>
-            <label>
-              <input
-                type="radio"
-                name="voucher"
-                value="FREE"
-                checked={voucherType === 'FREE'}
-                onChange={(e) => handleVoucherChoice(e.target.value)}
-              />
-              무료권 (FREE)
-            </label>
+            <p>사용할 이용권을 선택하세요.</p>
+            <div className="radio-group-container"> 
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="voucher"
+                  value="FREE"
+                  checked={voucherType === 'FREE'}
+                  onChange={(e) => handleVoucherChoice(e.target.value)}
+                />
+                FREE 이용권
+              </label>
+              <br />
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="voucher"
+                  value="GOLD"
+                  checked={voucherType === 'GOLD'}
+                  onChange={(e) => handleVoucherChoice(e.target.value)}
+                />
+                GOLD 이용권
+              </label>
+            </div>
             <br />
-            <label>
-              <input
-                type="radio"
-                name="voucher"
-                value="GOLD"
-                checked={voucherType === 'GOLD'}
-                onChange={(e) => handleVoucherChoice(e.target.value)}
-              />
-              유료권 (GOLD)
-            </label>
-            <br /><br />
             <p style={{ fontWeight: 'bold' }}>
-              현재 "{voucherType === 'FREE' ? '무료권' : '유료권'}"을 선택하셨습니다.<br />
+              현재 "{voucherType === 'FREE' ? 'FREE 이용권' : 'GOLD 이용권'}"을 선택하셨습니다.<br />
               이대로 진행하시겠습니까?
             </p>
-            <button onClick={handleVoucherConfirm}>확인</button>
-            <button onClick={() => setShowVoucherModal(false)} style={{ marginLeft: '10px' }}>
+            <button className="voucher-modal-b" onClick={handleVoucherConfirm}>확인</button>
+            <button className="voucher-modal-c" onClick={() => setShowVoucherModal(false)} style={{ marginLeft: '10px' }}>
               취소
             </button>
           </div>

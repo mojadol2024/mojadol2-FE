@@ -7,7 +7,7 @@ function RecordingPage() {
   const navigate = useNavigate();
   const questionObj = location.state?.question;
   const coverLetterId = location.state?.coverLetterId;
-  const questions = location.state?.questions || [];
+  const questions = location.state?.questions || JSON.parse(localStorage.getItem('questions') || '[]');
   const questionIndex = location.state?.questionIndex;
 
   const questionText = questionObj?.content
@@ -26,11 +26,24 @@ function RecordingPage() {
   const maxRecordingSeconds = 5;
 
   useEffect(() => {
-    const streamRef = { current: null };
-
     if (!coverLetterId || !questionObj) {
       alert('잘못된 접근입니다. 다시 질문을 선택해주세요.');
       navigate(`/ResumeQuestionPage?id=${coverLetterId}`);
+      return;
+    }
+
+    const key = `videoTakes_${coverLetterId}_${questionIndex}`;
+    const prevTakes = JSON.parse(localStorage.getItem(key) || '[]');
+    if (prevTakes.length >= 3) {
+      alert('이 질문에 대한 최대 3개의 녹화가 이미 완료되었습니다.');
+      navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
+        state: {
+          coverLetterId,
+          questionIndex,
+          question: questionObj,
+          questions,
+        },
+      });
       return;
     }
 
@@ -38,47 +51,39 @@ function RecordingPage() {
       try {
         const userStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         setStream(userStream);
-        streamRef.current = userStream;
-
-        setTimeout(() => {
-          if (videoRef.current) {
-            videoRef.current.srcObject = userStream;
-          }
-        }, 100);
+        if (videoRef.current) videoRef.current.srcObject = userStream;
       } catch (err) {
-        alert("카메라 또는 마이크에 접근할 수 없습니다.");
-        navigate(`/ResumeQuestionPage?id=${coverLetterId}`);
+        console.error('getUserMedia 실패:', err);
+        alert('카메라 또는 마이크 접근 실패. 브라우저 설정을 확인해주세요.');
+        navigate(-1);
       }
     };
 
     checkDevices();
 
     return () => {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-      }
+      stream?.getTracks().forEach(track => track.stop());
     };
-  }, [navigate, coverLetterId, questionObj]);
+  }, [navigate, coverLetterId, questionObj, questionIndex]);
 
   const extractThumbnail = (blob) => {
     return new Promise((resolve) => {
       const video = document.createElement('video');
       video.src = URL.createObjectURL(blob);
-      video.currentTime = 0;
       video.muted = true;
       video.playsInline = true;
-
-      video.onloadeddata = () => {
+      video.onloadedmetadata = () => {
+        video.currentTime = 0;
+      };
+      video.onseeked = () => {
         const canvas = document.createElement('canvas');
         canvas.width = 240;
         canvas.height = 240;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, 240, 240);
-        const base64 = canvas.toDataURL('image/png');
-        resolve(base64);
+        resolve(canvas.toDataURL('image/png'));
       };
       video.onerror = () => resolve(null);
-      video.load();
     });
   };
 
@@ -90,8 +95,8 @@ function RecordingPage() {
 
       const mediaRecorder = new MediaRecorder(userStream);
       mediaRecorderRef.current = mediaRecorder;
-
       const chunks = [];
+
       mediaRecorder.ondataavailable = (e) => {
         if (e.data.size > 0) chunks.push(e.data);
       };
@@ -99,18 +104,21 @@ function RecordingPage() {
       mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'video/webm' });
         const thumbnail = await extractThumbnail(blob);
-
         const newTake = {
+          takeNumber: Date.now(),
           file: blob,
           imageUrl: thumbnail,
         };
+
+        const key = `videoTakes_${coverLetterId}_${questionIndex}`;
+        const prevTakes = JSON.parse(localStorage.getItem(key) || '[]');
+        localStorage.setItem(key, JSON.stringify([...prevTakes, newTake]));
 
         navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
           state: {
             coverLetterId,
             questionIndex,
             question: questionObj,
-            takes: [newTake], // 반드시 전달
             questions,
           },
         });
@@ -120,8 +128,9 @@ function RecordingPage() {
       setRecording(true);
       monitorSilence(userStream);
     } catch (err) {
-      alert('녹화 시작에 실패했습니다.');
-      navigate(`/ResumeQuestionPage?id=${coverLetterId}`);
+      console.error('녹화 시작 실패:', err);
+      alert('녹화를 시작할 수 없습니다.');
+      navigate(-1);
     }
   };
 
@@ -142,7 +151,6 @@ function RecordingPage() {
       analyser.getByteTimeDomainData(buffer);
       const silent = buffer.every(val => Math.abs(val - 128) < 2);
       setSilenceCount(prev => silent ? prev + 1 : 0);
-
       setTimer(prev => {
         const next = prev + 1;
         if (next >= maxRecordingSeconds || silenceCount >= 3) {
@@ -172,7 +180,9 @@ function RecordingPage() {
             <button className="record-button" onClick={() => setStep('countdown')}>🎥 시작</button>
           </div>
         )}
+
         {step === 'countdown' && <div className="countdown-number">{countdown}</div>}
+
         {step === 'recording' && (
           <>
             <div className="recording-top-bar">
