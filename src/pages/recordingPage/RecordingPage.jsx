@@ -267,13 +267,29 @@ function RecordingPage() {
             <div className="confirm-buttons">
               <button className="btn gray" onClick={handleNavigateBack}>질문 재선택</button>
               <button className="btn green" onClick={() => setStep('countdown')}>녹화 시작</button>
+              <button
+                className="btn yellow"
+                onClick={() => {
+                  const storedQuestions = JSON.parse(localStorage.getItem('questions') || '[]');
+                  navigate(`/TakeSelect?id=${coverLetterId}&q=${questionIndex}`, {
+                    state: {
+                      coverLetterId,
+                      questionIndex,
+                      question: questionObj,
+                      questions: questions.length > 0 ? questions : storedQuestions,
+                    },
+                  });
+                }}
+              >
+                Take 선택하기
+            </button>
             </div>
 
             <div className="notice-text">
               <p>카메라, 녹음 권한을 확인하세요.
               <br/>녹화 시작 버튼 클릭 시 3초 카운트다운 후 녹화가 시작됩니다.
               <br/>제한 시간이 끝나면 자동 종료됩니다.
-              <br/>직접 종료하려면 종료 버튼 또는 스페이스바를 눌러주세요</p>
+              <br/>직접 종료하려면 종료 버튼 또는 스페이스바를 눌러주세요.</p>
             </div>
           </div>
         )}

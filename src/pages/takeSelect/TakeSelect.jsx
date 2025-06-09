@@ -14,6 +14,8 @@ function TakeSelect() {
   const [questionList, setQuestionList] = useState([]);
   const [questionObj, setQuestionObj] = useState(location.state?.question || null);
 
+  const [isUploading, setIsUploading] = useState(false);
+
   useEffect(() => {
     if (!coverLetterId || isNaN(questionIndex)) {
       alert('잘못된 접근입니다. 홈으로 이동합니다.');
@@ -101,10 +103,16 @@ function TakeSelect() {
   };
 
   const handleUploadAndReturn = async () => {
+    setIsUploading(true); 
     const interviewId = await uploadSelectedTake();
-    if (!interviewId) return;
+    //if (!interviewId) return;
+    if (!interviewId) {
+    setIsUploading(false); // 실패 시 로딩 종료
+    return;
+  }
 
     const analysisResults = await fetchAnalysisResults();
+    setIsUploading(false);
 
     alert("영상 업로드 성공! 질문 선택 화면으로 돌아갑니다.");
     navigate(`/ResumeQuestionPage?id=${coverLetterId}`, {
@@ -126,6 +134,15 @@ function TakeSelect() {
       },
     });
   };
+
+  if (isUploading) {
+    return (
+      <div className="loading-state-container">
+        <div className="spinner"></div>
+        <p className="loading-message">영상을 업로드 중입니다...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="take-select-container">
