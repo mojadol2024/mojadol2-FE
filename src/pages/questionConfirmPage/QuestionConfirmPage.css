@@ -1,7 +1,6 @@
-html, body {  
+/*html, body {  
   font-family: 'Noto Sans KR', sans-serif;
   background-color: #fff;
-  /*margin-left: 130px; side 때문에 margin 줘야돼돼요*/
 }
 
 .question-confirm-container {
@@ -10,13 +9,12 @@ html, body {
   width: 100%;
   box-sizing: border-box; 
   padding-left: 25px;
-  /*padding-right: 290px; 뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
   overflow-y: auto;
   text-align: center;
   padding-top:20px;
   padding-left: 50px;
   padding-right: 50px;
-}
+}*/
 /* 중복으로 둔 이유가 있는지
 .question-confirm-main {
   flex: 1;
@@ -65,6 +63,15 @@ html, body {
 
 .btn.green:hover {
   background-color: #3cc7a9;
+}
+
+.btn.yellow {
+  background-color: rgb(245, 229, 138);
+  color: #fff;
+}
+
+.btn.yellow:hover {
+  background-color: rgb(227, 208, 102);
 }
 
 /* 영상 첨부 확인/재첨부/분석 완료 관련 스타일 */

@@ -41,7 +41,7 @@ html, body {
   min-height: 100%;
   width: 100%;
   box-sizing: border-box; 
-  padding-left: 25px;
+
   padding-top: 20px;
   overflow-y: auto;
 }
@@ -179,3 +179,125 @@ html, body {
   line-height: 1.6;
   padding-bottom: 12px;
 }
+
+/*confirm 이랑 합치기*/
+
+/* 중복으로 둔 이유가 있는지
+.question-confirm-main {
+  flex: 1;
+  padding: 56px;
+  overflow-y: auto;
+  text-align: center;
+}*/
+
+.question-title {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 50px;
+  color: #333;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.btn {
+  padding: 15px 20px;
+  font-size: 20px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn.gray {
+  background-color: #dcdcdc;
+  color: #555;
+}
+
+.btn.gray:hover {
+  background-color: #c7c7c7;
+}
+
+.btn.green {
+  background-color: #51E0C4;
+  color: #fff;
+}
+
+.btn.green:hover {
+  background-color: #3cc7a9;
+}
+
+.btn.yellow {
+  background-color: rgb(245, 229, 138);
+  color: #fff;
+}
+
+.btn.yellow:hover {
+  background-color: rgb(227, 208, 102);
+}
+
+/* 영상 첨부 확인/재첨부/분석 완료 관련 스타일 */
+/*
+.btn.confirm {
+  background-color: #cce5ff;
+  color: #2c2c2c;
+}
+
+.btn.confirm:hover {
+  background-color: #b3d8fd;
+}
+
+.btn.redo {
+  background-color: #ffe3e3;
+  color: #c13d3d;
+}
+
+.btn.redo:hover {
+  background-color: #ffc7c7;
+}
+
+.video-preview {
+  font-size: 20px;
+  color: #666;
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.question-status.done {
+  color: green;
+  font-weight: bold;
+  margin-top: 16px;
+}
+*/
+
+.notice-text {
+  font-size: 20px;
+  color: #666;
+  line-height: 2;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/*
+.attach-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 64px;
+  margin-top: 60px;
+}
+
+.btn.attach {
+  background-color: #ececec;
+  color: #999;
+  font-weight: 600;
+  padding: 18px 32px;
+  font-size: 22px;
+}
+*/
