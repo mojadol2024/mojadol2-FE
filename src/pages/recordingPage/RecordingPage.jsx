@@ -23,7 +23,7 @@ function RecordingPage() {
   const streamRef = useRef(null); // ✅ stream을 ref로 관리
   const [recording, setRecording] = useState(false);
   const [countdown, setCountdown] = useState(3);
-  const [step, setStep] = useState('ready');
+  const [step, setStep] = useState('countdown'); {/*바로카운트다운부터시작하려고*/}
   const [timer, setTimer] = useState(0);
   const [silenceCount, setSilenceCount] = useState(0);
   const maxRecordingSeconds = 30;
@@ -244,26 +244,25 @@ function RecordingPage() {
           <div className="recorder-header">
             <button className="record-button" onClick={() => setStep('countdown')}>🎥 시작</button>
           </div>
-        )}
+        )} {/*confirm 에서 넘어오면 시작버튼이 필요없다*/}
 
         {step === 'countdown' && <div className="countdown-number">{countdown}</div>}
 
         {step === 'recording' && (
           <>
-            <div className="recording-top-bar">
-              <div className="question-text">{questionText}</div>
+            <div className="question-text">{questionText}</div>
 
+            {/* 2. 카메라 박스 (타이머 포함) - recording-main의 직접적인 자식으로 */}
+            <div className="camera-box">
+              <video ref={videoRef} autoPlay muted playsInline className="camera-feed" />
+              {/* 타이머 박스는 camera-box의 자식으로 */}
               <div className="timer-box">
-                <button className="recording-stop-button" onClick={stopRecording}>⏹</button>
+                <button className="recording-stop-button" onClick={stopRecording}></button>
                 <div className="timer-texts">
                   <div className="time-red">{new Date((maxRecordingSeconds - timer) * 1000).toISOString().substr(11, 8)}</div>
                   <div className="time-black">{new Date(timer * 1000).toISOString().substr(11, 8)}</div>
                 </div>
               </div>
-            </div>
-
-            <div className="camera-box">
-              <video ref={videoRef} autoPlay muted playsInline className="camera-feed" />
             </div>
 
             <div className="recording-notice">
