@@ -153,7 +153,7 @@ function InterviewMain() {
             }}
           />
 
-          <span className="cover-letter-count">총 {filteredResults.length}개</span>
+          <span className="cover-letter-count">{filteredResults.length}개</span>
         </div>
       </div>
 
@@ -173,7 +173,7 @@ function InterviewMain() {
             </div>
           ))
         ) : (
-          <p className="no-results">검색 결과가 없습니다.</p>
+          <p className="no-results">표시할 자소서가 없습니다.</p>
         )}
       </div>
 
