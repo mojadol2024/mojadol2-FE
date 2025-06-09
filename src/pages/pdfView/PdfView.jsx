@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../lib/axiosInstance';
 import './PdfView.css'; // ✅ 스타일 import
+import { FiDownload } from 'react-icons/fi';
 
 function PdfView() {
   const { coverLetterId } = useParams();
@@ -52,24 +53,25 @@ function PdfView() {
 
   return (
     <div className="pdf-view-container">
-      <h2>📄 면접 결과 리포트</h2>
-
-      {pdfUrl ? (
-        <>
-          <iframe
-            src={pdfUrl}
-            title="결과 리포트"
-            className="pdf-frame"
-          />
-          <br />
+      <div className="pdf-header"> {/* 제목과 버튼을 위한 새로운 div */}
+        <h2>면접 결과 리포트</h2>
+        {pdfUrl && ( // pdfUrl이 있을 때만 다운로드 버튼 표시
           <a
             href={pdfUrl}
             download={`면접_결과지_${coverLetterId}.pdf`}
-            className="download-button"
+            className="download-button-p"
           >
-            📥 결과지 다운로드
+            <FiDownload className="download-icon" /> 결과지 다운로드
           </a>
-        </>
+        )}
+      </div>
+
+      {pdfUrl ? (
+        <iframe
+          src={pdfUrl}
+          title="결과 리포트"
+          className="pdf-frame"
+        />
       ) : (
         <p>결과지를 불러오는 중입니다...</p>
       )}
