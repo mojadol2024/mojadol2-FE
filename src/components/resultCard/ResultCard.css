@@ -138,10 +138,11 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
+/*
 .gold-card {
-  border-color: gold;
-  background-color: #fffbea;
-}
+  /*border-color:gold;
+  background-color: #F5FFFD; 
+}*/
 
 .card-header {
   display: flex;
@@ -155,15 +156,18 @@
 }
 
 .voucher-tag {
-  font-size: 14px;
+  font-size: 12px;
   padding: 4px 8px;
   border-radius: 4px;
   font-weight: bold;
 }
 
 .gold-tag {
-  background-color: gold;
-  color: #000;
+  color: gold;
+}
+
+.free-tag {
+  color: #51E0C4; 
 }
 
 .question-btn,
@@ -171,43 +175,53 @@
 .delete-btn {
   display: block;
   width: 100%;
-  padding: 10px;
+  padding: 8px;
   margin-bottom: 10px;
   border: none;
   border-radius: 6px;
   font-size: 15px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s easee, border-color 0.2s ease; ;
 }
 
 .question-btn {
-  background-color: #f0f0f0;
+  background-color: #E0FFF5;
+  border: 2px solid #E0FFF5; 
+  color: #777;
+  
 }
 
 .question-btn:hover {
-  background-color: #e0e0e0;
+  background-color: #b5e3d8;
+  border: 2px solid #b5e3d8;
+  color: #666;
 }
 
 .interview-btn {
-  background-color: #51E0C4;
+  background-color: #51E0C4; 
+  border: 2px solid #51E0C4; 
   color: #fff;
 }
 
 .interview-btn.disabled {
   background-color: #ccc;
+  border: 2px solid #ccc;
   cursor: not-allowed;
 }
 
 .interview-btn.active:hover {
   background-color: #3cc7a9;
+  border: 2px solid #3cc7a9;
 }
 
 .delete-btn {
-  background-color: #f44336;
+  background-color: #777;
+  border: 2px solid #777;
   color: #fff;
 }
 
 .delete-btn:hover {
-  background-color: #d32f2f;
+  background-color: #666;
+  border: 2px solid #666;
 }
