@@ -40,6 +40,7 @@ function ResumeQuestionPage() {
   }, [location, coverLetterId]);
 
   const fetchLetterDetail = async () => {
+    setLoading(true);
     try {
       const response = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
       const result = response.data.result;
@@ -121,7 +122,12 @@ function ResumeQuestionPage() {
       </div>
 
       {loading ? (
-        <p className="loading">질문을 불러오는 중입니다...</p>
+        <div>
+                <div className="loading-state-container">
+                    <div className="spinner"></div>
+                    <p className="loading-message">데이터를 불러오는 중입니다...</p>
+                </div>
+            </div>
       ) : (
         <div className="question-list">
           {questions.map((q, i) => {
