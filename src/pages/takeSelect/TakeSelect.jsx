@@ -132,40 +132,44 @@ function TakeSelect() {
       <main className="take-main">
         <div className="take-question">{questionText}</div>
 
-        {takes.length < 3 ? (
-          <button className="take-rec-btn" onClick={handleNavigateToRecording}>
-            Take {takes.length + 1} 녹화 시작
-          </button>
-        ) : (
-          <p className="take-limit-warning">최대 3개의 영상을 녹화할 수 있습니다.</p>
-        )}
+        <div className="take-actions-container">
+          {takes.length < 3 ? (
+            <button className="take-rec-btn" onClick={handleNavigateToRecording}>
+              Take {takes.length + 1} 녹화 시작
+            </button>
+          ) : (
+            <p className="take-limit-warning">최대 3개의 영상을 녹화할 수 있습니다.</p>
+          )}
 
-        <div style={{ display: 'flex', gap: '20px' }}>
+          <div className="take-buttons">
+            <button
+              className={selectedTake !== null ? 'active' : 'disabled'}
+              onClick={handleUploadAndReturn}
+              disabled={selectedTake === null}
+            >
+              영상 저장
+            </button>
+          </div>
+        </div>
+
+        <div className="take-thumbnails-container">
           {takes.map((take, index) => (
             <div key={index} className="take-box">
-              <div
+              {/* --- 기존 take-radio div 제거 ---ddd */}
+              {/* <div
                 className={`take-radio ${selectedTake === index ? 'selected' : ''}`}
                 onClick={() => handleSelect(index)}
-              ></div>
+              ></div> */}
               <span>Take {index + 1}</span>
               <img
                 src={take.imageUrl}
                 alt={`Take ${index + 1}`}
-                className="take-image"
+                className={`take-image ${selectedTake === index ? 'selected' : ''}`} /* selected 클래스 조건부 추가 */
+                onClick={() => handleSelect(index)} 
                 onError={() => console.warn(`❗ 이미지 로드 실패: Take ${index + 1}`)}
               />
             </div>
           ))}
-        </div>
-
-        <div className="take-buttons">
-          <button
-            className={selectedTake !== null ? 'active' : 'disabled'}
-            onClick={handleUploadAndReturn}
-            disabled={selectedTake === null}
-          >
-            영상 저장
-          </button>
         </div>
       </main>
     </div>
