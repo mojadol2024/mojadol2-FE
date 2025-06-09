@@ -155,7 +155,7 @@ function TakeSelect() {
         <div className="take-thumbnails-container">
           {takes.map((take, index) => (
             <div key={index} className="take-box">
-              {/* --- 기존 take-radio div 제거 --- */}
+              {/* --- 기존 take-radio div 제거 ---ddd */}
               {/* <div
                 className={`take-radio ${selectedTake === index ? 'selected' : ''}`}
                 onClick={() => handleSelect(index)}
