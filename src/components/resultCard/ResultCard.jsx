@@ -1,9 +1,7 @@
-// ResultCard.js 파일
 import React from 'react';
 import './ResultCard.css';
 import { FaUserAlt } from 'react-icons/fa';
 
-// canCheckResult prop을 추가합니다.
 function ResultCard({ highlight, useVoucher, canCheckResult, onCheckQuestion, onCheckResult, onDelete }) {
   const isGold = useVoucher === 'GOLD';
   const isFree = useVoucher === 'FREE';
@@ -26,10 +24,10 @@ function ResultCard({ highlight, useVoucher, canCheckResult, onCheckQuestion, on
 
       {/* 화상 면접 결과 확인 버튼 */}
       <button
-        // disabled 상태를 canCheckResult prop으로 설정합니다.
-        className={`interview-btn ${canCheckResult ? 'active' : 'disabled'}`}
+        // disabled 상태를 더 이상 canCheckResult prop에 의존하지 않고 항상 활성화
+        className={`interview-btn active`} // 항상 'active' 클래스 적용
         onClick={onCheckResult}
-        disabled={!canCheckResult} // canCheckResult가 false일 때 비활성화
+        disabled={false} // ✨✨✨ 항상 false로 설정하여 버튼이 비활성화되지 않도록 함 ✨✨✨
       >
         화상 면접 결과 확인
       </button>
