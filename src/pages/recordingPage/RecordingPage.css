@@ -1,35 +1,39 @@
-/* RecordingPage.css - 정리된 최종 레이아웃 */
-
 html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  font-family: 'Pretendard', sans-serif;
-  background-color: #d7eff9;
-}
-
-.recording-layout {
-  display: flex;
-  height: 100vh;
-}
-
-.side-fake {
-  width: 240px;
+  font-family: 'Noto Sans KR', sans-serif;
   background-color: #fff;
 }
 
-.recording-main {
-  flex: 1;
-  padding: 32px 48px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-sizing: border-box;
+.recording-layout {
+  flex-grow: 1;
+  min-height: 100%;
+  width: 100%;
+  box-sizing: border-box; 
+  padding-left: 25px;
+  padding-top: 20px;
+  overflow-y: auto; 
 }
 
-.recorder-header {
+/*
+.side-fake {
+  width: 240px;
+  background-color: #fff;
+}*/
+
+.recording-main {
+  flex-grow: 1;
+  min-height: 100%;
+  width: 100%;
+  box-sizing: border-box; 
+  padding-left: 25px;
+  padding-top: 20px;
+  overflow-y: auto;
+
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; 
+}
+/*
+.recorder-header { 이거없애고싶으니까걍둬야겟다다
   margin-top: 100px;
 }
 
@@ -41,12 +45,13 @@ html, body {
   border-radius: 16px;
   border: none;
   cursor: pointer;
-}
+}*/ 
 
 .countdown-number {
+  justify-content: center;
   font-size: 280px;
   font-weight: bold;
-  margin-top: 120px;
+  margin: 0 auto;
   animation: fade 0.8s ease-in-out;
 }
 
@@ -55,26 +60,23 @@ html, body {
   to { opacity: 1; transform: scale(1); }
 }
 
+/*
 .recording-top-bar {
   display: flex;
-  justify-content: center;        /* 가운데 정렬로 바꾸기 */
+  justify-content: center;     
   align-items: flex-start;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto 20px auto;
   padding: 0 16px;
-  gap: 40px;                      /* 질문과 타이머 박스 사이 간격 */
-}
+  gap: 40px;              
+}*/
 
 .question-text {
-  flex-shrink: 0;
-  max-width: 600px;
+  width: 90%;
   font-size: 24px;
   font-weight: bold;
-  background: white;
-  padding: 10px 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  
   word-break: keep-all;
 }
 
