@@ -50,7 +50,8 @@ import InterviewMain from './pages/main/InterviewMain';
 
 <Routes>
   {/* ✅ 사이드바 없는 페이지들 */}
-  <Route path="/" element={<Home />} />
+  <Route path="/" element={<Homepage />} />
+  <Route path="/home" element={<Home />} />
   <Route path="/homepage" element={<Homepage />} />
   <Route path="/login" element={<Login />} />
   <Route path="/sign-up" element={<SignUp />} />

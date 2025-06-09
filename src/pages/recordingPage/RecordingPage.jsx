@@ -23,11 +23,31 @@ function RecordingPage() {
   const streamRef = useRef(null); // ✅ stream을 ref로 관리
   const [recording, setRecording] = useState(false);
   const [countdown, setCountdown] = useState(3);
-  const [step, setStep] = useState('countdown'); {/*바로카운트다운부터시작하려고*/}
+  const [step, setStep] = useState('ready'); 
   const [timer, setTimer] = useState(0);
   const [silenceCount, setSilenceCount] = useState(0);
   const maxRecordingSeconds = 30;
+
+  const handleNavigateBack = () => {
+    navigate(`/ResumeQuestionPage?id=${coverLetterId}`); // 질문 재선택시 이동
+  };
   
+  useEffect(() => {
+  if (step === 'recording') {
+    const handleKeyDown = (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault(); // 스페이스바 기본 동작(스크롤 등) 방지
+        stopRecording();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }
+}, [step]);
+
   useEffect(() => {
     const incomingQuestions = location.state?.questions;
     const storedQuestions = JSON.parse(localStorage.getItem('questions') || '[]');
@@ -241,10 +261,23 @@ function RecordingPage() {
     <div className="recording-layout">
       <main className="recording-main">
         {step === 'ready' && (
-          <div className="recorder-header">
-            <button className="record-button" onClick={() => setStep('countdown')}>🎥 시작</button>
+          <div className="question-confirm-container">
+            <h1 className="question-title">{questionText}</h1>
+
+            <div className="confirm-buttons">
+              <button className="btn gray" onClick={handleNavigateBack}>질문 재선택</button>
+              <button className="btn green" onClick={() => setStep('countdown')}>녹화 시작</button>
+            </div>
+
+            <div className="notice-text">
+              <p>카메라, 녹음 권한을 확인하세요.
+              <br/>녹화 시작 버튼 클릭 시 3초 카운트다운 후 녹화가 시작됩니다.
+              <br/>제한 시간이 끝나면 자동 종료됩니다.
+              <br/>직접 종료하려면 종료 버튼 또는 스페이스바를 눌러주세요</p>
+            </div>
           </div>
-        )} {/*confirm 에서 넘어오면 시작버튼이 필요없다*/}
+        )}
+
 
         {step === 'countdown' && <div className="countdown-number">{countdown}</div>}
 
@@ -266,8 +299,8 @@ function RecordingPage() {
             </div>
 
             <div className="recording-notice">
-              제한 시간이 끝나거나 소리가 3초 이상 녹음되지 않으면 자동 종료됩니다.
-              직접 종료하려면 종료 버튼을 눌러주세요.
+              제한 시간이 끝나면 자동 종료됩니다.
+              직접 종료하려면 종료 버튼 또는 스페이스바를 눌러주세요.
             </div>
           </>
         )}
