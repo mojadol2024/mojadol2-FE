@@ -74,21 +74,25 @@ function ResumeQuestionPage() {
   };
 
   const handleConfirm = () => {
+    const isUploaded = (q) => q.is_answered === 1;
+
     if (voucherType === 'FREE') {
-      const allAnalyzed = questions.every((_, i) => analysisResults[i]?.exists);
-      if (!allAnalyzed) {
+      const allUploaded = questions.every(isUploaded);
+      if (!allUploaded) {
         alert('모든 질문에 대해 영상이 등록되어야 결과 확인이 가능합니다.');
         return;
       }
     } else if (voucherType === 'GOLD') {
-      const anyAnalyzed = questions.some((_, i) => analysisResults[i]?.exists);
-      if (!anyAnalyzed) {
+      const anyUploaded = questions.some(isUploaded);
+      if (!anyUploaded) {
         alert('최소 한 개 이상의 질문에 대해 영상이 등록되어야 결과 확인이 가능합니다.');
         return;
       }
     }
+
     navigate(`/PdfView/${coverLetterId}`);
   };
+
 
   const handleSave = async () => {
     alert('저장되었습니다. 이후에도 이어서 진행 가능합니다.');
@@ -102,7 +106,8 @@ function ResumeQuestionPage() {
           <button
             className="btn-confirm"
             onClick={handleConfirm}
-            disabled={voucherType === 'FREE' && !questions.every((_, i) => analysisResults[i]?.exists)}
+            disabled={(voucherType === 'FREE' && !questions.every(q => q.is_answered === 1)) ||
+                      (voucherType === 'GOLD' && !questions.some(q => q.is_answered === 1))}
           >
             결과 확인
           </button>
@@ -113,27 +118,30 @@ function ResumeQuestionPage() {
         <p className="loading">질문을 불러오는 중입니다...</p>
       ) : (
         <div className="question-list">
-          {questions.map((q, i) => (
-            <div className="question-item" key={i}>
-              <div className="question-text-r">
-                <span className="play-icon">▶</span>
-                질문 {i + 1}: "{q.content}"
+          {questions.map((q, i) => {
+            const isUploaded = q.is_answered === 1;
+            return (
+              <div className="question-item" key={i}>
+                <div className="question-text-r">
+                  <span className="play-icon">▶</span>
+                  질문 {i + 1}: "{q.content}"
+                </div>
+                <div className="question-actions">
+                  <button
+                    className="btn-record"
+                    onClick={() => handleNavigateToRecord(i)}
+                    disabled={isUploaded}
+                  >
+                    {isUploaded ? '녹화 완료' : '영상 녹화'}
+                  </button>
+                </div>
+                {isUploaded && (
+                  <div className="question-status done">녹화 완료</div>
+                )}
               </div>
-              <div className="question-actions">
-                <button
-                  className="btn-record"
-                  onClick={() => handleNavigateToRecord(i)}
-                  disabled={analysisResults[i]?.exists}
-                >
-                  영상 녹화
-                </button>
-              </div>
-              {analysisResults[i]?.exists && (
-                <div className="question-status done">분석 완료</div>
-              )}
-            </div>
-          ))}
-        </div>
+            );
+          })}
+      </div>
       )}
     </main>
   );

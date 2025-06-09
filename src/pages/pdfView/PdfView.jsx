@@ -10,10 +10,12 @@ function PdfView() {
 
   useEffect(() => {
     const fetchPdf = async () => {
+      console.log('📦 accessToken:', localStorage.getItem('accessToken'));
+      console.log("📌 coverLetterId:", coverLetterId);
+
       try {
-        const res = await axiosInstance.post(
+        const res = await axiosInstance.get(
           `/mojadol/api/v1/pdf/create/${coverLetterId}`,
-          {},
           { responseType: 'blob' }
         );
 
@@ -28,7 +30,7 @@ function PdfView() {
         } else {
           alert('결과지를 불러오는 데 실패했습니다.');
         }
-        navigate(-1);
+        navigate('/InterviewMain');
       }
     };
 

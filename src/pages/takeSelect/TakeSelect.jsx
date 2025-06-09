@@ -9,9 +9,6 @@ function TakeSelect() {
   const [selectedTake, setSelectedTake] = useState(null);
   const coverLetterId = new URLSearchParams(location.search).get('id');
   const questionIndex = parseInt(new URLSearchParams(location.search).get('q'), 10);
-  const questionText = questionObj?.content
-    ? `질문 ${questionIndex + 1}: "${questionObj.content}"`
-    : `질문 ${questionIndex + 1}: "질문 내용을 불러올 수 없습니다."`;
 
   const [takes, setTakes] = useState(location.state?.takes || []);
   const [questionList, setQuestionList] = useState([]);
@@ -23,26 +20,29 @@ function TakeSelect() {
       navigate('/');
       return;
     }
-
+    // ✅ takes 복원
+    if ((!takes || takes.length === 0)) {
+      const key = `videoTakes_${coverLetterId}_${questionIndex}`;
+      const restored = JSON.parse(localStorage.getItem(key) || '[]');
+      if (restored.length > 0) {
+        console.log("📦 localStorage에서 takes 복원:", restored);
+        setTakes(restored);
+      } else {
+        console.warn("📭 takes를 복원할 수 없습니다.");
+      }
+    }
     const incoming = location.state?.questions || [];
     const stored = JSON.parse(localStorage.getItem('questions') || '[]');
 
-    if (incoming.length > 0) {
-      localStorage.setItem('questions', JSON.stringify(incoming));
-      setQuestionList(incoming);
-      if (!questionObj || !questionObj.id) {
-        const fallback = incoming[questionIndex];
-        if (fallback) {
-          setQuestionObj({
-            id: fallback.questionId, // ✅ 서버가 요구하는 필드명으로 매핑
-            content: fallback.content,
-          });
-        }
+    const source = incoming.length > 0 ? incoming : stored;
+
+    if (source.length > 0) {
+      if (incoming.length > 0) {
+        localStorage.setItem('questions', JSON.stringify(incoming));
       }
-    } else if (stored.length > 0) {
-      setQuestionList(stored);
+      setQuestionList(source);
       if (!questionObj || !questionObj.id) {
-        const fallback = stored[questionIndex];
+        const fallback = source[questionIndex];
         if (fallback) {
           setQuestionObj({
             id: fallback.questionId,
@@ -55,14 +55,18 @@ function TakeSelect() {
     }
   }, [coverLetterId, questionIndex]);
 
+  const questionText = questionObj?.content
+    ? `질문 ${questionIndex + 1}: "${questionObj.content}"`
+    : `질문 ${questionIndex + 1}: "질문 내용을 불러올 수 없습니다."`;
+
   const handleSelect = (index) => {
     setSelectedTake(index);
   };
 
-  const handleUpload = async () => {
+  const uploadSelectedTake = async () => {
     if (selectedTake === null) {
       alert("업로드할 영상을 선택해주세요.");
-      return;
+      return null;
     }
 
     const selected = takes[selectedTake];
@@ -72,79 +76,41 @@ function TakeSelect() {
 
     const formData = new FormData();
     formData.append('video', file);
-    formData.append('id', questionObj.id); // ✅ 서버 요구 key로 정확히 전송
-
-    console.log("🟨 업로드 시도 중");
-    console.log("questionObj.id:", questionObj?.id);
-    console.log("video:", file);
-
-    for (let [key, val] of formData.entries()) {
-      console.log(`FormData: ${key} =>`, val);
-    }
+    formData.append('id', questionObj.id);
 
     try {
-      const response = await axiosInstance.post(
-        '/mojadol/api/v1/interview/upload',
-        formData
-      );
-      const interviewId = response.data.result.interviewId;
-      alert("업로드 성공! 결과지로 이동합니다.");
-      navigate(`/interview/result/${interviewId}`);
+      const response = await axiosInstance.post('/mojadol/api/v1/interview/upload', formData);
+      return response.data.result?.interviewId || null;
     } catch (error) {
-      console.error('Upload failed:', error.response || error);
+      console.error('❌ 업로드 실패:', error.response || error);
       alert('영상 업로드에 실패했습니다.');
+      return null;
     }
   };
 
-  const handleNewQuestion = async () => {
-    if (!questionList || questionList.length === 0) {
-      alert('질문을 찾을 수 없습니다.');
-      return;
-    }
-
-    const nextIndex = questionIndex + 1;
-    const nextQuestion = questionList[nextIndex];
-
-    if (!nextQuestion) {
-      alert('더 이상 남은 질문이 없습니다.');
-      return;
-    }
-
-    if (selectedTake === null) {
-      alert('새로운 질문으로 이동하려면 업로드할 영상을 선택하세요.');
-      return;
-    }
-
-    const selected = takes[selectedTake];
-    const file = new File([selected.file], `question_${questionIndex}.webm`, {
-      type: 'video/webm',
-    });
-
-    const formData = new FormData();
-    formData.append('video', file);
-    formData.append('id', questionObj.id); // ✅ 정확한 id 사용
-
-    console.log("🟩 새 질문 이동 직전 업로드");
-    console.log("questionObj.id:", questionObj?.id);
-    console.log("video:", file);
-
+  const fetchAnalysisResults = async () => {
     try {
-      await axiosInstance.post('/mojadol/api/v1/interview/upload', formData);
-      alert('영상 업로드 성공. 다음 질문으로 이동합니다.');
-
-      navigate(`/ResumeQuestionPage?id=${coverLetterId}&q=${nextIndex}`, {
-        state: {
-          question: {
-            id: nextQuestion.questionId,
-            content: nextQuestion.content,
-          },
-          questions: questionList,
-        },
-      });
-    } catch (error) {
-      console.error('Upload before new question failed:', error);
-      alert('업로드에 실패했습니다. 새 질문으로 이동하지 않습니다.');
+      const res = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
+      return res.data.result.analysisResults || {};
+    } catch (err) {
+      console.error("❌ 분석 결과 갱신 실패", err);
+      return {};
     }
+  };
+
+  const handleUploadAndReturn = async () => {
+    const interviewId = await uploadSelectedTake();
+    if (!interviewId) return;
+
+    const analysisResults = await fetchAnalysisResults();
+
+    alert("영상 업로드 성공! 질문 선택 화면으로 돌아갑니다.");
+    navigate(`/ResumeQuestionPage?id=${coverLetterId}`, {
+      state: {
+        questions: questionList,
+        analysisResults,
+      }
+    });
   };
 
   const handleNavigateToRecording = () => {
@@ -164,12 +130,11 @@ function TakeSelect() {
       <main className="take-main">
         <div className="take-question">{questionText}</div>
 
-        {takes.length < 3 && (
+        {takes.length < 3 ? (
           <button className="take-rec-btn" onClick={handleNavigateToRecording}>
             Take {takes.length + 1} 녹화 시작
           </button>
-        )}
-        {takes.length >= 3 && (
+        ) : (
           <p className="take-limit-warning">최대 3개의 영상을 녹화할 수 있습니다.</p>
         )}
 
@@ -192,15 +157,12 @@ function TakeSelect() {
         </div>
 
         <div className="take-buttons">
-          <button className="outline" onClick={handleNewQuestion}>
-            새로운 질문 선택 (녹화 영상은 자동 업로드됨)
-          </button>
           <button
             className={selectedTake !== null ? 'active' : 'disabled'}
-            onClick={handleUpload}
+            onClick={handleUploadAndReturn}
             disabled={selectedTake === null}
           >
-            결과지 생성
+            영상 저장
           </button>
         </div>
       </main>

@@ -39,7 +39,7 @@ function RecordingPage() {
   const [step, setStep] = useState('ready');
   const [timer, setTimer] = useState(0);
   const [silenceCount, setSilenceCount] = useState(0);
-  const maxRecordingSeconds = 300;
+  const maxRecordingSeconds = 30;
 
   useEffect(() => {
     if (!coverLetterId || !realQuestion) {
@@ -75,7 +75,6 @@ function RecordingPage() {
           video: true,
           audio: true,
         });
-        setStream(userStream);
         streamRef.current = userStream;
 
         setTimeout(() => {
@@ -140,7 +139,6 @@ function RecordingPage() {
       }
 
       streamRef.current = stream;
-      setStream(stream);
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -202,7 +200,6 @@ function RecordingPage() {
       navigate(-1);
     }
   };
-
 
   const stopRecording = () => {
     mediaRecorderRef.current?.stop();
