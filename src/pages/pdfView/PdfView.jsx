@@ -22,6 +22,13 @@ function PdfView() {
         const blob = new Blob([res.data], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         setPdfUrl(url);
+        // ✅ 최초 생성 성공 시에만 저장 (이미 저장된 경우는 덮어쓰기 X)
+        const storageKey = `pdfGenerated_${coverLetterId}`;
+        if (!localStorage.getItem(storageKey)) {
+          localStorage.setItem(storageKey, 'true');
+          console.log('✅ 결과지 생성 상태 저장 완료:', storageKey);
+        }
+        
       } catch (error) {
         console.error('PDF 불러오기 실패:', error);
         const status = error.response?.status;
