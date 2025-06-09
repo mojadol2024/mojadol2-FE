@@ -20,7 +20,17 @@ function TakeSelect() {
       navigate('/');
       return;
     }
-
+    // ✅ takes 복원
+    if ((!takes || takes.length === 0)) {
+      const key = `videoTakes_${coverLetterId}_${questionIndex}`;
+      const restored = JSON.parse(localStorage.getItem(key) || '[]');
+      if (restored.length > 0) {
+        console.log("📦 localStorage에서 takes 복원:", restored);
+        setTakes(restored);
+      } else {
+        console.warn("📭 takes를 복원할 수 없습니다.");
+      }
+    }
     const incoming = location.state?.questions || [];
     const stored = JSON.parse(localStorage.getItem('questions') || '[]');
 

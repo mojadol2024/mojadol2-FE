@@ -92,6 +92,7 @@ function ResumeQuestionPage() {
     navigate(`/PdfView/${coverLetterId}`);
   };
 
+
   const handleSave = async () => {
     alert('저장되었습니다. 이후에도 이어서 진행 가능합니다.');
   };
@@ -104,10 +105,8 @@ function ResumeQuestionPage() {
           <button
             className="btn-confirm"
             onClick={handleConfirm}
-            disabled={
-              voucherType === 'FREE' &&
-              !questions.every(q => q.is_answered === 1)
-            }
+            disabled={(voucherType === 'FREE' && !questions.every(q => q.is_answered === 1)) ||
+                      (voucherType === 'GOLD' && !questions.some(q => q.is_answered === 1))}
           >
             결과 확인
           </button>
@@ -121,7 +120,6 @@ function ResumeQuestionPage() {
         <div className="question-list">
           {questions.map((q, i) => {
             const isUploaded = q.is_answered === 1;
-
             return (
               <div className="question-item" key={i}>
                 <div className="question-text-r">
