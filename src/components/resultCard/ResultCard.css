@@ -1,159 +1,32 @@
-/* InterviewMain 전용 CSS */
-
-.main-content {
-  padding: 20px;
-  max-width: 900px;
-  margin: 0 auto;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.main-title {
-  font-size: 28px;
-  font-weight: bold;
-  color: #333;
-}
-
-.upload-btn {
-  background-color: #51E0C4;
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
-  font-size: 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.upload-btn:hover {
-  background-color: #3cc7a9;
-}
-
-.filter-section {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.filter-section input {
-  padding: 8px 12px;
-  font-size: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  margin-right: 10px;
-  width: 240px;
-}
-
-.cover-letter-count {
-  font-size: 14px;
-  color: #666;
-}
-
-.results-list {
-  margin-top: 20px;
-}
-
-.card-container {
-  margin-bottom: 20px;
-}
-
-.card-title {
-  font-size: 18px;
-  font-weight: bold;
-  color: #222;
-  margin-bottom: 10px;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 30px;
-  font-size: 16px;
-}
-
-.pagination span {
-  cursor: pointer;
-  padding: 4px 10px;
-  border-radius: 4px;
-  user-select: none;
-}
-
-.pagination .current {
-  font-weight: bold;
-  color: #000;
-}
-
-.pagination .disabled {
-  color: #ccc;
-  cursor: not-allowed;
-}
-
-.loading-state-container,
-.error-message-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 80px;
-  color: #666;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #eee;
-  border-top: 4px solid #51E0C4;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 10px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.no-results {
-  text-align: center;
-  color: #888;
-  margin-top: 30px;
-  font-size: 16px;
-}
-
-/* ResultCard 전용 CSS */
-
-.result-card {
-  border: 1px solid #ddd;
+/*.result-card {
+  border: 1px solid #51E0C4; 
   border-radius: 10px;
   padding: 20px;
   background-color: #fff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.25);
 }
 
-/*
 .gold-card {
-  /*border-color:gold;
-  background-color: #F5FFFD; 
+  border-color:gold;
 }*/
+
+.result-card {
+  margin-top:0px;
+}
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
+  padding-left: 10%;
+  padding-right: 10%;
 }
 
-.user-icon {
-  font-size: 24px;
+/*.user-icon {
+  
 }
+*/
 
 .voucher-tag {
   font-size: 12px;

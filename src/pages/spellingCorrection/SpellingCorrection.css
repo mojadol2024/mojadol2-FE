@@ -36,7 +36,7 @@ html, body {
 .editor-section {
   display: flex;
   margin-bottom: 30px;
-  width: 96%;
+  width:95%;
 }
 
 .voucher-modal {
@@ -114,7 +114,7 @@ html, body {
 
 .editor-box {
   flex: 1;
-  min-width: 260px;
+  /*max-width: 260px;*/
   display: flex;
   flex-direction: column;
   margin-right: 20px;

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import PasswordResetModal from './PasswordResetModal';
 import { getEnv } from '../../lib/getEnv';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const API_BASE_URL = getEnv('BASE_URL');
 
@@ -80,7 +81,7 @@ function Login() {
           className="login-toggle-button"
           type="button"
         >
-          {showPassword ? '🕶️' : '👀'}
+          {showPassword ? <FaEye size={20} /> : <FaEyeSlash size={20} />}
         </button>
       </div>
 
