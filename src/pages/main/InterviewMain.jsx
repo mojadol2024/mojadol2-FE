@@ -29,39 +29,66 @@ function InterviewMain() {
     setLoading(true);
     setError(null);
 
-    try {
+     try {
       // 1. 자소서 리스트 불러오기
       const listParams = {
         page: 0,
         size: 1000 // 모든 자소서를 불러오기 위함
       };
       const response = await axiosInstance.get('/mojadol/api/v1/letter/list', { params: listParams });
-      
+
       const rawList = response.data.result?.content || [];
 
-      // 2. 각 자소서별로 화상 면접 영상 존재 여부 확인
+      // 2. 각 자소서별로 화상 면접 영상 존재 여부 및 결과 확인 가능 여부 확인
       const resultsWithVideoStatus = await Promise.all(
         rawList.map(async (item) => {
+          let hasVideo = false;
+          let canCheckResult = false; // 새로 추가될 결과 확인 가능 여부
+          let questionsForThisLetter = []; // 해당 자소서의 질문들을 저장할 변수
+
           try {
+            // 해당 자소서의 면접 질문 목록과 영상 업로드 상태를 가져옵니다.
             const videoResponse = await axiosInstance.get(`/mojadol/api/v1/interview/list/${item.coverLetterId}`);
             // videoResponse.data.result가 배열이고, 그 안에 내용이 있으면 영상이 있는 것으로 판단
-            const hasVideo = videoResponse.data.result && videoResponse.data.result.length > 0;
-            
-            // console.log(`자소서 ID: ${item.coverLetterId}, 영상 존재 여부: ${hasVideo}`);
+            questionsForThisLetter = videoResponse.data.result && Array.isArray(videoResponse.data.result) ? videoResponse.data.result : [];
+
+            hasVideo = questionsForThisLetter.length > 0; // 영상이 하나라도 존재하면 true
+
+            // ResumeQuestionPage의 로직을 여기에 적용
+            const isUploaded = (q) => q.is_answered === 1;
+
+            if (item.useVoucher === 'FREE') {
+              // FREE 사용자는 모든 질문에 영상이 있어야 결과 확인 가능
+              canCheckResult = questionsForThisLetter.every(isUploaded) && questionsForThisLetter.length > 0; // 질문이 없으면 false
+            } else if (item.useVoucher === 'GOLD') {
+              // GOLD 사용자는 최소 한 개 이상의 질문에 영상이 있어야 결과 확인 가능
+              canCheckResult = questionsForThisLetter.some(isUploaded);
+            }
+            // 그 외 (null 또는 정의되지 않은 경우)는 hasVideo와 동일하게 처리하거나,
+            // 기본값으로 canCheckResult를 false로 두거나, FREE와 동일하게 처리할 수 있습니다.
+            // 현재 코드의 item.useVoucher ?? 'FREE' 로직을 따라 FREE와 동일하게 처리하겠습니다.
+            else {
+                canCheckResult = questionsForThisLetter.every(isUploaded) && questionsForThisLetter.length > 0;
+            }
+
+
+            // console.log(`자소서 ID: ${item.coverLetterId}, 영상 존재 여부: ${hasVideo}, 결과 확인 가능: ${canCheckResult}`);
 
             return {
               coverLetterId: item.coverLetterId,
               title: item.title,
-              useVoucher: item.useVoucher ?? 'FREE', 
-              hasVideo: hasVideo,
+              useVoucher: item.useVoucher ?? 'FREE',
+              hasVideo: hasVideo, // 기존 로직 유지 (단순 영상 존재 여부)
+              canCheckResult: canCheckResult, // 결과 확인 버튼 활성화 여부
             };
           } catch (videoError) {
             //console.error(`자소서 ID ${item.coverLetterId}의 영상 정보를 불러오는데 실패했습니다:`, videoError);
             return {
               coverLetterId: item.coverLetterId,
               title: item.title,
-              useVoucher: item.useVoucher ?? 'FREE', 
+              useVoucher: item.useVoucher ?? 'FREE',
               hasVideo: false, // 영상 정보 불러오기 실패 시 false
+              canCheckResult: false, // 영상 정보 불러오기 실패 시 결과 확인 불가
             };
           }
         })
@@ -189,12 +216,13 @@ function InterviewMain() {
       <div className="results-list">
         {paginatedResults.length > 0 ? (
           paginatedResults.map((data, index) => (
-            <div key={data.coverLetterId} className="card-container">
+            <div key={data.coverLetterId} className={`card-container ${data.useVoucher === 'GOLD' ? 'gold-card' : ''}`}>
               <h4 className="card-title">{data.title || `결과지 ${index + 1}`}</h4>
 
               <ResultCard
                 highlight={data.hasVideo} 
-                useVoucher={data.useVoucher} 
+                useVoucher={data.useVoucher}
+                canCheckResult={data.canCheckResult} 
                 onCheckQuestion={() => handleNavigateToQuestions(data.coverLetterId)}
                 onCheckResult={() => handleNavigateToVideoResult(data.coverLetterId)}
                 onDelete={() => handleDelete(data.coverLetterId)}
