@@ -13,7 +13,6 @@ function ResumeQuestionPage() {
   const [title, setTitle] = useState('');
   const [questions, setQuestions] = useState([]);
   const [videos, setVideos] = useState({});
-  const [analysisResults, setAnalysisResults] = useState({});
   const [voucherType, setVoucherType] = useState(null);
 
   useEffect(() => {
@@ -25,10 +24,12 @@ function ResumeQuestionPage() {
       navigate('/login');
       return;
     }
+
     if (!coverLetterId) {
       alert('자소서 ID가 없습니다.');
       return;
     }
+
     fetchLetterDetail();
   }, [location, coverLetterId]);
 
@@ -36,12 +37,10 @@ function ResumeQuestionPage() {
     try {
       const response = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
       const result = response.data.result;
+
       setTitle(result.coverLetter?.title || '자소서 제목 없음');
       setVoucherType(result.coverLetter?.useVoucher || 'FREE');
       setQuestions(Array.isArray(result.questions) ? result.questions : []);
-      if (result.analysisResults) {
-        setAnalysisResults(result.analysisResults);
-      }
     } catch (error) {
       console.error('자소서 정보 조회 실패:', error);
       alert('자소서 정보를 불러오는 데 실패했습니다.');
@@ -58,7 +57,7 @@ function ResumeQuestionPage() {
         state: {
           question: questions[index],
           questions: questions,
-          coverLetterId: coverLetterId,
+          coverLetterId,
         }
       });
     } else {
@@ -66,7 +65,7 @@ function ResumeQuestionPage() {
         state: {
           question: questions[index],
           questions: questions,
-          coverLetterId: coverLetterId,
+          coverLetterId,
           questionIndex: index,
         }
       });
@@ -114,6 +113,7 @@ function ResumeQuestionPage() {
           <button className="btn-save" onClick={handleSave}>저장</button>
         </div>
       </div>
+
       {loading ? (
         <p className="loading">질문을 불러오는 중입니다...</p>
       ) : (
@@ -141,7 +141,7 @@ function ResumeQuestionPage() {
               </div>
             );
           })}
-      </div>
+        </div>
       )}
     </main>
   );

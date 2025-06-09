@@ -2,10 +2,14 @@ import React, { createElement as h, useState, useEffect } from 'react';
 import './mypage.css';
 import axiosInstance from '../../lib/axiosInstance';
 import { getEnv } from '../../lib/getEnv';
+import { useNavigate } from 'react-router-dom';
+
 
 const API_BASE_URL = getEnv('REACT_APP_BASE_URL');
 
 function MyPage() {
+  const navigate = useNavigate(); 
+
   const [showModal, setShowModal] = useState(false);
   const [password, setPassword] = useState(''); // 개인정보 수정 시 사용될 새/현재 비밀번호
   const [isEditable, setIsEditable] = useState(false);
@@ -143,10 +147,11 @@ function MyPage() {
       const response = await axiosInstance.patch(`${API_BASE_URL}/mojadol/api/v1/mypage/update-profile`, payload);
 
       if (response.data.isSuccess) {
-        alert('개인정보 수정이 완료되었습니다.');
+        alert('개인정보 수정이 완료되었습니다. 다시 로그인해 주세요.');
         setIsEditable(false); 
         setPassword(''); 
         setOriginalNickname(nickname); // 수정 성공하면 originalNickname도 업데이트
+        await handleLogout(); 
       } else {
         alert('개인정보 수정 실패: ' + response.data.message);
       }

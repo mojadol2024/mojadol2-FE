@@ -7,6 +7,7 @@
   /*padding-right: 290px; 뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
   padding-top: 20px;
   overflow-y: auto; 
+  
 }
 
 .mypage-content h1 {
@@ -45,12 +46,20 @@
 /* 폼 테이블 스타일 */
 .mypage-form-table {
     margin-top: 10px;
+
+    width: 100%;
+    max-width: 800px;         /* 입력칸 최대 너비 지정 */
+    margin-left: auto;
+    margin-right: auto;       /* 중앙 정렬 */
+    box-sizing: border-box;
 }
 
 .mypage-form-row {
     display: flex;
     align-items: center;
     padding: 15px 0;
+
+    width: 100%; 
 }
 
 .mypage-form-label { /*이름이메일이런이름*/
@@ -58,7 +67,6 @@
     font-weight: 600;
     color: #555;
     font-size: 1.05em;
-    padding-left: 6%;
 }
 
 .mypage-form-input {
@@ -69,7 +77,8 @@
 
 .mypage-form-input input[type="text"],
 .mypage-form-input input[type="password"] {
-    width: 90%; 
+    width: 80%;
+    max-width: 700px;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 7px;

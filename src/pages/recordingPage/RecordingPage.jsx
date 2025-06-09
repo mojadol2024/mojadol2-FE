@@ -5,20 +5,7 @@ import './RecordingPage.css';
 function RecordingPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  useEffect(() => {
-    const incomingQuestions = location.state?.questions;
-    const storedQuestions = JSON.parse(localStorage.getItem('questions') || '[]');
 
-    if (incomingQuestions && incomingQuestions.length > 0) {
-      console.log('📦 RecordingPage에서 전달된 questions:', incomingQuestions);
-      localStorage.setItem('questions', JSON.stringify(incomingQuestions));
-    } else if (storedQuestions.length > 0) {
-      console.log('📦 RecordingPage: localStorage fallback 사용');
-    } else {
-      console.warn('❌ RecordingPage: 질문 리스트 없음!');
-    }
-  }, []);
-  
   const questionObj = location.state?.question;
   const coverLetterId = location.state?.coverLetterId;
   const questions = location.state?.questions || [];
@@ -40,6 +27,14 @@ function RecordingPage() {
   const [timer, setTimer] = useState(0);
   const [silenceCount, setSilenceCount] = useState(0);
   const maxRecordingSeconds = 30;
+  
+  useEffect(() => {
+    const incomingQuestions = location.state?.questions;
+    const storedQuestions = JSON.parse(localStorage.getItem('questions') || '[]');
+    if (incomingQuestions && incomingQuestions.length > 0) {
+      localStorage.setItem('questions', JSON.stringify(incomingQuestions));
+    }
+  }, []);
 
   useEffect(() => {
     if (!coverLetterId || !realQuestion) {

@@ -1,29 +1,36 @@
 .findid-container {
-  height: 100vh;
+  /*height: 100vh; 이거때문에스크롤바필요없는데스크롤바생김*/
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: #fff;
   font-family: sans-serif;
+  padding: 20px;
+  overflow-y: hidden;
 }
 
-.logo {
+.findid-logo {
   font-size: 36px;
   font-weight: bold;
   margin-bottom: 20px;
+  margin-top:100px;
 }
 
-.logoHighlight {
+.findid-logo-highlight {
   color: #51E0C4;
 }
 
-.title {
+.findid-title {
   margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 3%;
 }
 
-.input {
-  width: 500px;
+.findid-input {
+  width: 100%;
+  max-width: 500px;
   height: 45px;
   padding: 0 15px;
   border-radius: 7px;
@@ -33,18 +40,19 @@
   margin-bottom: 20px;
 }
 
-.input-with-button {
+.findid-input-with-button {
   position: relative;
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
   margin-bottom: 20px;
 }
 
-.input-with-button .input {
-  padding-right: 130px; /* 버튼 자리 확보 */
+.findid-input-with-button .findid-input {
+  padding-right: 130px;
   margin-bottom: 0;
 }
 
-.inline-button {
+.findid-inline-button {
   position: absolute;
   right: 10px;
   top: 50%;
@@ -58,8 +66,9 @@
   border-radius: 5px;
 }
 
-.button {
-  width: 500px;
+.findid-button {
+  width: 100%;
+  max-width: 500px;
   height: 45px;
   background-color: #51e2c2;
   color: #fff;
@@ -68,10 +77,13 @@
   border: none;
   border-radius: 7px;
   cursor: pointer;
-  margin-bottom: 16px;
 }
 
-.backLink {
+.findid-button:hover {
+  background-color: #3cc7a9;
+}
+
+.findid-back-link {
   background: none;
   border: none;
   color: #555;
@@ -79,5 +91,14 @@
   font-size: 14px;
   text-decoration: underline;
   padding-top: 10px;
-  
+}
+
+.findid-back-link:hover {
+  color: #222;
+}
+
+.findid-input-wrapper {
+  width: 100%;
+  max-width: 500px;
+
 }

@@ -478,7 +478,6 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 700px; /* 로딩 중에도 최소 높이를 유지하여 레이아웃 흔들림 방지 */
   color: #555;
   /*padding-left: 20px; 
   padding-right: 290px; */
@@ -509,12 +508,12 @@ html, body {
 }
 
 .error-message {
-  color: #e74c3c; 
+  color: #999; 
   text-align: center;
-  font-size: 18px;
+  font-size: 25px;
   /*padding-left: 20px; 
   padding-right: 290px; */
-  font-size: 25px;
+  margin-top: 10%;
 }
 
 /* 결제 취소 버튼 */
