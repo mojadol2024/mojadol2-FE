@@ -6,6 +6,7 @@ import './ResumeQuestionPage.css';
 function ResumeQuestionPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [pdfGenerated, setPdfGenerated] = useState(false);
   const coverLetterId = new URLSearchParams(location.search).get('id');
   const questionIndex = new URLSearchParams(location.search).get('q');
 
@@ -31,6 +32,11 @@ function ResumeQuestionPage() {
     }
 
     fetchLetterDetail();
+
+    const storageKey = `pdfGenerated_${coverLetterId}`;
+    const isPdfAlreadyGenerated = localStorage.getItem(storageKey) === 'true';
+    setPdfGenerated(isPdfAlreadyGenerated);
+
   }, [location, coverLetterId]);
 
   const fetchLetterDetail = async () => {
@@ -130,7 +136,7 @@ function ResumeQuestionPage() {
                   <button
                     className="btn-record"
                     onClick={() => handleNavigateToRecord(i)}
-                    disabled={isUploaded}
+                    disabled={isUploaded || pdfGenerated}
                   >
                     {isUploaded ? '녹화 완료' : '영상 녹화'}
                   </button>
