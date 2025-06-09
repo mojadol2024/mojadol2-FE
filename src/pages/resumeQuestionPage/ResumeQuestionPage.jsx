@@ -135,9 +135,9 @@ function ResumeQuestionPage() {
                     {isUploaded ? '녹화 완료' : '영상 녹화'}
                   </button>
                 </div>
-                {isUploaded && (
+                {/*{isUploaded && ( 이부분아예필요없다 영상첨부완료버튼 그런거같음 지워야돼돼
                   <div className="question-status done">녹화 완료</div>
-                )}
+                )}*/}
               </div>
             );
           })}
