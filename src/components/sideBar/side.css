@@ -16,6 +16,7 @@
 
   transition: width 0.3s ease-in-out, padding 0.3s ease-in-out;
   overflow: hidden;
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* 사이드바가 접혔을 때의 스타일 */
@@ -109,7 +110,7 @@
 /* 아이콘 스타일 */
 .sidebar-menu-item .sidebar-menu-icon {
   margin-right: 10px;
-  /*transition: margin-right 0.3s ease;*/
+  transition: margin-right 0.3s ease;
 }
 
 /* 사이드바가 접혔을 때 아이콘 마진은 그대로 유지 (텍스트 컨테이너로 조절) */

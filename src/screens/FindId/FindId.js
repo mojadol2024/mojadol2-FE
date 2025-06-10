@@ -9,6 +9,8 @@ function FindId() {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+
   const isValidEmail = address => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address);
 
   const handleFindId = async () => {
@@ -21,6 +23,7 @@ function FindId() {
       return;
     }
 
+    setLoading(true);
     try {
       const url = `${API_BASE_URL}/mojadol/api/v1/mail/find-user-id`;
       const response = await axios.post(
@@ -38,9 +41,20 @@ function FindId() {
         err.response?.data?.message ||
         `메일 발송에 실패했습니다. (status: ${err.response?.status})`
       );
+    } finally {
+       setLoading(false);
     }
   };
 
+  if (loading) {
+    return (
+        <div className="loading-state-container">
+        <div className="spinner"></div>
+        <p className="loading-message">이메일을 전송 중입니다...</p>
+        </div>
+    );
+  }
+  
   return (
     <div className="findid-container">
       <div className="findid-logo">
