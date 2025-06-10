@@ -160,11 +160,11 @@ function TakeSelect() {
 
           <div className="take-buttons">
             <button
-              className={selectedTake !== null ? 'active' : 'disabled'}
+              className={selectedTake !== null && !isUploading ? 'active' : 'disabled'}
               onClick={handleUploadAndReturn}
-              disabled={selectedTake === null}
+              disabled={selectedTake === null || isUploading} // 여기에 isUploading도 추가?
             >
-              영상 저장
+              {isUploading ? '업로드 중...' : '영상 저장'}
             </button>
           </div>
         </div>

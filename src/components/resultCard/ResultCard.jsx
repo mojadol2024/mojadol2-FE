@@ -2,7 +2,7 @@ import React from 'react';
 import './ResultCard.css';
 import { FaUserAlt } from 'react-icons/fa';
 
-function ResultCard({ highlight, useVoucher, canCheckResult, onCheckQuestion, onCheckResult, onDelete }) {
+function ResultCard({ highlight, useVoucher, canCheckResult, pdfGenerated, onCheckQuestion, onCheckResult, onDelete }) {
   const isGold = useVoucher === 'GOLD';
   const isFree = useVoucher === 'FREE';
 
@@ -24,10 +24,9 @@ function ResultCard({ highlight, useVoucher, canCheckResult, onCheckQuestion, on
 
       {/* 화상 면접 결과 확인 버튼 */}
       <button
-        // disabled 상태를 더 이상 canCheckResult prop에 의존하지 않고 항상 활성화
-        className={`interview-btn active`} // 항상 'active' 클래스 적용
+        className={`interview-btn ${pdfGenerated ? 'active' : 'disabled'}`}
         onClick={onCheckResult}
-        disabled={false} // ✨✨✨ 항상 false로 설정하여 버튼이 비활성화되지 않도록 함 ✨✨✨
+        disabled={!pdfGenerated} // ❗결과지가 없으면 비활성화
       >
         화상 면접 결과 확인
       </button>
