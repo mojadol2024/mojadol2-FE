@@ -22,12 +22,20 @@ function SignUp() {
   const [emailChecked, setEmailChecked] = useState(false);
   const navigate = useNavigate();
 
-  const isValidPassword = (password) => {
-    const lengthCheck = /^.{8,16}$/;
-    const types = [/[A-Z]/, /[a-z]/, /[0-9]/, /[^A-Za-z0-9]/];
-    const passedTypes = types.filter((regex) => regex.test(password)).length;
-    return lengthCheck.test(password) && passedTypes >= 2;
-  };
+ const isValidPassword = (password) => {
+  const lengthCheck = /^.{8,16}$/;
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[^A-Za-z0-9]/.test(password); // ✅ 특수문자 필수
+
+  // 대소문자/숫자 포함 여부 (특수문자는 따로 체크했으므로 제외)
+  const typeCount = [hasUpper, hasLower, hasNumber].filter(Boolean).length;
+
+  return lengthCheck.test(password) && hasSpecial && typeCount >= 2;
+};
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,7 +49,7 @@ function SignUp() {
       if (value === '') {
         setPwFormatError('');
       } else if (!isValidPassword(value)) {
-        setPwFormatError('8~16자리의 대소문자/숫자/특수문자 2종 이상을 조합하세요.');
+        setPwFormatError('8~16자리의 대소문자/숫자를 조합하세요(특수문자 포함).');
       } else {
         setPwFormatError('');
       }
