@@ -65,6 +65,7 @@ function Login() {
         placeholder="예) 1234@gmail.com"
         value={userLoginId}
         onChange={e => setUserLoginId(e.target.value)}
+        onKeyDown={e => e.key === 'Enter' && handleLogin()}
         className="login-input"
       />
 
@@ -74,6 +75,7 @@ function Login() {
           placeholder="비밀번호"
           value={password}
           onChange={e => setPassword(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleLogin()}
           className="login-input"
         />
         <button
