@@ -221,9 +221,11 @@ function InterviewMain() {
               }
             }}
           />
-          <span className="cover-letter-count">{filteredResults.length}개</span>
+          <span className="cover-letter-count"><strong>{filteredResults.length}</strong>개</span>
         </div>
       </div>
+
+      <p className="guide-text-m">※ 이미 <strong>생성된</strong> 면접 결과지를 확인할 수 있습니다. 면접 결과는 <strong>질문 확인 페이지</strong>에서 생성할 수 있습니다. </p>
 
       <div className="results-list">
         {paginatedResults.length > 0 ? (
