@@ -110,6 +110,9 @@ function TakeSelect() {
     setIsUploading(false); // 실패 시 로딩 종료
     return;
   }
+    // ✅ 업로드 성공했으면 해당 영상만 삭제
+    const storageKey = `videoTakes_${coverLetterId}_${questionIndex}`;
+    localStorage.removeItem(storageKey);
 
     const analysisResults = await fetchAnalysisResults();
     setIsUploading(false);
