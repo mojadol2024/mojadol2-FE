@@ -131,6 +131,7 @@ function TakeSelect() {
         question: questionObj,
         takes,
         questions: questionList,
+        step: 'countdown',
       },
     });
   };
@@ -151,9 +152,15 @@ function TakeSelect() {
 
         <div className="take-actions-container">
           {takes.length < 3 ? (
+           <>
             <button className="take-rec-btn" onClick={handleNavigateToRecording}>
-              Take {takes.length + 1} 녹화 시작
-            </button>
+                Take {takes.length + 1} 녹화 시작
+              </button>
+              <p className="take-hint-text">
+                녹화 시작 버튼을 누르면 카운트다운 후 <strong>바로 녹화</strong>가 시작됩니다.
+              </p>
+            </> 
+
           ) : (
             <p className="take-limit-warning">최대 3개의 영상을 녹화할 수 있습니다.</p>
           )}

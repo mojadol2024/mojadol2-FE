@@ -23,7 +23,7 @@ function RecordingPage() {
   const streamRef = useRef(null); // ✅ stream을 ref로 관리
   const [recording, setRecording] = useState(false);
   const [countdown, setCountdown] = useState(3);
-  const [step, setStep] = useState('ready'); 
+  const [step, setStep] = useState(location.state?.step || 'ready');
   const [timer, setTimer] = useState(0);
   const [silenceCount, setSilenceCount] = useState(0);
   const maxRecordingSeconds = 30;
@@ -295,7 +295,13 @@ function RecordingPage() {
         )}
 
 
-        {step === 'countdown' && <div className="countdown-number">{countdown}</div>}
+        {step === 'countdown' && (
+          <div
+            className={`countdown-number ${countdown === 1 ? 'highlight-final' : ''}`}
+          >
+            {countdown}
+          </div>
+        )}
 
         {step === 'recording' && (
           <>
@@ -316,7 +322,7 @@ function RecordingPage() {
 
             <div className="recording-notice">
               제한 시간이 끝나면 자동 종료됩니다.
-              직접 종료하려면 종료 버튼 또는 스페이스바를 눌러주세요.
+              직접 종료하려면 <strong>종료 버튼</strong> 또는 <strong>스페이스바</strong>를 눌러주세요.
             </div>
           </>
         )}

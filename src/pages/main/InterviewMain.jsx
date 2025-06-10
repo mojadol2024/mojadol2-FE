@@ -225,7 +225,7 @@ function InterviewMain() {
         </div>
       </div>
 
-      <p className="guide-text-m">※ 이미 <strong>생성된</strong> 면접 결과지를 확인할 수 있습니다. 면접 결과는 <strong>질문 확인 페이지</strong>에서 생성할 수 있습니다. </p>
+      <p className="guide-text-m">※ 이미 <strong>생성된</strong> 면접 결과지를 확인할 수 있습니다. 면접 결과는 <strong>질문 확인</strong> 페이지에서 생성할 수 있습니다. </p>
 
       <div className="results-list">
         {paginatedResults.length > 0 ? (
