@@ -97,7 +97,7 @@ function Login() {
             아이디 찾기
           </span>
           <span className="login-divider">|</span>
-          <span className="login-link" onClick={() => setShowResetModal(true)}>
+          <span className="login-link"  onClick={() => navigate('/find-password')}>
             비밀번호 찾기
           </span>
         </div>
