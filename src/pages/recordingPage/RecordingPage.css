@@ -8,7 +8,7 @@ html, body {
   min-height: 100%;
   width: 100%;
   box-sizing: border-box; 
-  padding-left: 25px;
+
   padding-top: 20px;
   overflow-y: auto; 
 }
@@ -67,6 +67,7 @@ html, body {
   font-weight: bold;
   margin: auto;
   animation: fade 0.8s ease-in-out;
+  margin-top: 5%
 }
 
 .highlight-final {
