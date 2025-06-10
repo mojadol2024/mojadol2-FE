@@ -12,7 +12,6 @@ html, body {
   width: 100%;
   box-sizing: border-box; 
   padding-left: 25px;
-  /*padding-right: 290px; 뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
   padding-top: 20px;
   overflow-y: auto;
 }
@@ -95,10 +94,11 @@ background-color: #dcdcdc;
 
 /* 질문 목록 컨테이너 */
 .question-list {
-    width: 100%;
+    width: 97%;
     display: flex;
     flex-direction: column;
     gap: 20px; /* 각 질문 아이템 사이의 간격 */
+    margin: 0 auto;
 }
 
 /* 개별 질문 아이템 */
