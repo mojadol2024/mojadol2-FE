@@ -226,7 +226,7 @@
 .mypage-modal-content input[type="password"] {
     width: calc(100% - 20px);
     padding: 10px;
-    margin-bottom: 20px;
+
     border: 1px solid #ddd;
     border-radius: 7px;
     font-size: 1em;
@@ -243,6 +243,7 @@
     background-color: #51E0C4;
     color: #fff; 
     border: none;
+    margin-top:15px;
 }
 
 .mypage-modal-actions button:hover {
@@ -259,4 +260,36 @@
 .mypage-modal-actions button:last-child:hover {
   color: #fff; 
   background-color: #ccc;
+}
+
+/* 비밀번호 입력창 wrapper */
+.mypage-password-wrapper {
+  position: relative;
+}
+
+.mypage-password-input {
+  width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+
+/* 토글 버튼 (눈 아이콘) */
+.mypage-password-toggle-button {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  font-size: 18px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
