@@ -71,6 +71,8 @@ function InterviewMain() {
                 canCheckResult = questionsForThisLetter.every(isUploaded) && questionsForThisLetter.length > 0;
             }
 
+              const pdfGeneratedKey = `pdfGenerated_${item.coverLetterId}`;
+              const pdfGenerated = localStorage.getItem(pdfGeneratedKey) === 'true';
 
             // console.log(`자소서 ID: ${item.coverLetterId}, 영상 존재 여부: ${hasVideo}, 결과 확인 가능: ${canCheckResult}`);
 
@@ -78,8 +80,9 @@ function InterviewMain() {
               coverLetterId: item.coverLetterId,
               title: item.title,
               useVoucher: item.useVoucher ?? 'FREE',
-              hasVideo: hasVideo, // 기존 로직 유지 (단순 영상 존재 여부)
-              canCheckResult: canCheckResult, // 결과 확인 버튼 활성화 여부
+              hasVideo,
+              canCheckResult,
+              pdfGenerated, 
             };
           } catch (videoError) {
             //console.error(`자소서 ID ${item.coverLetterId}의 영상 정보를 불러오는데 실패했습니다:`, videoError);
@@ -89,6 +92,7 @@ function InterviewMain() {
               useVoucher: item.useVoucher ?? 'FREE',
               hasVideo: false, // 영상 정보 불러오기 실패 시 false
               canCheckResult: false, // 영상 정보 불러오기 실패 시 결과 확인 불가
+              pdfGenerated: false,
             };
           }
         })
@@ -230,7 +234,8 @@ function InterviewMain() {
               <ResultCard
                 highlight={data.hasVideo} 
                 useVoucher={data.useVoucher}
-                canCheckResult={data.canCheckResult} 
+                canCheckResult={data.canCheckResult}
+                pdfGenerated={data.pdfGenerated} 
                 onCheckQuestion={() => handleNavigateToQuestions(data.coverLetterId)}
                 onCheckResult={() => handleNavigateToVideoResult(data.coverLetterId)}
                 onDelete={() => handleDelete(data.coverLetterId)}
