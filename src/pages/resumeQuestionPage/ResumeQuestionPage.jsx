@@ -68,7 +68,7 @@ function ResumeQuestionPage() {
         }
       });
     } else {
-      navigate(`/RecordingPage`, {
+      navigate(`/RecordingPage?id=${coverLetterId}&q=${index}`, {
         state: {
           question: questions[index],
           questions: questions,
