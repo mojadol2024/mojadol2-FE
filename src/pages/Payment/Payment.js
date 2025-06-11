@@ -240,8 +240,8 @@ function Payment() {
             alert('BootPay SDK가 로드되지 않았습니다.');
             return;
         }
-        console.log('env:', window._env_);
-        console.log('BootPay App ID:', getEnv('BOOTPAY_WEB_APPLICATION_ID'));
+        //console.log('env:', window._env_);
+        //console.log('BootPay App ID:', getEnv('BOOTPAY_WEB_APPLICATION_ID'));
 
         window.BootPay.request({
             price: selectedProduct.amount,
