@@ -6,7 +6,7 @@ let axiosInstance = null;
 export function getAxiosInstance() {
   if (axiosInstance) return axiosInstance;
 
-  const BASE_URL = getEnv('REACT_APP_API_BASE_URL');
+  const BASE_URL = getEnv('REACT_APP_BASE_URL');
 
   axiosInstance = axios.create({
     baseURL: BASE_URL,

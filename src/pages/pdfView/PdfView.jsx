@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../lib/axiosInstance';
+import { getAxiosInstance } from '../../lib/axiosInstance';
 import './PdfView.css'; // ✅ 스타일 import
 import { FiDownload } from 'react-icons/fi';
 
@@ -17,10 +17,11 @@ function PdfView() {
 
       try {
         setLoading(true);
-        const res = await axiosInstance.get(
-          `/mojadol/api/v1/pdf/create/${coverLetterId}`,
+          const axios = getAxiosInstance();
+          const res = await axios.get(
+            `/mojadol/api/v1/pdf/create/${coverLetterId}`,
           { responseType: 'blob' }
-        );
+          );
 
         const blob = new Blob([res.data], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);

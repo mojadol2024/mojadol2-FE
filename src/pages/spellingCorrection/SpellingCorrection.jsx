@@ -1,7 +1,7 @@
   // src/pages/SelfIntroRegister.jsx
   import React, { useState, useEffect } from 'react';
   import { useNavigate } from 'react-router-dom';
-  import axiosInstance from '../../lib/axiosInstance';
+  import { getAxiosInstance } from '../../lib/axiosInstance';
   import './SpellingCorrection.css';
 
   function SelfIntroRegister() {
@@ -18,6 +18,12 @@
     const [isLoadingS, setIsLoadingS] = useState(false);
 
     useEffect(() => {
+      const axios = getAxiosInstance();
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        alert('로그인이 필요한 서비스입니다.');
+        navigate('/login');
+      }
       fetchVoucherList();
     }, []);
 
@@ -53,7 +59,8 @@
     
     const fetchVoucherList = async () => {
       try {
-        const res = await axiosInstance.get('/mojadol/api/v1/payment/list?page=0&size=9');
+        const axios = getAxiosInstance();
+        const res = await axios.get('/mojadol/api/v1/payment/list?page=0&size=9');
         const list = res.data.result.content;
 
         const now = new Date();
@@ -92,10 +99,9 @@
 
       try {
         setIsLoadingS(true);
-        const response = await axiosInstance.post(
-          '/mojadol/api/v1/letter/spell-checker',
-          { data: organizedText }
-        );
+        const axios = getAxiosInstance();
+        const response = await axios.post('/mojadol/api/v1/letter/spell-checker', { data: organizedText });
+        
         setCorrectionResult(response.data.result); // 한 번에 저장
         setCorrectedText(response.data.result.notag_html); // 저장용 텍스트도 별도 보관
         setShowCorrection(true);
@@ -111,7 +117,8 @@
       const start = Date.now();
       while (Date.now() - start < timeout) {
         try {
-          const res = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${id}`);
+          const axios = getAxiosInstance();
+          const res = await axios.get(`/mojadol/api/v1/letter/detail/${id}`);
           if (Array.isArray(res.data.result.questions) && res.data.result.questions.length > 0) {
             return true; // 질문 생성 완료
           }
@@ -156,8 +163,8 @@
           alert("자소서는 최대 1200자까지만 저장할 수 있습니다. 내용을 줄여주세요.");
           return;
         }
-
-        const response = await axiosInstance.post(
+        const axios = getAxiosInstance();
+        const response = await axios.post(
           '/mojadol/api/v1/letter/write',
           {
             title,

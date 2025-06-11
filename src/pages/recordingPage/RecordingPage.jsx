@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { getAxiosInstance } from '../../lib/axiosInstance';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './RecordingPage.css';
 
@@ -39,6 +40,16 @@ function RecordingPage() {
   const [hasHandledStop, setHasHandledStop] = useState(false);
 
   const maxRecordingSeconds = 30;
+  
+  useEffect(() => {
+    const axios = getAxiosInstance();
+    // 토큰이 있는지 여부만 점검
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
+      navigate('/login');
+    }
+  }, []);
 
   const handleNavigateBack = () => {
     navigate(`/ResumeQuestionPage?id=${coverLetterId}`);

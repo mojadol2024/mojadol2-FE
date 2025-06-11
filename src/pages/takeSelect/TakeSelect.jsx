@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './TakeSelect.css';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axiosInstance from '../../lib/axiosInstance';
+import { getAxiosInstance } from '../../lib/axiosInstance';
 
 function TakeSelect() {
   const location = useLocation();
@@ -82,8 +82,15 @@ function TakeSelect() {
     formData.append('video', file);
     formData.append('id', questionObj.id);
 
+    const axios = getAxiosInstance();
+    if (!axios) {
+      alert("인증 정보가 없습니다. 다시 로그인해주세요.");
+      navigate('/login');
+      return null;
+    }
+
     try {
-      const response = await axiosInstance.post('/mojadol/api/v1/interview/upload', formData);
+      const response = await axios.post('/mojadol/api/v1/interview/upload', formData);
       return response.data.result?.interviewId || null;
     } catch (error) {
       console.error('❌ 업로드 실패:', error.response || error);
@@ -94,7 +101,8 @@ function TakeSelect() {
 
   const fetchAnalysisResults = async () => {
     try {
-      const res = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
+      const axios = getAxiosInstance();
+      const res = await axios.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
       return res.data.result.analysisResults || {};
     } catch (err) {
       console.error("❌ 분석 결과 갱신 실패", err);
