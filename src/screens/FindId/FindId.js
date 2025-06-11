@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { getAxiosInstance } from '../../lib/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import './FindId.css';
-
+import { getEnv } from '../../lib/getEnv';
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function FindId() {
@@ -24,16 +24,11 @@ function FindId() {
     }
 
     setLoading(true);
-    try {
-      const url = `${API_BASE_URL}/mojadol/api/v1/mail/find-user-id`;
-      const response = await axios.post(
-        url,
-        { email },
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
-        }
-      );
+     try {
+    const axios = getAxiosInstance(); // ✅ axios 인스턴스 선언
+    const response = await axios.post('/mojadol/api/v1/mail/find-user-id', {
+      email,
+    });
       alert('메일 발송 성공');
       navigate('/login');
     } catch (err) {
