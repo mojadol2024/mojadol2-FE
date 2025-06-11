@@ -1,9 +1,6 @@
 import axios from 'axios';
 import { getEnv } from './getEnv';
 
-import axios from 'axios';
-import { getEnv } from '../utils/getEnv';
-
 let axiosInstance = null;
 
 export function getAxiosInstance() {
