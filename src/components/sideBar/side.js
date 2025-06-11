@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { getAxiosInstance } from '../../lib/axiosInstance';
 import { FaFileAlt, FaEdit, FaTicketAlt, FaUserCog, FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa';
 import logo from '../../assets/logo_h.png';
 import './side.css';
@@ -14,21 +14,8 @@ function Sidebar({ onToggle }) {
     if (!confirmLogout) return;
 
     try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        alert('로그인 정보가 없습니다.');
-        return;
-      }
-
-      const response = await axios.post(
-        'https://myeonjub.store/api/mojadol/api/v1/auth/logout',
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const axios = getAxiosInstance();
+      const response = await axios.post('/mojadol/api/v1/auth/logout', {});
 
       if (response.data.isSuccess) {
         alert('로그아웃 성공!');
@@ -46,8 +33,8 @@ function Sidebar({ onToggle }) {
   const toggleSidebar = () => {
     const newState = !isOpen;
     setIsOpen(newState);
-    if (onToggle) { // onToggle prop이 존재하면 호출
-      onToggle(newState); // 변경된 상태 전달
+    if (onToggle) {
+      onToggle(newState);
     }
   };
 

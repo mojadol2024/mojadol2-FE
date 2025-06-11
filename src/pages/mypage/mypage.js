@@ -1,18 +1,15 @@
 import React, { createElement as h, useState, useEffect } from 'react';
 import './mypage.css';
-import axiosInstance from '../../lib/axiosInstance';
-import { getEnv } from '../../lib/getEnv';
+import { getAxiosInstance } from '../../lib/axiosInstance';
+//import { getEnv } from '../../lib/getEnv';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-
-
-const API_BASE_URL = getEnv('REACT_APP_BASE_URL');
 
 function MyPage() {
   const navigate = useNavigate(); 
 
   const [showModal, setShowModal] = useState(false);
-  const [password, setPassword] = useState(''); // 개인정보 수정 시 사용될 새/현재 비밀번호
+  const [password, setPassword] = useState(''); 
   const [isEditable, setIsEditable] = useState(false);
   const [email, setEmail] = useState(''); 
   const [marketingAgreed, setMarketingAgreed] = useState(true);
@@ -32,7 +29,9 @@ function MyPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await axiosInstance.get(`${API_BASE_URL}/mojadol/api/v1/mypage/profile`);
+        //const response = await axiosInstance.get(`${API_BASE_URL}/mojadol/api/v1/mypage/profile`);
+        const axios = getAxiosInstance();
+        const response = await axios.get('/mojadol/api/v1/mypage/profile');
         if (response.data.isSuccess) {
           const userData = response.data.result;
           setName(userData.userName);
@@ -63,7 +62,9 @@ function MyPage() {
           return; 
         }
         try {
-          const response = await axiosInstance.get(`${API_BASE_URL}/mojadol/api/v1/users/check`, {
+          //const response = await axiosInstance.get(`${API_BASE_URL}/mojadol/api/v1/users/check`, {
+          const axios = getAxiosInstance();
+          const response = await axios.get('/mojadol/api/v1/users/check', {
             params: { nickname: nickname },
           });
 
@@ -109,7 +110,9 @@ function MyPage() {
     }
 
     try {
-      const response = await axiosInstance.post(`${API_BASE_URL}/mojadol/api/v1/mypage/check-password`,
+      //const response = await axiosInstance.post(`${API_BASE_URL}/mojadol/api/v1/mypage/check-password`,
+      const axios = getAxiosInstance();
+      const response = await axios.post('/mojadol/api/v1/mypage/check-password',
         { userPw: password }
       );
 
@@ -158,7 +161,9 @@ function MyPage() {
     };
 
     try {
-      const response = await axiosInstance.patch(`${API_BASE_URL}/mojadol/api/v1/mypage/update-profile`, payload);
+      //const response = await axiosInstance.patch(`${API_BASE_URL}/mojadol/api/v1/mypage/update-profile`, payload);
+      const axios = getAxiosInstance();
+      const response = await axios.patch('/mojadol/api/v1/mypage/update-profile', payload);
 
       if (response.data.isSuccess) {
         alert('개인정보 수정이 완료되었습니다. 다시 로그인해 주세요.');
@@ -194,7 +199,9 @@ function MyPage() {
     if (!confirmWithdraw) return;
 
     try {
-      const response = await axiosInstance.delete(`${API_BASE_URL}/mojadol/api/v1/mypage/resign`);
+      //const response = await axiosInstance.delete(`${API_BASE_URL}/mojadol/api/v1/mypage/resign`);
+      const axios = getAxiosInstance();
+      const response = await axios.delete('/mojadol/api/v1/mypage/resign');
 
       if (response.data.isSuccess) {
         alert('회원 탈퇴 예약이 완료되었습니다.');
