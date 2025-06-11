@@ -1,13 +1,13 @@
-// src/HomePage.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../lib/axiosInstance';
+import { getAxiosInstance } from '../../lib/axiosInstance';
 import { getEnv } from '../../lib/getEnv';
+
 import './homepage.css';
 import logo from '../../assets/logo_h.png'; 
 
-const API_BASE_URL = getEnv('BASE_URL');
-const AUTH_LOGOUT_URL = getEnv('AUTH_LOGOUT_URL') || '/mojadol/api/v1/auth/logout';
+//const API_BASE_URL = getEnv('BASE_URL');
+//const AUTH_LOGOUT_URL = getEnv('AUTH_LOGOUT_URL') || '/mojadol/api/v1/auth/logout';
 
 function HomePage() {
   const navigate = useNavigate();
@@ -32,10 +32,8 @@ function HomePage() {
     }
 
     try {
-      const response = await axiosInstance.post(
-        `${API_BASE_URL}${AUTH_LOGOUT_URL}`,
-        {}
-      );
+      const axios = getAxiosInstance();
+      const response = await axios.post('/mojadol/api/v1/auth/logout', {});
 
       if (response.data.isSuccess) {
         alert('로그아웃 성공!');

@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './Payment.css';
 // import axios from 'axios'; 
-import axiosInstance from '../../lib/axiosInstance'; 
-import { getEnv } from '../../lib/getEnv';
+import { getAxiosInstance } from '../../lib/axiosInstance';
 
 /* global BootPay, bootpaySDKLoaded */
 
-const API_BASE_URL = getEnv('BASE_URL');
-const BOOTPAY_WEB_APPLICATION_ID = getEnv('BOOTPAY_WEB_APPLICATION_ID');
+//const API_BASE_URL = getEnv('BASE_URL');
+//const BOOTPAY_WEB_APPLICATION_ID = getEnv('BOOTPAY_WEB_APPLICATION_ID');
 
 async function fetchAllPaymentData(size = 1000) {
-    const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/list?page=0&size=${size}`;
+  const axios = getAxiosInstance();
+  const response = await axios.get(`/mojadol/api/v1/payment/list?page=0&size=${size}`);
 
     try {
         const response = await axiosInstance.get(apiUrl); 
@@ -25,7 +25,8 @@ async function fetchAllPaymentData(size = 1000) {
 }
 
 async function requestPaymentApprovalToBackend(amount, paymentMethod, title, quantity) {
-    const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/pay`;
+    const axios = getAxiosInstance();
+    const apiUrl = '/mojadol/api/v1/payment/pay';
 
     const requestBody = {
         amount: amount,
@@ -51,7 +52,8 @@ async function requestPaymentApprovalToBackend(amount, paymentMethod, title, qua
 }
 
 async function requestPaymentCancelToBackend(paymentId) {
-    const apiUrl = `${API_BASE_URL}/mojadol/api/v1/payment/cancel/${paymentId}`;
+    const axios = getAxiosInstance();
+    const response = await axios.post(`/mojadol/api/v1/payment/cancel/${paymentId}`);
 
     try {
         const response = await axiosInstance.post(apiUrl); // POST 요청으로 변경
@@ -68,8 +70,8 @@ async function requestPaymentCancelToBackend(paymentId) {
 }
 
 async function fetchUserProfile() {
-    const apiUrl = `${API_BASE_URL}/mojadol/api/v1/mypage/profile`;
-
+    const axios = getAxiosInstance();
+    const response = await axios.get('/mojadol/api/v1/mypage/profile');
     try {
         const response = await axiosInstance.get(apiUrl);
         return response.data.result;
