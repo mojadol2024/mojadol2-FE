@@ -241,7 +241,7 @@ function Payment() {
 
         window.BootPay.request({
             price: selectedProduct.amount,
-            application_id: BOOTPAY_WEB_APPLICATION_ID,
+            application_id: getEnv('BOOTPAY_WEB_APPLICATION_ID'),
             name: selectedProduct.title,
             pg: 'kcp',
             method: paymentMethodMap[selectedPaymentMethod],
