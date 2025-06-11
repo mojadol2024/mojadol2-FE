@@ -365,8 +365,7 @@ function Payment() {
                         <div className="info-popup-content">
                             <p>FREE 이용권이 매달 1개씩 제공되며,<br /> 유효 기간이 지나면 소멸됩니다.<br />
                             <strong>FREE 이용권</strong> 사용 시, 생성된 면접 질문을 전부<br />녹화해야만 분석 결과를 열람할 수 있습니다.</p>
-                            <p><strong>GOLD 이용권</strong>은 면접 질문 1개 이상 녹화시<br />바로 결과 열람이 가능합니다.<br />
-                            후에 답변하지 않았던 질문을 녹화하여<br />결과지를 업데이트하는 것도 가능합니다.</p>
+                            <p><strong>GOLD 이용권</strong>은 면접 질문 1개 이상 녹화시<br />바로 결과 열람이 가능합니다.</p>
                             <p><strong>이미 자소서 분석을 시작한 경우 이용권 변경이 불가합니다.</strong><br />
                             (FREE 이용권으로 면접 질문을 생성한 경우,<br />도중에 GOLD 이용권으로 변경하는 것 불가)</p>
                             <p>모든 이용권은 구매일로부터 <strong>30일</strong>간 유효하며,<br />유효 기간이 지난 이용권은 자동으로 소멸됩니다.</p>

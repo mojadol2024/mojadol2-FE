@@ -8,6 +8,7 @@ function PdfView() {
   const { coverLetterId } = useParams();
   const navigate = useNavigate();
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPdf = async () => {
@@ -15,6 +16,7 @@ function PdfView() {
       console.log("📌 coverLetterId:", coverLetterId);
 
       try {
+        setLoading(true);
         const res = await axiosInstance.get(
           `/mojadol/api/v1/pdf/create/${coverLetterId}`,
           { responseType: 'blob' }
@@ -39,6 +41,8 @@ function PdfView() {
           alert('결과지를 불러오는 데 실패했습니다.');
         }
         navigate('/InterviewMain');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -53,9 +57,9 @@ function PdfView() {
 
   return (
     <div className="pdf-view-container">
-      <div className="pdf-header"> {/* 제목과 버튼을 위한 새로운 div */}
+      <div className="pdf-header">
         <h2>면접 결과 리포트</h2>
-        {pdfUrl && ( // pdfUrl이 있을 때만 다운로드 버튼 표시
+        {pdfUrl && (
           <a
             href={pdfUrl}
             download={`면접_결과지_${coverLetterId}.pdf`}
@@ -66,14 +70,20 @@ function PdfView() {
         )}
       </div>
 
-      {pdfUrl ? (
+      {loading ? ( // ✅ 로딩 상태에 따라 조건부 렌더링
+        <div className="loading-state-container">
+          <div className="spinner"></div>
+          <p className="loading-message">결과지를 불러오는 중입니다...</p>
+        </div>
+      ) : pdfUrl ? (
         <iframe
           src={pdfUrl}
           title="결과 리포트"
           className="pdf-frame"
         />
       ) : (
-        <p>결과지를 불러오는 중입니다...</p>
+        // 로딩이 끝났지만 pdfUrl이 없는 경우 (예: 에러 발생 후 navigate 되기 전)
+        <p className="loading-message">결과지를 불러오는 데 실패했습니다.</p> 
       )}
     </div>
   );
