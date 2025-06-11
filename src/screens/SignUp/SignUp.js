@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { getAxiosInstance } from '../../lib/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
+import { getEnv } from '../../lib/getEnv';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -23,19 +24,13 @@ function SignUp() {
   const [emailChecked, setEmailChecked] = useState(false);
   const navigate = useNavigate();
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
  const isValidPassword = (password) => {
   const lengthCheck = /^.{8,16}$/;
   const hasUpper = /[A-Z]/.test(password);
   const hasLower = /[a-z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
-  const hasSpecial = /[^A-Za-z0-9]/.test(password); // ✅ 특수문자 필수
-
-  // 대소문자/숫자 포함 여부 (특수문자는 따로 체크했으므로 제외)
+  const hasSpecial = /[^A-Za-z0-9]/.test(password); // 
   const typeCount = [hasUpper, hasLower, hasNumber].filter(Boolean).length;
-
   return lengthCheck.test(password) && hasSpecial && typeCount >= 2;
 };
 
@@ -53,7 +48,7 @@ function SignUp() {
       if (value === '') {
         setPwFormatError('');
       } else if (!isValidPassword(value)) {
-        setPwFormatError('8~16자리의 대소문자/숫자/특수문자를 조합하세요.');
+        setPwFormatError('8~16자리의 대소문자/숫자를 조합하세요(특수문자 포함).');
       } else {
         setPwFormatError('');
       }
@@ -91,23 +86,19 @@ function SignUp() {
     }
 
     try {
-      const res = await axios.post(
-        `${API_BASE_URL}/mojadol/api/v1/users/sign-up`,
-        {
-          userLoginId: formData.userLoginId,
-          userPw: formData.userPw,
-          userName: formData.userName,
-          nickname: formData.nickname,
-          phoneNumber: formData.phoneNumber,
-          email: formData.email,
-        },
-        {
-          withCredentials: true,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
-      alert('회원가입 성공!');
-      navigate('/login');
+      const axios = getAxiosInstance(); // 여 바꿈꿈
+
+    const res = await axios.post('/mojadol/api/v1/users/sign-up', {
+      userLoginId: formData.userLoginId,
+      userPw: formData.userPw,
+      userName: formData.userName,
+      nickname: formData.nickname,
+      phoneNumber: formData.phoneNumber,
+      email: formData.email,
+    });
+
+    alert('회원가입 성공!');
+    navigate('/login');
     } catch (error) {
       const status = error.response?.status;
       const message = error.response?.data?.message || error.response?.data;
@@ -122,30 +113,31 @@ function SignUp() {
       return alert('아이디는 4~12자의 영문 또는 숫자만 사용할 수 있습니다.');
     }
     try {
-      const { data } = await axios.get(`${API_BASE_URL}/mojadol/api/v1/users/check`, {
-        params: { userLoginId: formData.userLoginId },
-        withCredentials: true,
-      });
-      if (data.result === '중복되는 데이터가 없습니다.') {
-        alert('사용 가능한 아이디입니다.');
-        setIdChecked(true);
-      } else {
-        alert('이미 사용 중인 아이디입니다.');
-        setIdChecked(false);
-      }
-    } catch {
-      alert('아이디 중복 확인 중 오류가 발생했습니다.');
+    const axios = getAxiosInstance();
+    const { data } = await axios.get('/mojadol/api/v1/users/check', {
+      params: { userLoginId: formData.userLoginId }
+    });
+
+    if (data.result === '중복되는 데이터가 없습니다.') {
+      alert('사용 가능한 아이디입니다.');
+      setIdChecked(true);
+    } else {
+      alert('이미 사용 중인 아이디입니다.');
       setIdChecked(false);
     }
-  };
+  } catch {
+    alert('아이디 중복 확인 중 오류가 발생했습니다.');
+    setIdChecked(false);
+  }
+};
 
   const checkNicknameDuplicate = async () => {
     if (!formData.nickname) return alert('닉네임을 입력해주세요.');
     try {
-      const { data } = await axios.get(`${API_BASE_URL}/mojadol/api/v1/users/check`, {
-        params: { nickname: formData.nickname },
-        withCredentials: true,
-      });
+    const axios = getAxiosInstance();
+    const { data } = await axios.get('/mojadol/api/v1/users/check', {
+      params: { nickname: formData.nickname }
+    });
       if (data.result === '중복되는 데이터가 없습니다.') {
         alert('사용 가능한 닉네임입니다.');
         setNicknameChecked(true);
@@ -165,10 +157,10 @@ function SignUp() {
       return alert('유효하지 않은 이메일 형식 입니다.');
     }
     try {
-      const { data } = await axios.get(`${API_BASE_URL}/mojadol/api/v1/users/check`, {
-        params: { email: formData.email },
-        withCredentials: true,
-      });
+    const axios = getAxiosInstance();
+    const { data } = await axios.get('/mojadol/api/v1/users/check', {
+      params: { email: formData.email }
+    });
       if (data.result === '중복되는 데이터가 없습니다.') {
         alert('사용 가능한 이메일입니다.');
         setEmailChecked(true);
@@ -204,52 +196,30 @@ function SignUp() {
       </div>
 
       <div className="signup-field-wrapper">
-        <div className="signup-password-wrapper">
-          <input
-            type={showPassword ? 'text' : 'password'}
-            name="userPw"
-            placeholder="비밀번호"
-            value={formData.userPw}
-            onChange={handleChange}
-            className="signup-input"
-          />
-          <button
-            type="button"
-            className="signup-toggle-button-b"
-            onClick={() => setShowPassword((prev) => !prev)}
-          >
-            {showPassword ? <FaEye /> : <FaEyeSlash />}
-          </button>
-        </div>
+        <input
+          type="password"
+          name="userPw"
+          placeholder="비밀번호"
+          value={formData.userPw}
+          onChange={handleChange}
+          className="signup-input"
+        />
         {pwFormatError && (
           <div className="signup-error-text red">{pwFormatError}</div>
         )}
       </div>
 
       <div className="signup-field-wrapper">
-        <div className="signup-password-wrapper">
-          <input
-            type={showConfirmPassword ? 'text' : 'password'}
-            name="confirmPw"
-            placeholder="비밀번호 확인"
-            value={formData.confirmPw}
-            onChange={handleChange}
-            className="signup-input"
-          />
-          <button
-            type="button"
-            className="signup-toggle-button-b"
-            onClick={() => setShowConfirmPassword((prev) => !prev)}
-          >
-            {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
-          </button>
-        </div>
+        <input
+          type="password"
+          name="confirmPw"
+          placeholder="비밀번호 확인"
+          value={formData.confirmPw}
+          onChange={handleChange}
+          className="signup-input"
+        />
         {passwordError && (
-          <div
-            className={`signup-error-text ${
-              passwordError.includes('일치하지') ? 'red' : 'green'
-            }`}
-          >
+          <div className={`signup-error-text ${passwordError.includes('일치하지') ? 'red' : 'green'}`}>
             {passwordError}
           </div>
         )}
