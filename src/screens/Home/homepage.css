@@ -16,20 +16,36 @@
 
 /* Header */
 .homepage-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.25rem 2.5rem;
   background-color: white;
+  padding: 1.25rem 2.5rem;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-  flex-wrap: wrap;  /* ✅ 줄바꿈 허용 */
-  row-gap: 1rem; 
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+
+.header-center {
+  display: flex;
+  justify-content: center;
 }
 
 .logo-section {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 /*
@@ -58,9 +74,43 @@
   display: flex;
   gap: 2rem;
   font-size: 0.875rem;
-  color: #1f2937;
   flex-wrap: wrap;
-  
+}
+
+.header-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+@media (max-width: 600px) {
+  .header-container {
+    position: relative;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-left {
+    width: 100%;
+  }
+
+  .header-right {
+    position: absolute;
+    right: 0rem;
+  }
+
+  .header-center {
+    width: 100%;
+    margin-top: 1rem;
+    justify-content: center;
+  }
+
+  .nav-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+  }
 }
 
 /* 상단 네비게이션 버튼 */
@@ -144,6 +194,7 @@
   color: #3cc7a9;
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
+  word-break: keep-all; 
 }
 
 .hero-text h1 {
@@ -214,7 +265,26 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  word-break: keep-all; 
+  gap: 1rem; 
 }
+
+@media (max-width: 768px) {
+  .deadline-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .deadline-header h2 {
+    width: 100%;
+    text-align: left;
+  }
+
+  .purchase-link {
+    align-self: flex-start; /* 버튼 왼쪽 정렬 */
+  }
+}
+
 
 .purchase-link {
   background: none;
@@ -224,6 +294,7 @@
   cursor: pointer;
   font-size: 0.875rem;
   text-decoration: underline;
+  word-break: keep-all; 
 }
 
 .purchase-link:hover {

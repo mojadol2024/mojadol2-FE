@@ -1,7 +1,6 @@
 html, body {  
   font-family: 'Noto Sans KR', sans-serif;
   background-color: #fff;
-  /*margin-left: 130px; side 때문에 margin 줘야돼돼요*/
 }
 
 .payment-container {
@@ -10,9 +9,8 @@ html, body {
   width: 100%;
   box-sizing: border-box; 
   padding-left: 25px;
-  /*padding-right: 290px; 뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
   padding-top: 20px;
-  overflow-y: auto; /*body 에 overflow 적용했더니 이중으로 스크롤이 생겨서*/
+  overflow-y: auto; 
   }
   
   .payment-container p { /*내역 없을 때 안내문구 (현재이용권이없습니다/이용내역이없습니다)*/
@@ -36,9 +34,9 @@ html, body {
   }
 
   .button-group {
-    display: flex; /* 버튼들을 가로로 배치 */
-    gap: 10px; /* 버튼 사이 간격 조절 */
-    justify-content: flex-end; /* 내용을 오른쪽으로 정렬 */
+    display: flex; 
+    gap: 10px; 
+    justify-content: flex-end; 
     margin-bottom: 20px;
     margin-right:10px;
   }
@@ -60,18 +58,18 @@ html, body {
   }
 
   .buy-ticket-button {
-    background-color: #51E0C4; /* 메인 색상 */
+    background-color: #51E0C4; 
     color: #fff;
     border: none;
     padding: 10px 15px; 
     border-radius: 7px; 
     font-size: 18px; 
     cursor: pointer;
-    transition: background-color 0.2s ease; /* mypage.css의 edit-button transition 적용 */
+    transition: background-color 0.2s ease;
   }
   
   .buy-ticket-button:hover {
-    background-color: #3cc7a9; /* 호버 시 약간 어둡게 */
+    background-color: #3cc7a9; 
   }
   
   /* 현재 이용권 정보 */
@@ -92,6 +90,7 @@ html, body {
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
+    word-break: keep-all;
   
   }
   
@@ -121,9 +120,9 @@ html, body {
   
   .subscription-table th,
   .subscription-table td {
-    border-left: none; /* 세로 줄 제거 */
-    border-right: none; /* 세로 줄 제거 */
-    border-bottom: 1px solid #d1d5db; /* 가로 줄 유지 */
+    border-left: none;
+    border-right: none; 
+    border-bottom: 1px solid #d1d5db; 
     padding: 12px 16px;
     text-align: left;
     font-size: 16px;
@@ -159,7 +158,7 @@ html, body {
   }
 
   .subscription-table tbody tr:last-child td {
-    border-bottom: none; /* 마지막 행의 아래쪽 가로 줄 제거 (선택 사항) */
+    border-bottom: none; 
   }
   
   /* 결제 내역 테이블 */
@@ -231,7 +230,7 @@ html, body {
   }
   
   .payment-history tbody tr:last-child td {
-    border-bottom: none; /* 마지막 행의 아래쪽 가로 줄 제거 (선택 사항) */
+    border-bottom: none; 
   }
   
   /* 페이지네이션 */
@@ -310,6 +309,7 @@ html, body {
   margin-bottom: 5px; /* 닫기 버튼과의 간격 */
   padding-right: 30px; /* 스크롤바 공간 확보 */
   padding-left: 40px;
+  word-break: keep-all;
 }
 
 .info-popup p {
@@ -481,6 +481,7 @@ html, body {
   color: #555;
   /*padding-left: 20px; 
   padding-right: 290px; */
+  margin-top: 15%; 
 }
 
 /* 스피너 스타일 */
@@ -510,10 +511,10 @@ html, body {
 .error-message {
   color: #999; 
   text-align: center;
-  font-size: 25px;
+  font-size: 20px;
   /*padding-left: 20px; 
   padding-right: 290px; */
-  margin-top: 10%;
+  margin-top: 15%;
 }
 
 /* 결제 취소 버튼 */
@@ -544,3 +545,156 @@ html, body {
     font-style: italic;
     color: #999;
 }
+
+@media (max-width: 768px) {
+
+    .payment-container {
+        padding-left: 15px; 
+        padding-right: 15px; 
+        padding-top: 15px;
+    }
+
+    .payment-container p {
+        font-size: 20px; 
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .button-group {
+        flex-direction: column; 
+        width: 100%; 
+        gap: 15px; 
+        margin-right: 0; 
+        align-items: center; 
+    }
+
+    .buy-info-button,
+    .buy-ticket-button {
+        width: 100%;
+        max-width: 300px; 
+        padding: 12px 15px; 
+    }
+
+    .subscription-summary {
+        flex-wrap: wrap; 
+        justify-content: center; 
+        gap: 5px; 
+        margin-bottom: 20px;
+    }
+
+    .subscription-box {
+        width: 35%; 
+        padding: 10px 15px; 
+        font-size: 14px; 
+        flex-shrink: 0; 
+    }
+
+
+    .table-responsive {
+        overflow-x: auto; 
+        -webkit-overflow-scrolling: touch; 
+        width: 100%;
+    }
+
+    .subscription-table,
+    .payment-history table {
+        width: 100%; 
+        min-width: 600px; 
+        table-layout: auto; 
+    }
+
+    .subscription-table th,
+    .subscription-table td,
+    .payment-history th,
+    .payment-history td {
+        padding: 10px 8px; 
+        font-size: 14px; 
+        white-space: nowrap; 
+        text-align: center;
+    }
+
+    .subscription-table th:nth-child(1),
+    .subscription-table td:nth-child(1),
+    .subscription-table th:nth-child(2),
+    .subscription-table td:nth-child(2),
+    .subscription-table th:nth-child(3),
+    .subscription-table td:nth-child(3),
+    .subscription-table th:nth-child(4),
+    .subscription-table td:nth-child(4),
+    .payment-history th:nth-child(1),
+    .payment-history td:nth-child(1),
+    .payment-history th:nth-child(2),
+    .payment-history td:nth-child(2),
+    .payment-history th:nth-child(3),
+    .payment-history td:nth-child(3),
+    .payment-history th:nth-child(4),
+    .payment-history td:nth-child(4),
+    .payment-history th:nth-child(5),
+    .payment-history td:nth-child(5) {
+        width: auto; 
+    }
+
+    .pagination-controls {
+        margin-top: 25px;
+        margin-bottom: 10px;
+    }
+
+    .pagination-controls .nav-button {
+        padding: 6px 12px;
+        font-size: 18px;
+    }
+
+    .pagination-controls .current-page-info {
+        font-size: 13px;
+        min-width: 80px;
+    }
+
+    .info-popup,
+    .payment-popup {
+        width: 70%; 
+        max-width: 450px; 
+        padding: 20px 15px; 
+    }
+
+    .info-popup h2,
+    .payment-popup h2 {
+        font-size: 20px; 
+    }
+
+    .info-popup-content,
+    .payment-popup-content {
+        padding-left: 15px; 
+        padding-right: 15px; 
+    }
+
+    .info-popup p,
+    .payment-popup p {
+        font-size: 15px; 
+    }
+
+    .info-popup button {
+        padding: 8px 15px;
+        font-size: 15px;
+    }
+
+    .payment-popup-content .form-group {
+        margin-bottom: 10px; 
+    }
+
+    .payment-popup-content label {
+        font-size: 15px;
+        margin-bottom: 3px;
+    }
+
+    .payment-popup-content select {
+        padding: 8px;
+        font-size: 16px;
+    }
+
+    .payment-popup-buttons button {
+        padding: 8px 15px;
+        font-size: 15px;
+        flex: 1; 
+        max-width: 150px; 
+    }
+  }
