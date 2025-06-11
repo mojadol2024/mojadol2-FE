@@ -20,6 +20,5 @@ export function getEnv(key, fallback = '') {
     // 없으면 일반 키 시도
     if (env[key]) return env[key];
   }
-
   return fallback;
 }
