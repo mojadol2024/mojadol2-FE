@@ -52,7 +52,7 @@ function FindId() {
   
   return (
     <div className="findid-container">
-      <div className="findid-logo">
+      <div className="findid-logo" onClick={() => navigate('/homepage')} style={{ cursor: 'pointer' }}>
         면접의<span className="findid-logo-highlight">정석</span>
       </div>
       <h3 className="findid-title">아이디 찾기</h3>

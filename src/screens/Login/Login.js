@@ -52,7 +52,7 @@ function Login() {
 
   return (
     <div className="login-container">
-      <div className="login-logo">
+      <div className="login-logo" onClick={() => navigate('/homepage')} style={{ cursor: 'pointer' }}>
         면접의<span className="login-logo-highlight">정석</span>
       </div>
       <h3 className="login-title">로그인</h3>
