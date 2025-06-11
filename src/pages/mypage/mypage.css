@@ -4,7 +4,6 @@
   width: 100%;
   box-sizing: border-box; 
   padding-left: 25px;
-  /*padding-right: 290px; 뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
   padding-top: 20px;
   overflow-y: auto; 
   
@@ -27,7 +26,7 @@
 
 .mypage-edit-button,
 .mypage-save-button {
-    background-color: #51E0C4; /* 메인 색상 */
+    background-color: #51E0C4; 
     color: #fff;
     border: none;
     padding: 10px 15px; 
@@ -48,9 +47,9 @@
     margin-top: 10px;
 
     width: 100%;
-    max-width: 800px;         /* 입력칸 최대 너비 지정 */
+    max-width: 800px;    
     margin-left: auto;
-    margin-right: auto;       /* 중앙 정렬 */
+    margin-right: auto; 
     box-sizing: border-box;
 }
 
@@ -88,11 +87,37 @@
 }
 
 .mypage-form-input input[type="text"]:focus,
-.mypage-form-input input[type="password"]:focus {
+.mypage-form-input input[type="password"]:focus
+.mypage-password-input-wrapper:focus {
     border-color: #ccc;
     outline: none;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
+
+.mypage-password-input-wrapper {
+    position: relative;
+    width: 80%; 
+    max-width: 700px; 
+}
+
+.mypage-password-toggle-main {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+    padding: 0; 
+    line-height: 1; 
+}
+
+.mypage-password-toggle-main:hover {
+    color: #333; 
+}
+
 
 .mypage-form-input input[disabled] {
     background-color: #f9f9f9;
@@ -102,7 +127,7 @@
 
 /* 토글 스위치 (마케팅 정보 수신) */
 .mypage-toggle-row {
-    align-items: flex-start; /* 토글이 상단에 맞춰지도록 */
+    align-items: flex-start; 
 }
 
 .mypage-toggle-switch {
@@ -110,7 +135,7 @@
     display: inline-block;
     width: 60px;
     height: 34px;
-    margin-top: 5px; /* 라벨과의 정렬을 위해 약간 조정 */
+    margin-top: 5px; 
 }
 
 .mypage-toggle-switch input {
@@ -221,6 +246,7 @@
     font-size: 1.1em;
     margin-bottom: 20px;
     color: #333;
+    word-break: keep-all;
 }
 
 .mypage-modal-content input[type="password"] {
@@ -276,8 +302,6 @@
     box-sizing: border-box;
 }
 
-
-/* 토글 버튼 (눈 아이콘) */
 .mypage-password-toggle-button {
   position: absolute;
   right: 20px;
@@ -292,4 +316,93 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@media (max-width: 768px) {
+
+    .mypage-edit-button,
+    .mypage-save-button {
+        width: 100%; 
+        max-width: 300px; 
+        margin-right: 0; 
+    }
+
+    .mypage-form-table {
+        padding: 0 10px; 
+        margin-left: auto; 
+        margin-right: auto; 
+        width: 100%; 
+        max-width: none; 
+    }
+
+    .mypage-form-row {
+        flex-direction: column; 
+        align-items: flex-start;
+        padding: 10px 0; 
+    }
+
+    .mypage-form-label {
+        width: 100%; 
+        flex: none; 
+        margin-bottom: 8px;
+        font-size: 1.1em; 
+        text-align: left; 
+    }
+
+    .mypage-form-input {
+        width: 100%; 
+        flex: none; 
+    }
+
+    .mypage-form-input input[type="text"],
+    .mypage-form-input input[type="password"]
+    .mypage-password-input-wrapper {
+        width: 100%; 
+        max-width: none; 
+        font-size: 1em; 
+        padding: 12px; 
+    }
+
+    .mypage-password-input-wrapper{
+        position: relative;
+    }
+
+    .mypage-password-wrapper {
+        width: 100%; 
+        max-width: none; 
+    }
+
+    .mypage-password-input {
+        width: 100%; 
+    }
+    
+    .mypage-password-toggle-button {
+        right: 15px; 
+        font-size: 20px; 
+    }
+
+    .mypage-content {
+        padding-left: 15px; 
+        padding-right: 15px; 
+        padding-top: 20px; 
+    }
+
+    .mypage-modal-content {
+        width: 70%; 
+        padding: 25px 20px; 
+    }
+    .mypage-modal-actions button {
+        width: calc(50% - 10px); 
+        padding: 10px 5px; 
+        font-size: 15px;
+        margin-top: 15px;
+    }
+    .mypage-modal-actions button:first-child {
+        margin-right: 15px; 
+        margin-left: 0;
+    }
+    .mypage-modal-actions button:last-child {
+        margin-left: 0;
+    }
+
 }

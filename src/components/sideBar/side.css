@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   width: 250px;
-  height: 100vh;
+  height: 100%;
   background-color: #fff;
   border-right: 1px solid #e5e7eb;
   padding: 28px;
@@ -103,7 +103,7 @@
 
 /* 사이드바가 접혔을 때 메뉴 항목 스타일 */
 .sidebar-collapsed .sidebar-menu-item {
-  justify-content: center; /* 아이콘을 중앙으로 정렬 */
+  justify-content: center; 
   padding: 15px 0;
 }
 
@@ -122,7 +122,7 @@
 .sidebar-menu-text-wrapper {
     flex-grow: 1;
     overflow: hidden;
-    transition: max-width 0.4s ease; /*, opacity 0.3s ease, transform 0.3s ease*/
+    transition: max-width 0.4s ease; 
     max-width: 100%;
     display: flex;
     align-items: center;

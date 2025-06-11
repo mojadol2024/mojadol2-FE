@@ -97,20 +97,19 @@ html, body {
   justify-content: center; 
   align-items: center; 
   width: 100%;
-  max-width: 1200px; /* 전체 컨테이너 너비 제한 */
-  margin: 0 auto 20px auto; /* 중앙 정렬 및 아래 여백 */
+  max-width: 1200px; 
+  margin: 0 auto 20px auto; 
   padding: 0 16px;
-  /* gap은 필요없습니다. */
 }
 
 
 .question-text {
-  width: 100%; /* 부모 컨테이너에 맞게 너비 설정 */
+  width: 100%; 
   font-size: 24px;
   font-weight: bold;
-  text-align: center; /* 질문 텍스트 중앙 정렬 */
+  text-align: center; 
   word-break: keep-all;
-  margin-bottom: 20px; /* 질문 텍스트와 카메라 박스 사이 간격 */
+  margin-bottom: 20px; 
 }
 
 
@@ -124,10 +123,10 @@ html, body {
   background-color: rgba(128, 128, 128, 0.4);
   border-radius: 7px;
   font-family: 'Courier New', monospace;
-  position: absolute; /* camera-box에 상대적으로 위치 */
-  top: 15px; /* 상단에서 10px 아래 */
-  right: 15px; /* 오른쪽에서 10px 안쪽 */
-  z-index: 10; /* 카메라 피드 위에 오도록 설정 */
+  position: absolute; 
+  top: 15px; 
+  right: 15px; 
+  z-index: 10; 
 }
 
 .recording-stop-button {
@@ -168,7 +167,7 @@ html, body {
   background-color: #ccc;
   border-radius: 7px;
   overflow: hidden;
-  position: relative; /* 타이머 박스의 absolute 위치 기준 */
+  position: relative; 
   margin-bottom: 20px;
 }
 
@@ -184,6 +183,7 @@ html, body {
   text-align: center;
   line-height: 1.6;
   padding-bottom: 12px;
+  word-break: keep-all;
 }
 
 /*confirm 이랑 합치기*/
@@ -201,6 +201,7 @@ html, body {
   font-weight: bold;
   margin-bottom: 50px;
   color: #333;
+  word-break: keep-all;
 }
 
 .confirm-buttons {
@@ -289,6 +290,7 @@ html, body {
   line-height: 2;
   text-align: center;
   margin-bottom: 10px;
+  word-break: keep-all;
 }
 
 /*
@@ -307,3 +309,105 @@ html, body {
   font-size: 22px;
 }
 */
+
+@media (max-width: 768px) {
+
+    .recording-layout {
+        margin: 0;
+        padding: 0;
+    }
+
+    .recording-main {
+        padding-top: 10px; 
+    }
+
+    .question-title {
+        font-size: 18px; 
+        margin-bottom: 30px; 
+        padding: 0 10px;
+        text-align: center; 
+        word-break: keep-all;
+    }
+
+    .confirm-buttons {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%; 
+        padding: 0 10px; 
+        box-sizing: border-box;
+    }
+
+    .btn {
+        width: 100%; 
+        padding: 12px 15px; 
+        font-size: 18px; 
+        box-sizing: border-box; 
+        margin: 0 !important; 
+    }
+
+    .notice-text {
+        font-size: 14px; 
+        line-height: 1.5; 
+        padding: 0 10px;
+        word-break: keep-all;
+    }
+    .countdown-number {
+        font-size: 150px; 
+        margin-top: 10%; 
+    }
+
+    .question-text {
+        font-size: 20px; 
+        margin-bottom: 15px; 
+        padding: 0 10px; 
+        text-align: center; 
+        word-break: keep-all; 
+        width: 90%; 
+    }
+
+    .camera-box {
+        width: calc(100% - 20px); 
+        max-width: none;
+        margin-left: auto; 
+        margin-right: auto; 
+    }
+      .timer-box.mobile-timer-box { 
+        position: static; 
+        display: flex;
+        flex-direction: row; 
+        justify-content: center; 
+        align-items: center;
+        width: calc(100% - 20px); 
+        max-width: 100%; 
+        margin-top: -10px;
+        margin-bottom: 10px;
+        background-color: transparent; 
+    }
+
+    /* mobile-timer-box 내부 요소 스타일 */
+    .mobile-timer-box .recording-stop-button {
+        width: 30px; 
+        height: 30px;
+        font-size: 18px; 
+        margin: 0;
+    }
+
+    .mobile-timer-box .timer-texts {
+        flex-direction: row; 
+        align-items: center;
+    }
+    
+    .mobile-timer-box .time-red, 
+    .mobile-timer-box .time-black {
+        font-size: 18px; 
+        text-align: center;
+    }
+
+    .recording-notice {
+        font-size: 13px; 
+        line-height: 1.4;
+        padding: 0 10px;
+        word-break: keep-all;
+    }
+   
+}

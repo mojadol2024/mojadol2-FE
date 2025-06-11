@@ -254,7 +254,7 @@
 
           {correctionResult && (
             <>
-              <div className="editor-box" style={{ marginLeft: '35px'}}>
+              <div className="editor-box-r" >
               <h4>교정 결과</h4>
               <div
                   className="correction-html-box"

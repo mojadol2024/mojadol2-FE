@@ -1,7 +1,7 @@
 html, body {  
   font-family: 'Noto Sans KR', sans-serif;
   background-color: #fff;
-  margin-left: 130px; /*side 때문에 margin 줘야돼돼요*/
+  margin-left: 130px; 
 }
 
 .register-page {
@@ -10,7 +10,6 @@ html, body {
   width: 100%;
   box-sizing: border-box; 
   padding-left: 25px;
-  /*padding-right: 290px; 뭐가문제지?????/????????ㅜㅜㅜㅜ전에는50px이었는데*/
   padding-top: 20px;
   overflow-y: auto; 
 }
@@ -22,6 +21,7 @@ html, body {
     margin: 0;
     margin-top: 20px;
     margin-bottom: 20px;
+    word-break: keep-all;
 }
 
 .register-page input[type="text"] {
@@ -45,7 +45,7 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4); /* 어두운 배경 */
+  background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -58,6 +58,7 @@ html, body {
   border-radius: 12px;
   text-align: center;
   box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  word-break: keep-all;
 }
 
 .voucher-modal-b{
@@ -118,6 +119,15 @@ html, body {
   display: flex;
   flex-direction: column;
   margin-right: 20px;
+}
+
+.editor-box-r {
+  flex: 1;
+  /*max-width: 260px;*/
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px;
+  padding-left: 35px;
 }
 
 .editor-box textarea {
@@ -186,8 +196,8 @@ textarea {
 .button-section-s {
   display: flex;
   gap: 16px;
-  justify-content: center;  /* 가운데 정렬 */
-  margin-top: 10px;         /* 위쪽 여백 추가 (선택) */
+  justify-content: center;  
+  margin-top: 10px; 
 }
 
 .button-section-s button {
@@ -216,18 +226,59 @@ textarea {
   padding-right: 290px; */
 }
 
-/* 스피너 스타일 */
-.spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #51E0C4; /* 스피너 색상 - 메인 색상으로 변경 */
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin: 20px auto; /* 중앙 정렬 */
-}
+@media (max-width: 768px) {
+  .register-page {
+    margin-left: 0 !important;
+    padding: 16px !important;
+  }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  .editor-section {
+    flex-direction: column;
+    width: 100% !important;
+  }
+
+  .register-page input[type="text"] {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  .editor-box {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0px;
+  }
+
+  .editor-box-r {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 20px;
+    margin-left: -35px;
+  }
+
+  .editor-box textarea,
+  .correction-html-box {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+    .button-section-s {
+        flex-direction: column; 
+        gap: 10px; 
+        width: 100%; 
+        padding: 0 16px; 
+        box-sizing: border-box; 
+        margin-top: 5px;
+    }
+
+    .button-section-s button {
+        width: 100%; 
+        box-sizing: border-box; 
+    }
+
+        .voucher-modal-content {
+        width: 70%; 
+        max-width: 400px; 
+        padding: 20px; 
+        box-sizing: border-box; 
+    }
 }

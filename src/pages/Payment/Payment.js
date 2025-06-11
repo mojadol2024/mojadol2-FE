@@ -433,6 +433,7 @@ function Payment() {
                     <div className="subscription-box paid">GOLD 이용권<span className="subscription-count">&nbsp;&nbsp;{paidSubscriptionsCount}</span></div>
                 </div>
                 {availableVouchers.length > 0 ? (
+                    <div className="table-responsive"> 
                     <table className="subscription-table">
                         <thead>
                             <tr>
@@ -453,6 +454,7 @@ function Payment() {
                             ))}
                         </tbody>
                     </table>
+                    </div>
                 ) : (
                     <p>현재 사용 가능한 이용권이 없습니다.</p>
                 )}
@@ -463,7 +465,8 @@ function Payment() {
                 <h2>결제 내역</h2>
                 {allPaymentHistoryData.length > 0 ? (
                     <>
-                        <table>
+                        <div className="table-responsive">
+                            <table>
                             <thead>
                                 <tr>
                                     <th>일시</th>
@@ -497,6 +500,7 @@ function Payment() {
                                 ))}
                             </tbody>
                         </table>
+                        </div>
 
                         {/* 페이지네이션 컨트롤 */}
                         <div className="pagination-controls">

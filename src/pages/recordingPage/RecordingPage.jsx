@@ -38,6 +38,8 @@ function RecordingPage() {
   const [timer, setTimer] = useState(0);
   const [silenceCount, setSilenceCount] = useState(0);
   const [hasHandledStop, setHasHandledStop] = useState(false);
+   // 모바일 여부를 판단하는 상태 추가
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const maxRecordingSeconds = 30;
   
@@ -316,14 +318,27 @@ function RecordingPage() {
             <div className="question-text">{questionText}</div>
             <div className="camera-box">
               <video ref={videoRef} autoPlay muted playsInline className="camera-feed" />
-              <div className="timer-box">
+              {/* 데스크톱일 때만 타이머 박스가 카메라 안에 위치 */}
+              {!isMobile && (
+                <div className="timer-box">
+                  <button className="recording-stop-button" onClick={stopRecording}></button>
+                  <div className="timer-texts">
+                    <div className="time-red">{new Date((maxRecordingSeconds - timer) * 1000).toISOString().substr(11, 8)}</div>
+                    <div className="time-black">{new Date(timer * 1000).toISOString().substr(11, 8)}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+            {/* 모바일일 때 타이머 박스가 카메라 박스 밖에 위치 */}
+            {isMobile && (
+              <div className="timer-box mobile-timer-box">
                 <button className="recording-stop-button" onClick={stopRecording}></button>
                 <div className="timer-texts">
                   <div className="time-red">{new Date((maxRecordingSeconds - timer) * 1000).toISOString().substr(11, 8)}</div>
                   <div className="time-black">{new Date(timer * 1000).toISOString().substr(11, 8)}</div>
                 </div>
               </div>
-            </div>
+            )}
             <div className="recording-notice">
               제한 시간이 끝나면 자동 종료됩니다.
               직접 종료하려면 <strong>종료 버튼</strong> 또는 <strong>스페이스바</strong>를 눌러주세요.

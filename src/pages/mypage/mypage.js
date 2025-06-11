@@ -225,7 +225,7 @@ function MyPage() {
       h('div', { className: 'mypage-form-label' }, label),
       h('div', { className: 'mypage-form-input' },
         type === 'password'
-          ? h('div', { style: { position: 'relative', width: '80%', maxWidth: '700px' } },
+          ? h('div', { className: 'mypage-password-input-wrapper' },
               h('input', {
                 type: showPassword ? 'text' : 'password',
                 value,
@@ -236,17 +236,7 @@ function MyPage() {
               isEditable && h('button', {
                 type: 'button',
                 onClick: () => setShowPassword(prev => !prev),
-                style: {
-                  position: 'absolute',
-                  right: '10px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '16px',
-                  color: '#666'
-                }
+                className: 'mypage-password-toggle-main'
               }, showPassword ? h(FaEye) : h(FaEyeSlash))
             )
           : h('input', {

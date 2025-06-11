@@ -71,31 +71,37 @@ function HomePage() {
   return (
     <div className="home-container">
       {/* Header */}
-      <header className="homepage-header">
-        <div className="logo-section" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
-          <img src={logo} alt="면접의 정석" className="logo-image" /> 
-          <span className="logo-text">면접의 정석</span>
-        </div>
-        <nav className="nav-menu">
-          <button className="nav-button active" onClick={() => navigate('/HomePage')}>홈</button>
-          <button className="nav-button" onClick={() => navigateIfLoggedIn('/InterviewMain')}>면접 목록</button>
-          <button className="nav-button" onClick={() => navigateIfLoggedIn('/Payment')}>이용권 관리</button>
-          {isLoggedIn ? (
-            <button className="nav-button" onClick={() => navigateIfLoggedIn('/mypage')}>개인정보 관리</button>
-          ) : (
-            <button className="nav-button" onClick={() => navigate('/sign-up')}>회원가입</button>
-          )}
-        </nav>
+<header className="homepage-header">
+  <div className="header-container">
+    <div className="header-left">
+      <div className="logo-section" onClick={() => navigate('/')}>
+        <img src={logo} alt="면접의 정석" className="logo-image" />
+        <span className="logo-text">면접의 정석</span>
+      </div>
+    </div>
+
+    <div className="header-center">
+      <nav className="nav-menu">
+        <button className="nav-button active" onClick={() => navigate('/HomePage')}>홈</button>
+        <button className="nav-button" onClick={() => navigateIfLoggedIn('/InterviewMain')}>면접 목록</button>
+        <button className="nav-button" onClick={() => navigateIfLoggedIn('/Payment')}>이용권 관리</button>
         {isLoggedIn ? (
-          <button className="btn-primary" onClick={handleLogout}>
-            로그아웃
-          </button>
+          <button className="nav-button" onClick={() => navigateIfLoggedIn('/mypage')}>개인정보 관리</button>
         ) : (
-          <button className="btn-primary" onClick={() => navigate('/login')}>
-            로그인
-          </button>
+          <button className="nav-button" onClick={() => navigate('/sign-up')}>회원가입</button>
         )}
-      </header>
+      </nav>
+    </div>
+
+    <div className="header-right">
+      {isLoggedIn ? (
+        <button className="btn-primary" onClick={handleLogout}>로그아웃</button>
+      ) : (
+        <button className="btn-primary" onClick={() => navigate('/login')}>로그인</button>
+      )}
+    </div>
+  </div>
+</header>
 
       {/* Hero Section */}
       <section className="hero">
