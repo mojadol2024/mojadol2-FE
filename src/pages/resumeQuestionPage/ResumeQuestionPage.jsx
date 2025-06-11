@@ -15,6 +15,8 @@ function ResumeQuestionPage() {
   const [questions, setQuestions] = useState([]);
   const [videos, setVideos] = useState({});
   const [voucherType, setVoucherType] = useState(null);
+  const [letterData, setLetterData] = useState('');
+  const [showLetterData, setShowLetterData] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("shouldRefreshMainList", "true");
@@ -48,6 +50,7 @@ function ResumeQuestionPage() {
       setTitle(result.coverLetter?.title || '자소서 제목 없음');
       setVoucherType(result.coverLetter?.useVoucher || 'FREE');
       setQuestions(Array.isArray(result.questions) ? result.questions : []);
+      setLetterData(result.coverLetter?.data || '');
     } catch (error) {
       console.error('자소서 정보 조회 실패:', error);
       alert('자소서 정보를 불러오는 데 실패했습니다.');
@@ -110,6 +113,12 @@ function ResumeQuestionPage() {
         <input className="resume-title" value={title} disabled />
         <div className="button-group-r">
           <button
+            className="btn-view-data"
+            onClick={() => setShowLetterData(prev => !prev)}
+          >
+            {showLetterData ? '본문 닫기' : '본문 보기'}
+          </button>
+          <button
             className="btn-confirm"
             onClick={handleConfirm}
             disabled={(voucherType === 'FREE' && !questions.every(q => q.is_answered === 1)) ||
@@ -129,6 +138,12 @@ function ResumeQuestionPage() {
                 </div>
             </div>
       ) : (
+        <>
+        {showLetterData && letterData && (
+          <div className="letter-data-box">
+            <pre className="letter-data-content">{letterData}</pre>
+          </div>
+        )} 
         <div className="question-list">
           {questions.map((q, i) => {
             const isUploaded = q.is_answered === 1;
@@ -150,10 +165,12 @@ function ResumeQuestionPage() {
                 {/*{isUploaded && ( 이부분아예필요없다 영상첨부완료버튼 그런거같음 지워야돼돼
                   <div className="question-status done">녹화 완료</div>
                 )}*/}
+                
               </div>
             );
           })}
         </div>
+        </>
       )}
     </main>
   );

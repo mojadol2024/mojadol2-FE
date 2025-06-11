@@ -58,7 +58,8 @@ html, body {
 .btn-confirm,
 .btn-save,
 .btn-record,
-.btn-redo {
+.btn-redo,
+.btn-view-data {
     padding: 10px 15px;
     border-radius: 7px;
     font-size: 18px;
@@ -82,6 +83,17 @@ html, body {
     cursor: not-allowed;
 }
 
+.btn-view-data{
+    background-color: #cdf6ee;
+    color: #81aaa2;
+    border: none;
+}
+
+.btn-view-data:hover {
+    background-color: #7ad7c5;
+    color: #fff;
+}
+
 /* '저장' 버튼 */
 .btn-save {
 background-color: #dcdcdc;
@@ -92,21 +104,55 @@ background-color: #dcdcdc;
     background-color: #c7c7c7;
 }
 
+.letter-data-box {
+    width: 97%;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+
+    padding: 15px;
+    padding-top:0px;
+    padding-bottom:0px;
+    border-radius: 7px;
+    border: 3px solid #cdf6ee;
+    //box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); 
+    display: flex; 
+    flex-direction: row; 
+    align-items: center; 
+ 
+    
+    box-sizing: border-box;
+
+    margin-bottom: 20px;
+}
+
+.letter-data-content {
+  font-size: 18px;
+    color: #444;
+
+    flex-grow: 1; 
+    flex-shrink: 1; 
+    flex-basis: auto; 
+    min-width: 0; 
+    word-break: break-word; /* 긴 단어 강제 줄바꿈 */
+    white-space: normal;
+}
+
 /* 질문 목록 컨테이너 */
 .question-list {
     width: 97%;
     display: flex;
     flex-direction: column;
-    gap: 20px; /* 각 질문 아이템 사이의 간격 */
+    gap: 10px; /* 각 질문 아이템 사이의 간격 */
     margin: 0 auto;
 }
 
 /* 개별 질문 아이템 */
 .question-item {
     padding: 15px;
-    border-radius: 10px;
-    border: 1px solid #eee; 
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); 
+    border-radius: 7px;
+    border: 3px solid #eee; 
+    //box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); 
     display: flex; 
     flex-direction: row; 
     align-items: center; 
