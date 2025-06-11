@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getEnv } from './getEnv';
 
-const BASE_URL = getEnv('API_BASE_URL', 'http://localhost:4000');
+const BASE_URL = getEnv('BASE_URL', 'http://localhost:4000');
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
