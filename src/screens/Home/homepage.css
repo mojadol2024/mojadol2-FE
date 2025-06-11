@@ -10,10 +10,6 @@
   padding: 0;
 }
 
-.home-container {
-  padding: 0;
-}
-
 /* Header */
 .homepage-header {
   background-color: white;
@@ -92,11 +88,13 @@
 
   .header-left {
     width: 100%;
+    margin-left:-10px;
   }
 
   .header-right {
     position: absolute;
     right: 0rem;
+    margin-right:-10px;
   }
 
   .header-center {
@@ -179,13 +177,14 @@
 .hero {
   display: flex;
   justify-content: space-between;
-  padding: 4rem 5rem;
+  padding: 3rem 3rem;
   gap: 2rem;
   flex-wrap: wrap;
 }
 
 .hero-text {
   max-width: 36rem;
+  word-break: keep-all;
 }
 
 .hero-sub {
@@ -258,7 +257,7 @@
 
 /* 유료 서비스 소개 */
 .deadline {
-  padding: 2.5rem 5rem;
+  padding: 2.5rem 3rem;
 }
 
 .deadline-header {
@@ -314,6 +313,7 @@
   color: black;
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
+  word-break: keep-all;
 }
 
 /* 원형 포인트 */
@@ -357,7 +357,8 @@
 .stats {
   text-align: center;
   background-color: white;
-  padding: 4rem 5rem;
+  padding: 4rem 3rem;
+  word-break: keep-all;
 }
 
 .stat-grid {
@@ -396,9 +397,10 @@
 
 /* 기능 소개 */
 .categories {
-  padding: 4rem 5rem;
+  padding: 4rem 3rem;
   background-color: #f3f4f6;
   text-align: center;
+  word-break: keep-all;
 }
 
 .category-grid {
@@ -406,6 +408,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
+  word-break: keep-all;
 }
 
 @media (max-width: 768px) {

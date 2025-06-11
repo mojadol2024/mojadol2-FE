@@ -506,6 +506,7 @@ html, body {
   font-size: 18px;
   font-size: 25px;
   color: #ccc;
+  word-break: keep-all;
 }
 
 .error-message {
