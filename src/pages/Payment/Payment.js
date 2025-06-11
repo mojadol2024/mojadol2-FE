@@ -230,6 +230,7 @@ function Payment() {
     };
 
     const handleConfirmPayment = () => {
+        const BOOTPAY_WEB_APPLICATION_ID = getEnv('REACT_APP_BOOTPAY_WEB_APPLICATION_ID');
         if (!userProfile || !selectedProduct) {
             alert('사용자 정보 또는 상품 정보가 없습니다.');
             return;
@@ -239,10 +240,12 @@ function Payment() {
             alert('BootPay SDK가 로드되지 않았습니다.');
             return;
         }
+        console.log('env:', window._env_);
+        console.log('BootPay App ID:', getEnv('BOOTPAY_WEB_APPLICATION_ID'));
 
         window.BootPay.request({
             price: selectedProduct.amount,
-            application_id: getEnv('BOOTPAY_WEB_APPLICATION_ID'),
+            application_id: BOOTPAY_WEB_APPLICATION_ID,
             name: selectedProduct.title,
             pg: 'kcp',
             method: paymentMethodMap[selectedPaymentMethod],
