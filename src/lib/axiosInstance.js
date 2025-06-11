@@ -1,27 +1,37 @@
 import axios from 'axios';
 import { getEnv } from './getEnv';
 
-const BASE_URL = getEnv('REACT_APP_API_BASE_URL');
+import axios from 'axios';
+import { getEnv } from '../utils/getEnv';
 
-const axiosInstance = axios.create({
-  baseURL: BASE_URL,
-  withCredentials: true,
-});
+let axiosInstance = null;
 
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
+export function getAxiosInstance() {
+  if (axiosInstance) return axiosInstance;
 
-    if (!(config.data instanceof FormData)) {
-      config.headers['Content-Type'] = 'application/json';
-    }
+  const BASE_URL = getEnv('REACT_APP_API_BASE_URL');
 
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+  axiosInstance = axios.create({
+    baseURL: BASE_URL,
+    withCredentials: true,
+  });
 
-export default axiosInstance;
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      if (!(config.data instanceof FormData)) {
+        config.headers['Content-Type'] = 'application/json';
+      }
+
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+
+  return axiosInstance;
+}
+
