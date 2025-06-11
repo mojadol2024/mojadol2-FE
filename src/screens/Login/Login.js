@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import PasswordResetModal from './PasswordResetModal';
 import { getEnv } from '../../lib/getEnv';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-
-const API_BASE_URL = getEnv('API_BASE_URL');
 
 function Login() {
   const [userLoginId, setUserLoginId] = useState('');
@@ -17,14 +15,12 @@ function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    const url = `${API_BASE_URL}/mojadol/api/v1/auth/login`;
     try {
-      const response = await axios.post(
-        url,
-        { userLoginId, userPw: password },
+      const response = await axiosInstance.post(
+        '/mojadol/api/v1/auth/login',
         {
-          withCredentials: true,
-          headers: { 'Content-Type': 'application/json' },
+          userLoginId,
+          userPw: password,
         }
       );
 
