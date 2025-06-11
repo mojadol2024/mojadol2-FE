@@ -1,8 +1,8 @@
 // src/HomePage.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../lib/axiosInstance';
-import { getEnv } from '../../lib/getEnv';
+import axiosInstance from '../../../lib/axiosInstance';
+import { getEnv } from '../../../lib/getEnv';
 import './homepage.css';
 import logo from '../../assets/logo_h.png'; 
 

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { getAxiosInstance } from '../../lib/axiosInstance';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { getEnv } from '../../lib/getEnv';
+
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -35,12 +37,13 @@ function PasswordResetPage() {
   const handleSendCode = async () => {
     setLoading(true); 
     try {
-      await axios.post(`${API_BASE_URL}/mojadol/api/v1/mail/find-password`, {
-        userLoginId: userId,
-        email,
-      });
-      alert('인증번호가 이메일로 전송되었습니다.');
-      setCodeSent(true);
+      const axios = getAxiosInstance(); //여기 바꿈
+      await axios.post('/mojadol/api/v1/mail/find-password', {
+      userLoginId: userId,
+      email,
+    });
+    alert('인증번호가 이메일로 전송되었습니다.');
+    setCodeSent(true);
     } catch (err) {
       alert(err.response?.data?.message || '인증번호 전송 실패');
     }finally {
@@ -50,12 +53,13 @@ function PasswordResetPage() {
 
   const handleVerifyCode = async () => {
     try {
-      await axios.post(`${API_BASE_URL}/mojadol/api/v1/mail/mail-check`, {
-        userLoginId: userId,
-        email,
-        code: authCode,
-      });
-      alert('인증 성공!');
+      const axios = getAxiosInstance(); // 여기 바꿈꿈
+    await axios.post('/mojadol/api/v1/mail/mail-check', {
+      userLoginId: userId,
+      email,
+      code: authCode,
+    });
+    alert('인증 성공!');
       setVerified(true);
     } catch (err) {
       alert(err.response?.data?.message || '인증 실패');
@@ -74,11 +78,12 @@ function PasswordResetPage() {
     }
 
     try {
-      await axios.patch(`${API_BASE_URL}/mojadol/api/v1/mail/update-password`, {
-        userLoginId: userId,
-        email,
-        userPw: newPw,
-      });
+    const axios = getAxiosInstance(); // ✅ 인스턴스 선언
+    await axios.patch('/mojadol/api/v1/mail/update-password', {
+      userLoginId: userId,
+      email,
+      userPw: newPw,
+    });
 
       alert('비밀번호가 변경되었습니다.');
       navigate('/login');
