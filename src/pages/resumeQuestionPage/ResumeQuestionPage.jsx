@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../lib/axiosInstance';
+import { getAxiosInstance } from '../../lib/axiosInstance';
 import './ResumeQuestionPage.css';
 
 function ResumeQuestionPage() {
@@ -44,7 +44,8 @@ function ResumeQuestionPage() {
   const fetchLetterDetail = async () => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
+      const axios = getAxiosInstance();
+      const response = await axios.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
       const result = response.data.result;
 
       setTitle(result.coverLetter?.title || '자소서 제목 없음');
