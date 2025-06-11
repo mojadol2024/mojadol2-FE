@@ -6,7 +6,7 @@ import PasswordResetModal from './PasswordResetModal';
 import { getEnv } from '../../lib/getEnv';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
-const API_BASE_URL = getEnv('BASE_URL');
+const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function Login() {
   const [userLoginId, setUserLoginId] = useState('');
