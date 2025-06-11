@@ -36,7 +36,7 @@ jobs:
       - name: env.js 생성
         run: |
           echo 'window._env_ = {' > env.js
-          echo '  REACT_APP_API_BASE_URL: "${{ secrets.REACT_APP_API_BASE_URL }}",' >> env.js
+          echo '  REACT_APP_BASE_URL: "${{ secrets.REACT_APP_API_BASE_URL }}",' >> env.js
           echo '  REACT_APP_BOOTPAY_WEB_APPLICATION_ID: "${{ secrets.REACT_APP_BOOTPAY_WEB_APPLICATION_ID }}"' >> env.js
           echo '}' >> env.js
 
