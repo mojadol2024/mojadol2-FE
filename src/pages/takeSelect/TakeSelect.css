@@ -8,7 +8,7 @@ html, body {
   min-height: 100%;
   width: 100%;
   box-sizing: border-box;
-  padding-left: 25px;
+
   padding-top: 20px;
   overflow-y: auto;
   display: flex;
@@ -62,11 +62,13 @@ html, body {
 }
 
 .take-rec-btn {
-  background-color: #51E0C4;
+  background-color: #444;
+  color: #fff;
 }
 
 .take-rec-btn:hover {
-  background-color: #3cc7a9;
+  color: #fff;
+  background-color: #333;
 }
 
 .take-limit-warning {
@@ -112,7 +114,7 @@ html, body {
 }
 
 .take-image.selected {
-  outline: 4px solid #51E0C4; 
+  outline: 4px solid #51e0c3b8; 
   outline-offset: -3px; 
 }
 
@@ -133,13 +135,11 @@ html, body {
 }
 
 .take-buttons .active {
-  background-color: #444;
-  color: #fff;
+  background-color: #51E0C4;
 }
 
 .take-buttons .active:hover {
-  color: #fff;
-  background-color: #333;
+  background-color: #3cc7a9;
 }
 /*
 .take-buttons .outline {

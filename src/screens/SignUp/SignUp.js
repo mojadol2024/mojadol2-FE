@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -21,6 +22,9 @@ function SignUp() {
   const [nicknameChecked, setNicknameChecked] = useState(false);
   const [emailChecked, setEmailChecked] = useState(false);
   const navigate = useNavigate();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
  const isValidPassword = (password) => {
   const lengthCheck = /^.{8,16}$/;
@@ -49,7 +53,7 @@ function SignUp() {
       if (value === '') {
         setPwFormatError('');
       } else if (!isValidPassword(value)) {
-        setPwFormatError('8~16자리의 대소문자/숫자를 조합하세요(특수문자 포함).');
+        setPwFormatError('8~16자리의 대소문자/숫자/특수문자를 조합하세요.');
       } else {
         setPwFormatError('');
       }
@@ -200,30 +204,52 @@ function SignUp() {
       </div>
 
       <div className="signup-field-wrapper">
-        <input
-          type="password"
-          name="userPw"
-          placeholder="비밀번호"
-          value={formData.userPw}
-          onChange={handleChange}
-          className="signup-input"
-        />
+        <div className="signup-password-wrapper">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            name="userPw"
+            placeholder="비밀번호"
+            value={formData.userPw}
+            onChange={handleChange}
+            className="signup-input"
+          />
+          <button
+            type="button"
+            className="signup-toggle-button-b"
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? <FaEye /> : <FaEyeSlash />}
+          </button>
+        </div>
         {pwFormatError && (
           <div className="signup-error-text red">{pwFormatError}</div>
         )}
       </div>
 
       <div className="signup-field-wrapper">
-        <input
-          type="password"
-          name="confirmPw"
-          placeholder="비밀번호 확인"
-          value={formData.confirmPw}
-          onChange={handleChange}
-          className="signup-input"
-        />
+        <div className="signup-password-wrapper">
+          <input
+            type={showConfirmPassword ? 'text' : 'password'}
+            name="confirmPw"
+            placeholder="비밀번호 확인"
+            value={formData.confirmPw}
+            onChange={handleChange}
+            className="signup-input"
+          />
+          <button
+            type="button"
+            className="signup-toggle-button-b"
+            onClick={() => setShowConfirmPassword((prev) => !prev)}
+          >
+            {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+          </button>
+        </div>
         {passwordError && (
-          <div className={`signup-error-text ${passwordError.includes('일치하지') ? 'red' : 'green'}`}>
+          <div
+            className={`signup-error-text ${
+              passwordError.includes('일치하지') ? 'red' : 'green'
+            }`}
+          >
             {passwordError}
           </div>
         )}

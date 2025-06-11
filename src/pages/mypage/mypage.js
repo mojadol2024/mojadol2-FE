@@ -3,6 +3,7 @@ import './mypage.css';
 import axiosInstance from '../../lib/axiosInstance';
 import { getEnv } from '../../lib/getEnv';
 import { useNavigate } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 
 const API_BASE_URL = getEnv('REACT_APP_BASE_URL');
@@ -23,6 +24,9 @@ function MyPage() {
 
   const [passwordMsg, setPasswordMsg] = useState('');
   const [nicknameMsg, setNicknameMsg] = useState(''); // 닉네임 중복 체크 메시지
+
+  const [showPassword, setShowPassword] = useState(false); // 비밀번호 토글
+  const [showModalPassword, setShowModalPassword] = useState(false); // 모달 비밀번호 토글
 
   // 컴포넌트 마운트 시 사용자 정보 불러오기
   useEffect(() => {
@@ -81,11 +85,20 @@ function MyPage() {
     return () => clearTimeout(debounceNicknameCheck);
   }, [nickname, isEditable, originalNickname]); // isEditable이 변경될 때도 useEffect 재실행
 
-  const validatePassword = (pw) => {
+  {/*const validatePassword = (pw) => {
     const lengthCheck = /^.{8,16}$/;
     const types = [/[A-Z]/, /[a-z]/, /[0-9]/, /[^A-Za-z0-9]/]; 
     const passedTypes = types.filter((regex) => regex.test(pw)).length; 
     return lengthCheck.test(pw) && passedTypes >= 2; 
+  };*/}
+
+  const validatePassword = (pw) => { //signup 에서의 비밀번호
+    const lengthCheck = /^.{8,16}$/;
+    const hasUpper = /[A-Z]/.test(pw);
+    const hasLower = /[a-z]/.test(pw);
+    const hasDigit = /[0-9]/.test(pw);
+    const hasSpecial = /[^A-Za-z0-9]/.test(pw);
+    return lengthCheck.test(pw) && hasUpper && hasLower && hasDigit && hasSpecial;
   };
 
   // 비밀번호 확인 (개인정보 수정 진입 전)
@@ -107,6 +120,7 @@ function MyPage() {
         setPassword(''); // 비밀번호 확인 후 모달 비밀번호 필드 초기화 (수정 모드 진입 후 새 비밀번호 입력 위함)
       } else {
         alert('비밀번호가 올바르지 않습니다.');
+        setPassword('');
       }
     } catch (error) {
       console.error('비밀번호 확인 에러:', error);
@@ -132,7 +146,7 @@ function MyPage() {
       return;
     }
     if (!validatePassword(password)) {
-      setPasswordMsg('비밀번호는 8~16자리의 대소문자/숫자/특수문자 2종 이상을 조합해야 합니다.');
+      setPasswordMsg('비밀번호는 8~16자리의 대소문자/숫자/특수문자를 모두 조합해야 합니다.');
       return;
     } else {
       setPasswordMsg('');
@@ -203,12 +217,37 @@ function MyPage() {
     h('div', { className: 'mypage-form-row' },
       h('div', { className: 'mypage-form-label' }, label),
       h('div', { className: 'mypage-form-input' },
-        h('input', {
-          type,
-          value,
-          disabled,
-          onChange: (e) => setValue(e.target.value),
-        }),
+        type === 'password'
+          ? h('div', { style: { position: 'relative', width: '80%', maxWidth: '700px' } },
+              h('input', {
+                type: showPassword ? 'text' : 'password',
+                value,
+                disabled,
+                onChange: (e) => setValue(e.target.value),
+                style: { width: '100%', paddingRight: '35px' }
+              }),
+              isEditable && h('button', {
+                type: 'button',
+                onClick: () => setShowPassword(prev => !prev),
+                style: {
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '16px',
+                  color: '#666'
+                }
+              }, showPassword ? h(FaEye) : h(FaEyeSlash))
+            )
+          : h('input', {
+              type,
+              value,
+              disabled,
+              onChange: (e) => setValue(e.target.value),
+            }),
         msg && h('div', { style: { fontSize: '13px', color: '#ef4444', marginTop: '5px' } }, msg)
       )
     );
@@ -252,12 +291,25 @@ function MyPage() {
     showModal && h('div', { className: 'mypage-modal' },
       h('div', { className: 'mypage-modal-content' },
         h('p', null, '개인정보 수정을 위해 비밀번호를 입력해주세요.'),
-        h('input', {
-          type: 'password',
-          value: password,
-          onChange: (e) => setPassword(e.target.value),
-          placeholder: '비밀번호',
-        }),
+        h('div', { className: 'mypage-password-wrapper' },
+          h('input', {
+            type: showModalPassword ? 'text' : 'password',
+            value: password,
+            onChange: (e) => setPassword(e.target.value),
+            placeholder: '비밀번호',
+            className: 'mypage-password-input',
+            onKeyDown: (e) => {
+              if (e.key === 'Enter') {
+                handleConfirm();
+              }
+            }
+          }),
+          h('button', {
+            type: 'button',
+            onClick: () => setShowModalPassword(prev => !prev),
+            className: 'mypage-password-toggle-button'
+          }, showModalPassword ? h(FaEye) : h(FaEyeSlash))
+        ),
         h('div', { className: 'mypage-modal-actions' },
           h('button', { onClick: handleConfirm }, '확인'),
           h('button', { onClick: () => { setShowModal(false); setPassword(''); } }, '취소') // 취소 시 비밀번호 초기화

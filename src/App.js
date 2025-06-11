@@ -6,7 +6,6 @@
 import Home from './pages/home/home';
 import MyPage from './pages/mypage/mypage';
 import Login from './screens/Login/Login';
-import Main from './pages/main/InterviewMain';
 import PdfView from './pages/pdfView/PdfView';
 import ResumeQuestionPage from './pages/resumeQuestionPage/ResumeQuestionPage';
 import QuestionConfirmPage from './pages/questionConfirmPage/QuestionConfirmPage';
@@ -19,7 +18,7 @@ import FindId from './screens/FindId/FindId';
 import MainLayout from './components/layout/MainLayout';
 import Homepage from './screens/Login/Home/homepage';
 import InterviewMain from './pages/main/InterviewMain';
-
+import PasswordResetPage from './screens/Login/PasswordResetPage';
 
   // ✅ 페이지에 따라 body 클래스 다르게 적용하는 컨트롤러
   function BodyClassController() {
@@ -30,7 +29,7 @@ import InterviewMain from './pages/main/InterviewMain';
       const path = location.pathname;
 
       // 로그인/회원가입/아이디 찾기 페이지에서는 auth-body
-      if (['/login', '/sign-up', '/find-id'].includes(path)) {
+      if (['/login', '/sign-up', '/find-id','/find-password'].includes(path)) {
         body.classList.add('auth-body');
         body.classList.remove('default-body');
       } else {
@@ -56,6 +55,7 @@ import InterviewMain from './pages/main/InterviewMain';
   <Route path="/login" element={<Login />} />
   <Route path="/sign-up" element={<SignUp />} />
   <Route path="/find-id" element={<FindId />} />
+  <Route path="/find-password" element={<PasswordResetPage />} />
 
           {/* ✅ 사이드바 포함된 레이아웃 페이지들 */}
           <Route path="/mypage" element={<MainLayout><MyPage /></MainLayout>} />
