@@ -45,7 +45,7 @@ async function requestPaymentApprovalToBackend(amount, paymentMethod, title, qua
             errorMessage = `네트워크 오류: ${error.message}`;
         }
         sessionStorage.setItem('bootpay_backend_error_log', error.message || JSON.stringify(error));
-        alert(errorMessage);
+        //alert(errorMessage);
         throw new Error(errorMessage);
     }
 }
@@ -59,11 +59,10 @@ async function requestPaymentCancelToBackend(paymentId) {
     } catch (error) {
         let errorMessage = '결제 취소 처리 중 오류 발생';
         if (error.response) {
-            errorMessage = `결제 취소 실패: ${error.response.data.message || error.response.statusText}`;
+            errorMessage = `${error.response.data.message || error.response.statusText}`;
         } else {
             errorMessage = `네트워크 오류: ${error.message}`;
         }
-        alert(errorMessage);
         throw new Error(errorMessage);
     }
 }
@@ -264,7 +263,7 @@ function Payment() {
             setShowPaymentPopup(false);
             })
             .done(async function(data) {
-            alert('BootPay 결제 성공!');
+            //alert('BootPay 결제 성공!');
 
             // 프론트에서 백엔드로 결제 승인 데이터 전송
             try {
@@ -275,7 +274,7 @@ function Payment() {
                 selectedProduct.quantity
                 );
 
-                alert('상품 지급이 완료되었습니다.');
+                alert('이용권 지급이 완료되었습니다.');
                 await loadInitialData();
 
             } catch (error) {
