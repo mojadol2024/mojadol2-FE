@@ -16,7 +16,7 @@ import SpellingCorrection from './pages/spellingCorrection/SpellingCorrection';
 import SignUp from './screens/SignUp/SignUp';
 import FindId from './screens/FindId/FindId';
 import MainLayout from './components/layout/MainLayout';
-import Homepage from './screens/Login/Home/homepage';
+import Homepage from './screens/Home/homepage';
 import InterviewMain from './pages/main/InterviewMain';
 import PasswordResetPage from './screens/Login/PasswordResetPage';
 
