@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axiosInstance from '../../lib/axiosInstance';
+import { getAxiosInstance } from '../../lib/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import PasswordResetModal from './PasswordResetModal';
@@ -16,7 +16,8 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await axiosInstance.post(
+      const axios = getAxiosInstance();
+      const response = await axios.post(
         '/mojadol/api/v1/auth/login',
         {
           userLoginId,
