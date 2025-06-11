@@ -10,10 +10,10 @@ import { getAxiosInstance } from '../../lib/axiosInstance';
 
 async function fetchAllPaymentData(size = 1000) {
   const axios = getAxiosInstance();
-  const response = await axios.get(`/mojadol/api/v1/payment/list?page=0&size=${size}`);
+  
 
     try {
-        const response = await axiosInstance.get(apiUrl); 
+        const response = await axios.get(`/mojadol/api/v1/payment/list?page=0&size=${size}`);
         return response.data.result;
     } catch (error) {
         if (error.response) {   
@@ -36,7 +36,7 @@ async function requestPaymentApprovalToBackend(amount, paymentMethod, title, qua
     };
 
     try {
-        const response = await axiosInstance.post(apiUrl, requestBody);
+        const response = await axios.post(apiUrl, requestBody);
         return response.data.result;
     } catch (error) {
         let errorMessage = '결제 처리 중 오류 발생';
@@ -53,10 +53,10 @@ async function requestPaymentApprovalToBackend(amount, paymentMethod, title, qua
 
 async function requestPaymentCancelToBackend(paymentId) {
     const axios = getAxiosInstance();
-    const response = await axios.post(`/mojadol/api/v1/payment/cancel/${paymentId}`);
+    const apiUrl = `/mojadol/api/v1/payment/cancel/${paymentId}`;
 
     try {
-        const response = await axiosInstance.post(apiUrl); // POST 요청으로 변경
+        const response = await axios.post(apiUrl);
         return response.data.result;
     } catch (error) {
         let errorMessage = '결제 취소 처리 중 오류 발생';
@@ -71,9 +71,9 @@ async function requestPaymentCancelToBackend(paymentId) {
 
 async function fetchUserProfile() {
     const axios = getAxiosInstance();
-    const response = await axios.get('/mojadol/api/v1/mypage/profile');
+     const apiUrl = '/mojadol/api/v1/mypage/profile';
     try {
-        const response = await axiosInstance.get(apiUrl);
+        const response = await axios.get(apiUrl);
         return response.data.result;
     } catch (error) {
         if (error.response) {
