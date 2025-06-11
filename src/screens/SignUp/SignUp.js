@@ -24,6 +24,9 @@ function SignUp() {
   const [emailChecked, setEmailChecked] = useState(false);
   const navigate = useNavigate();
 
+    const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
  const isValidPassword = (password) => {
   const lengthCheck = /^.{8,16}$/;
   const hasUpper = /[A-Z]/.test(password);
