@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import './Payment.css';
 // import axios from 'axios'; 
 import { getAxiosInstance } from '../../lib/axiosInstance';
+import { getEnv } from '../../lib/getEnv';
 
 /* global BootPay, bootpaySDKLoaded */
 
