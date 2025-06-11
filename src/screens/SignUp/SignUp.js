@@ -179,7 +179,7 @@ function SignUp() {
 
   return (
     <div className="signup-container">
-      <div className="signuplogo">
+      <div className="signuplogo" onClick={() => navigate('/homepage')} style={{ cursor: 'pointer' }}>
         면접의<span className="signuplogoHighlight">정석</span>
       </div>
       <h3 className="signup-title">회원가입</h3>

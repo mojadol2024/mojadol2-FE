@@ -110,7 +110,7 @@ function PasswordResetPage() {
 
   return (
     <div className="login-container">
-      <div className="login-logo">
+      <div className="login-logo" onClick={() => navigate('/homepage')} style={{ cursor: 'pointer' }}>
         면접의<span className="login-logo-highlight">정석</span>
       </div>
       <h3 className="login-title">비밀번호 재설정</h3>
