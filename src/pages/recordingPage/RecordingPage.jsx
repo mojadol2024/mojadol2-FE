@@ -179,13 +179,17 @@ function RecordingPage() {
         setHasHandledStop(true);
 
         if (typeof coverLetterId === 'undefined' || typeof questionIndex === 'undefined' || !realQuestion) {
-          showAlertOnce('saveError', '녹화 데이터를 저장할 수 없습니다. 필수 정보 누락');
+          showAlertOnce('saveError', '녹화 데이터를 저장할 수 없습니다. 필수 정보 누락', () => {
+          navigate(-1);
+        });
           return;
         }
 
         const blob = new Blob(chunks, { type: 'video/webm' });
         if (blob.size === 0) {
-          showAlertOnce('noData', "녹화된 데이터가 없습니다.");
+          showAlertOnce('noData', "녹화된 데이터가 없습니다.",() => {
+          navigate(-1);
+        });
           return;
         }
 
