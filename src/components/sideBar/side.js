@@ -55,7 +55,7 @@ function Sidebar({ onToggle }) {
     <div className={`sidebar-wrapper ${isOpen ? '' : 'sidebar-collapsed'}`}>
       {/* 토글 버튼을 sidebar-wrapper의 직계 자식으로 배치 */}
       <button className="sidebar-toggle-button" onClick={toggleSidebar}>
-        {isOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+        {isOpen ? <FaTimes size={20} /> : <FaBars size={18} />}
       </button>
 
       <div className="sidebar-logo-section">

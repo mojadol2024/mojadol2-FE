@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -22,12 +23,23 @@ function SignUp() {
   const [emailChecked, setEmailChecked] = useState(false);
   const navigate = useNavigate();
 
-  const isValidPassword = (password) => {
-    const lengthCheck = /^.{8,16}$/;
-    const types = [/[A-Z]/, /[a-z]/, /[0-9]/, /[^A-Za-z0-9]/];
-    const passedTypes = types.filter((regex) => regex.test(password)).length;
-    return lengthCheck.test(password) && passedTypes >= 2;
-  };
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+ const isValidPassword = (password) => {
+  const lengthCheck = /^.{8,16}$/;
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[^A-Za-z0-9]/.test(password); // ✅ 특수문자 필수
+
+  // 대소문자/숫자 포함 여부 (특수문자는 따로 체크했으므로 제외)
+  const typeCount = [hasUpper, hasLower, hasNumber].filter(Boolean).length;
+
+  return lengthCheck.test(password) && hasSpecial && typeCount >= 2;
+};
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,7 +53,7 @@ function SignUp() {
       if (value === '') {
         setPwFormatError('');
       } else if (!isValidPassword(value)) {
-        setPwFormatError('8~16자리의 대소문자/숫자/특수문자 2종 이상을 조합하세요.');
+        setPwFormatError('8~16자리의 대소문자/숫자/특수문자를 조합하세요.');
       } else {
         setPwFormatError('');
       }
@@ -192,30 +204,52 @@ function SignUp() {
       </div>
 
       <div className="signup-field-wrapper">
-        <input
-          type="password"
-          name="userPw"
-          placeholder="비밀번호"
-          value={formData.userPw}
-          onChange={handleChange}
-          className="signup-input"
-        />
+        <div className="signup-password-wrapper">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            name="userPw"
+            placeholder="비밀번호"
+            value={formData.userPw}
+            onChange={handleChange}
+            className="signup-input"
+          />
+          <button
+            type="button"
+            className="signup-toggle-button-b"
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? <FaEye /> : <FaEyeSlash />}
+          </button>
+        </div>
         {pwFormatError && (
           <div className="signup-error-text red">{pwFormatError}</div>
         )}
       </div>
 
       <div className="signup-field-wrapper">
-        <input
-          type="password"
-          name="confirmPw"
-          placeholder="비밀번호 확인"
-          value={formData.confirmPw}
-          onChange={handleChange}
-          className="signup-input"
-        />
+        <div className="signup-password-wrapper">
+          <input
+            type={showConfirmPassword ? 'text' : 'password'}
+            name="confirmPw"
+            placeholder="비밀번호 확인"
+            value={formData.confirmPw}
+            onChange={handleChange}
+            className="signup-input"
+          />
+          <button
+            type="button"
+            className="signup-toggle-button-b"
+            onClick={() => setShowConfirmPassword((prev) => !prev)}
+          >
+            {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+          </button>
+        </div>
         {passwordError && (
-          <div className={`signup-error-text ${passwordError.includes('일치하지') ? 'red' : 'green'}`}>
+          <div
+            className={`signup-error-text ${
+              passwordError.includes('일치하지') ? 'red' : 'green'
+            }`}
+          >
             {passwordError}
           </div>
         )}

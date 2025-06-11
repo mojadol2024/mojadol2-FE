@@ -6,7 +6,7 @@ import PasswordResetModal from './PasswordResetModal';
 import { getEnv } from '../../lib/getEnv';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
-const API_BASE_URL = getEnv('BASE_URL');
+const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function Login() {
   const [userLoginId, setUserLoginId] = useState('');
@@ -65,6 +65,7 @@ function Login() {
         placeholder="예) 1234@gmail.com"
         value={userLoginId}
         onChange={e => setUserLoginId(e.target.value)}
+        onKeyDown={e => e.key === 'Enter' && handleLogin()}
         className="login-input"
       />
 
@@ -74,6 +75,7 @@ function Login() {
           placeholder="비밀번호"
           value={password}
           onChange={e => setPassword(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleLogin()}
           className="login-input"
         />
         <button
@@ -95,7 +97,7 @@ function Login() {
             아이디 찾기
           </span>
           <span className="login-divider">|</span>
-          <span className="login-link" onClick={() => setShowResetModal(true)}>
+          <span className="login-link"  onClick={() => navigate('/find-password')}>
             비밀번호 찾기
           </span>
         </div>
