@@ -3,10 +3,6 @@ import { getAxiosInstance } from '../../lib/axiosInstance';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { getEnv } from '../../lib/getEnv';
-
-
-const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function PasswordResetPage() {
   const [userId, setUserId] = useState('');
