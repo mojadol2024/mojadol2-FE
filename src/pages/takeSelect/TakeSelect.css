@@ -143,12 +143,26 @@ html, body {
 }
 
 .take-hint-text {
-  margin-top: -3px;
-  font-size: 0.9rem;
-  color: #555;
+  font-size: 14px;
+  color: #666;
   text-align: center;
+  margin-top: 10px;
+  margin-bottom: 5px;
   word-break: keep-all;
+  margin-top: -2px;
+  margin-bottom: 10px;
 }
+
+.take-select-hint {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: -23px;
+  word-break: keep-all;
+  margin-top: -2px;
+}
+
 
 @media (max-width: 768px) {
   
