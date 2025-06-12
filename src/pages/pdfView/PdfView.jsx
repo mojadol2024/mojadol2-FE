@@ -26,7 +26,7 @@ function PdfView() {
         const blob = new Blob([res.data], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         setPdfUrl(url);
-        // ✅ 최초 생성 성공 시에만 저장 (이미 저장된 경우는 덮어쓰기 X)
+        // 최초 생성 성공 시에만 저장 (이미 저장된 경우는 덮어쓰기 X)
         const storageKey = `pdfGenerated_${coverLetterId}`;
         if (!localStorage.getItem(storageKey)) {
           localStorage.setItem(storageKey, 'true');
@@ -71,7 +71,7 @@ function PdfView() {
         )}
       </div>
 
-      {loading ? ( // ✅ 로딩 상태에 따라 조건부 렌더링
+      {loading ? ( // 로딩 상태에 따라 조건부 렌더링
         <div className="loading-state-container">
           <div className="spinner"></div>
           <p className="loading-message">결과지를 불러오는 중입니다...</p>

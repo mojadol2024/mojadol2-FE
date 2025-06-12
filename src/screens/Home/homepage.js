@@ -129,7 +129,7 @@ function HomePage() {
         </div>
         <p className="section-title">🔥 합리적인 가격의 AI 면접 코칭</p>
         <div className="half-circle-wrapper">
-          {['자기소개서 맞춤법 \n검사', '맞춤형 면접 질문 생성', '각 질문에 대한 촬영 \n기회 3회 제공'].map((text, i) => (
+          {['자기소개서 맞춤법 \n검사', '맞춤형 면접 질문 생성', '질문 당 3번 기회'].map((text, i) => (
             <div className="circle-group" key={i}>
               <div className="half-circle">✔</div>
               <div className="circle-label">{text}</div>
