@@ -16,6 +16,7 @@
     margin: 0;
     margin-top: 20px;
     margin-bottom: 20px;
+    word-break: keep-all;
 }
 
 /* 상단 버튼 섹션 */
@@ -318,14 +319,43 @@
   justify-content: center;
 }
 
+/* 비밀번호 입력창 - 우측 아이콘 여백 확보 */
+.mypage-password-input-full {
+  width: 100%;
+  padding-right: 35px;
+}
+
+/* 유효성 메시지 (에러 텍스트) */
+.mypage-validation-msg {
+  font-size: 13px;
+  color: #ef4444;
+  margin-top: 5px;
+}
+
 @media (max-width: 768px) {
+
+    .mypage-top-buttons{
+        display: flex;
+        justify-content: center; 
+    }
 
     .mypage-edit-button,
     .mypage-save-button {
         width: 100%; 
-        max-width: 300px; 
+        max-width: 500px; 
         margin-right: 0; 
     }
+
+      .mypage-password-input-full {
+    width: 100%;
+    padding-right: 0px;
+  }
+
+  .mypage-validation-msg {
+    font-size: 12px;
+    margin-top: 4px;
+    word-break: keep-all; /* 긴 메시지 줄바꿈 처리 */
+  }
 
     .mypage-form-table {
         padding: 0 10px; 
@@ -355,8 +385,7 @@
     }
 
     .mypage-form-input input[type="text"],
-    .mypage-form-input input[type="password"]
-    .mypage-password-input-wrapper {
+    .mypage-form-input input[type="password"] {
         width: 100%; 
         max-width: none; 
         font-size: 1em; 
@@ -365,6 +394,8 @@
 
     .mypage-password-input-wrapper{
         position: relative;
+        width: 100%;
+        max-width: none;
     }
 
     .mypage-password-wrapper {
