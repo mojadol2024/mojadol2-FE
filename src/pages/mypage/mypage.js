@@ -26,30 +26,41 @@ function MyPage() {
   const [showModalPassword, setShowModalPassword] = useState(false); // 모달 비밀번호 토글
 
   // 컴포넌트 마운트 시 사용자 정보 불러오기
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        //const response = await axiosInstance.get(`${API_BASE_URL}/mojadol/api/v1/mypage/profile`);
-        const axios = getAxiosInstance();
-        const response = await axios.get('/mojadol/api/v1/mypage/profile');
+useEffect(() => {
+  let didCancel = false; // 중복 방지 플래그
+
+  const fetchUserInfo = async () => {
+    try {
+      const axios = getAxiosInstance();
+      const response = await axios.get('/mojadol/api/v1/mypage/profile');
+      if (!didCancel) {
         if (response.data.isSuccess) {
           const userData = response.data.result;
           setName(userData.userName);
           setUsername(userData.userLoginId);
           setNickname(userData.nickname);
           setOriginalNickname(userData.nickname);
-          setEmail(userData.email); 
+          setEmail(userData.email);
         } else {
-          alert('사용자 정보를 불러오는데 실패했습니다: ' + response.data.message);
+          console.error('응답 실패:', response.data.message);
+          alert('사용자 정보를 불러오는 중 오류가 발생했습니다.');
         }
-      } catch (error) {
-        console.error('사용자 정보 불러오기 에러:', error);
+      }
+    } catch (error) {
+      if (!didCancel) {
+        console.error('API 호출 실패:', error);
         alert('사용자 정보를 불러오는 중 오류가 발생했습니다.');
       }
-    };
+    }
+  };
 
-    fetchUserInfo();
-  }, []);
+  fetchUserInfo();
+
+  return () => {
+    didCancel = true;
+  };
+}, []);
+
 
   // 닉네임 중복 체크 (debounce 적용)
   useEffect(() => {
@@ -231,7 +242,7 @@ function MyPage() {
                 value,
                 disabled,
                 onChange: (e) => setValue(e.target.value),
-                style: { width: '100%', paddingRight: '35px' }
+                
               }),
               isEditable && h('button', {
                 type: 'button',
@@ -245,7 +256,7 @@ function MyPage() {
               disabled,
               onChange: (e) => setValue(e.target.value),
             }),
-        msg && h('div', { style: { fontSize: '13px', color: '#ef4444', marginTop: '5px' } }, msg)
+        msg && h('div', msg)
       )
     );
 

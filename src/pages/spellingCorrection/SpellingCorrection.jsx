@@ -3,6 +3,7 @@
   import { useNavigate } from 'react-router-dom';
   import { getAxiosInstance } from '../../lib/axiosInstance';
   import './SpellingCorrection.css';
+  import { useRef } from 'react';
 
   function SelfIntroRegister() {
     const [title, setTitle] = useState('');
@@ -16,13 +17,18 @@
     const [goldVouchers, setGoldVouchers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingS, setIsLoadingS] = useState(false);
+    const hasCheckedAuth = useRef(false);
 
     useEffect(() => {
+      if (hasCheckedAuth.current) return;
+      hasCheckedAuth.current = true;
+
       const axios = getAxiosInstance();
       const token = localStorage.getItem('accessToken');
       if (!token) {
         alert('로그인이 필요한 서비스입니다.');
         navigate('/login');
+        return; 
       }
       fetchVoucherList();
     }, []);

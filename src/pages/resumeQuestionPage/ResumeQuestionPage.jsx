@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAxiosInstance } from '../../lib/axiosInstance';
 import './ResumeQuestionPage.css';
+import { FaPlay } from 'react-icons/fa';
 
 function ResumeQuestionPage() {
   const location = useLocation();
@@ -151,7 +152,7 @@ function ResumeQuestionPage() {
             return (
               <div className="question-item" key={i}>
                 <div className="question-text-r">
-                  <span className="play-icon">▶</span>
+                  <span className="play-icon"><FaPlay /></span>
                   질문 {i + 1}: "{q.content}"
                 </div>
                 <div className="question-actions">

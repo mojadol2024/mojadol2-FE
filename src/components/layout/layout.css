@@ -12,13 +12,25 @@ html, body {
   flex-grow: 1; 
   margin-left: 250px; 
   width: calc(100% - 250px); 
-  padding: 20px; /* 선택 사항: 내부 패딩 */
+  padding: 20px; 
   box-sizing: border-box; 
-  transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out; /* 마진과 너비 변화에 애니메이션 적용 */
+  transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out; 
 }
 
 /* 사이드바가 접혔을 때 .page-content의 스타일 */
 .page-content.content-collapsed {
   margin-left: 80px; /*  접힌 사이드바 너비만큼 밀기 */
   width: calc(100% - 80px); /* 콘텐츠 너비 확장 */
+}
+
+@media (max-width: 768px){
+  .page-content {
+    margin-left: 150px;
+    width: calc(100% - 150px);
+  }
+  
+  .page-content.content-collapsed {
+  margin-left: 40px; /*  접힌 사이드바 너비만큼 밀기 */
+  width: calc(100% - 40px); /* 콘텐츠 너비 확장 */
+}
 }
