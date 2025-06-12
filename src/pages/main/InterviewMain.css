@@ -178,6 +178,7 @@
     margin-bottom: 50px;
     grid-column: 1 / -1;
     text-align: center;
+    word-break: keep-all;
 }
 
 .guide-text-m {
@@ -237,6 +238,14 @@
     .cover-letter-count {
         font-size: 16px; 
         white-space: nowrap; 
+    }
+
+    .pagination {
+      font-size: 12px;
+    }
+
+    .pagination span {
+      padding: 2px 5px;
     }
 
 }
