@@ -42,7 +42,6 @@ function PasswordResetPage() {
       userLoginId: userId,
       email,
     });
-    alert('인증번호가 이메일로 전송되었습니다.');
     setCodeSent(true);
     } catch (err) {
       alert(err.response?.data?.message || '인증번호 전송 실패');
@@ -59,7 +58,7 @@ function PasswordResetPage() {
       email,
       code: authCode,
     });
-    alert('인증 성공!');
+
       setVerified(true);
     } catch (err) {
       alert(err.response?.data?.message || '인증 실패');
@@ -68,12 +67,10 @@ function PasswordResetPage() {
 
   const handleResetPassword = async () => {
     if (!isValidPassword(newPw)) {
-        alert('비밀번호 조건을 만족하지 않습니다.');
         return;
     }
 
     if (newPw !== confirmPw) {
-        alert('비밀번호가 일치하지 않습니다.');
         return;
     }
 
@@ -84,8 +81,6 @@ function PasswordResetPage() {
       email,
       userPw: newPw,
     });
-
-      alert('비밀번호가 변경되었습니다.');
       navigate('/login');
     } catch (err) {
       alert(err.response?.data?.message || '비밀번호 변경 실패');

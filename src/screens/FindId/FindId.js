@@ -6,6 +6,7 @@ import { getEnv } from '../../lib/getEnv';
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function FindId() {
+  const [emailMessage, setEmailMessage] = useState(''); 
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
@@ -14,32 +15,32 @@ function FindId() {
   const isValidEmail = address => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address);
 
   const handleFindId = async () => {
-    if (!email) {
-      alert('이메일을 입력해주세요.');
-      return;
-    }
-    if (!isValidEmail(email)) {
-      alert('유효한 이메일 형식이 아닙니다.');
-      return;
-    }
+  if (!email) {
+    setEmailMessage('이메일을 입력해주세요.');
+    return;
+  }
+  if (!isValidEmail(email)) {
+    setEmailMessage('유효하지 않은 이메일 형식입니다.');
+    return;
+  }
 
-    setLoading(true);
-     try {
-    const axios = getAxiosInstance(); // ✅ axios 인스턴스 선언
-    const response = await axios.post('/mojadol/api/v1/mail/find-user-id', {
-      email,
-    });
-      alert('메일 발송 성공');
-      navigate('/login');
-    } catch (err) {
-      alert(
-        err.response?.data?.message ||
-        `메일 발송에 실패했습니다. (status: ${err.response?.status})`
-      );
-    } finally {
-       setLoading(false);
-    }
-  };
+  setLoading(true);
+  setEmailMessage(''); // 메시지 초기화
+
+  try {
+    const axios = getAxiosInstance();
+    await axios.post('/mojadol/api/v1/mail/find-user-id', { email });
+    navigate('/login');
+  } catch (err) {
+    alert(
+      err.response?.data?.message ||
+      `메일 발송에 실패했습니다. (status: ${err.response?.status})`
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   if (loading) {
     return (
@@ -59,14 +60,30 @@ function FindId() {
 
       <div className="findid-input-wrapper">
         <input
-          type="email"
-          placeholder="예) 1234@gmail.com"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          className="findid-input"
-        />
-      </div>
+  type="email"
+  placeholder="예) 1234@gmail.com"
+  value={email}
+  onChange={e => {
+    const value = e.target.value;
+    setEmail(value);
 
+    if (!value) {
+      setEmailMessage('');
+    } else if (!isValidEmail(value)) {
+      setEmailMessage('유효하지 않은 이메일 형식입니다.');
+    } else {
+      setEmailMessage('');
+    }
+  }}
+  className="findid-input"
+/>
+{emailMessage && (
+  <div style={{ color: 'red', fontSize: '0.875rem', marginTop: -10  , marginBottom: '10px' }}>
+    {emailMessage}
+  </div>
+)}
+
+      </div>
       <button onClick={handleFindId} className="findid-button">
         확인
       </button>

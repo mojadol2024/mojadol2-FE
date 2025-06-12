@@ -17,15 +17,15 @@ function SignUp() {
     phoneNumber: '',
     email: '',
   });
+  const [idMessage, setIdMessage] = useState('');
+  const [nicknameMessage, setNicknameMessage] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [pwFormatError, setPwFormatError] = useState('');
   const [idChecked, setIdChecked] = useState(false);
   const [nicknameChecked, setNicknameChecked] = useState(false);
   const [emailChecked, setEmailChecked] = useState(false);
   const navigate = useNavigate();
-
-    const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
  const isValidPassword = (password) => {
   const lengthCheck = /^.{8,16}$/;
@@ -43,9 +43,19 @@ function SignUp() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    if (name === 'userLoginId') setIdChecked(false);
-    if (name === 'nickname') setNicknameChecked(false);
-    if (name === 'email') setEmailChecked(false);
+    if (name === 'userLoginId') {
+    setIdChecked(false);
+    checkIdDuplicate(value);  // 바로 중복 확인 호출
+  }
+
+    if (name === 'nickname') {
+    setNicknameChecked(false);
+    checkNicknameDuplicate(value);
+  }
+    if (name === 'email') {
+    setEmailChecked(false);
+    checkEmailDuplicate(value);
+  }
 
     if (name === 'userPw') {
       if (value === '') {
@@ -72,19 +82,15 @@ function SignUp() {
       return;
     }
     if (!idChecked || !nicknameChecked || !emailChecked) {
-      alert('아이디, 닉네임, 이메일 중복 확인을 모두 완료해주세요.');
       return;
     }
     if (formData.userPw !== formData.confirmPw) {
-      alert('비밀번호가 일치하지 않습니다.');
       return;
     }
     if (!isValidPassword(formData.userPw)) {
-      alert('비밀번호 조건을 만족하지 않습니다.');
       return;
     }
     if (!formData.email.includes('@') || !formData.email.endsWith('.com')) {
-      alert('유효하지 않은 이메일입니다.');
       return;
     }
 
@@ -100,7 +106,6 @@ function SignUp() {
       email: formData.email,
     });
 
-    alert('회원가입 성공!');
     navigate('/login');
     } catch (error) {
       const status = error.response?.status;
@@ -109,142 +114,153 @@ function SignUp() {
     }
   };
 
-  const checkIdDuplicate = async () => {
-    if (!formData.userLoginId) return alert('아이디를 입력해주세요.');
-    const idRegex = /^[A-Za-z0-9]{4,12}$/;
-    if (!idRegex.test(formData.userLoginId)) {
-      return alert('아이디는 4~12자의 영문 또는 숫자만 사용할 수 있습니다.');
-    }
-    try {
+
+  const checkIdDuplicate = async (loginId) => {
+  if (!loginId) {
+    setIdMessage('');
+    setIdChecked(false);
+    return;
+  }
+
+  const idRegex = /^[A-Za-z0-9]{4,12}$/;
+  if (!idRegex.test(loginId)) {
+    setIdMessage('아이디는 4~12자의 영문 또는 숫자만 가능합니다.');
+    setIdChecked(false);
+    return;
+  }
+
+  try {
     const axios = getAxiosInstance();
     const { data } = await axios.get('/mojadol/api/v1/users/check', {
-      params: { userLoginId: formData.userLoginId }
+      params: { userLoginId: loginId },
     });
 
     if (data.result === '중복되는 데이터가 없습니다.') {
-      alert('사용 가능한 아이디입니다.');
+      setIdMessage('사용 가능한 아이디입니다.');
       setIdChecked(true);
     } else {
-      alert('이미 사용 중인 아이디입니다.');
+      setIdMessage('이미 사용 중인 아이디입니다.');
       setIdChecked(false);
     }
   } catch {
-    alert('아이디 중복 확인 중 오류가 발생했습니다.');
+    setIdMessage('아이디 중복 확인 중 오류가 발생했습니다.');
     setIdChecked(false);
   }
 };
 
-  const checkNicknameDuplicate = async () => {
-    if (!formData.nickname) return alert('닉네임을 입력해주세요.');
-    try {
+
+  const checkNicknameDuplicate = async (nickname) => {
+  if (!nickname) {
+    setNicknameMessage('');
+    setNicknameChecked(false);
+    return;
+  }
+
+  try {
     const axios = getAxiosInstance();
     const { data } = await axios.get('/mojadol/api/v1/users/check', {
-      params: { nickname: formData.nickname }
+      params: { nickname }
     });
-      if (data.result === '중복되는 데이터가 없습니다.') {
-        alert('사용 가능한 닉네임입니다.');
-        setNicknameChecked(true);
-      } else {
-        alert('이미 사용 중인 닉네임입니다.');
-        setNicknameChecked(false);
-      }
-    } catch {
-      alert('닉네임 중복 확인 중 오류가 발생했습니다.');
+
+    if (data.result === '중복되는 데이터가 없습니다.') {
+      setNicknameMessage('사용 가능한 닉네임입니다.');
+      setNicknameChecked(true);
+    } else {
+      setNicknameMessage('이미 사용 중인 닉네임입니다.');
       setNicknameChecked(false);
     }
-  };
+  } catch {
+    setNicknameMessage('닉네임 중복 확인 중 오류가 발생했습니다.');
+    setNicknameChecked(false);
+  }
+};
 
-  const checkEmailDuplicate = async () => {
-    if (!formData.email) return alert('이메일을 입력해주세요.');
-    if (!formData.email.includes('@') || !formData.email.endsWith('.com')) {
-      return alert('유효하지 않은 이메일 형식 입니다.');
-    }
-    try {
+
+  const checkEmailDuplicate = async (email) => {
+  if (!email) {
+    setEmailMessage('');
+    setEmailChecked(false);
+    return;
+  }
+
+  // 이메일 형식 검증
+  if (!email.includes('@') || !email.endsWith('.com')) {
+    setEmailMessage('유효하지 않은 이메일 형식입니다.');
+    setEmailChecked(false);
+    return;
+  }
+
+  try {
     const axios = getAxiosInstance();
     const { data } = await axios.get('/mojadol/api/v1/users/check', {
-      params: { email: formData.email }
+      params: { email }
     });
-      if (data.result === '중복되는 데이터가 없습니다.') {
-        alert('사용 가능한 이메일입니다.');
-        setEmailChecked(true);
-      } else {
-        alert('이미 사용 중인 이메일입니다.');
-        setEmailChecked(false);
-      }
-    } catch {
-      alert('이메일 중복 확인 중 오류가 발생했습니다.');
+
+    if (data.result === '중복되는 데이터가 없습니다.') {
+      setEmailMessage('사용 가능한 이메일입니다.');
+      setEmailChecked(true);
+    } else {
+      setEmailMessage('이미 사용 중인 이메일입니다.');
       setEmailChecked(false);
     }
-  };
+  } catch {
+    setEmailMessage('이메일 중복 확인 중 오류가 발생했습니다.');
+    setEmailChecked(false);
+  }
+};
 
   return (
     <div className="signup-container">
-      <div className="signuplogo" onClick={() => navigate('/homepage')} style={{ cursor: 'pointer' }}>
+      <div className="signuplogo">
         면접의<span className="signuplogoHighlight">정석</span>
       </div>
       <h3 className="signup-title">회원가입</h3>
 
       <div className="signup-field-wrapper">
+  <input
+    type="text"
+    name="userLoginId"
+    placeholder="로그인 아이디(4~12자의 영문,숫자만 가능)"
+    value={formData.userLoginId}
+    onChange={handleChange}
+    className="signup-input"
+  />
+  {idMessage && (
+    <div
+      className="signup-id-message"
+      style={{ color: idChecked ? 'green' : 'red', fontSize: '0.85rem', marginTop: '4px' }}
+    >
+      {idMessage}
+    </div>
+  )}
+</div>
+
+
+      <div className="signup-field-wrapper">
         <input
-          type="text"
-          name="userLoginId"
-          placeholder="로그인 아이디(4~12자의 영문,숫자만 가능)"
-          value={formData.userLoginId}
+          type="password"
+          name="userPw"
+          placeholder="비밀번호"
+          value={formData.userPw}
           onChange={handleChange}
           className="signup-input"
         />
-        <button onClick={checkIdDuplicate} className="signup-duplicate-check-button">
-          중복 확인
-        </button>
-      </div>
-
-      <div className="signup-field-wrapper">
-        <div className="signup-password-wrapper">
-          <input
-            type={showPassword ? 'text' : 'password'}
-            name="userPw"
-            placeholder="비밀번호"
-            value={formData.userPw}
-            onChange={handleChange}
-            className="signup-input"
-          />
-          <button
-            type="button"
-            className="signup-toggle-button-b"
-            onClick={() => setShowPassword((prev) => !prev)}
-          >
-            {showPassword ? <FaEye /> : <FaEyeSlash />}
-          </button>
-        </div>
         {pwFormatError && (
           <div className="signup-error-text red">{pwFormatError}</div>
         )}
       </div>
 
       <div className="signup-field-wrapper">
-        <div className="signup-password-wrapper">
-          <input
-            type={showConfirmPassword ? 'text' : 'password'}
-            name="confirmPw"
-            placeholder="비밀번호 확인"
-            value={formData.confirmPw}
-            onChange={handleChange}
-            className="signup-input"
-          />
-          <button
-            type="button"
-            className="signup-toggle-button-b"
-            onClick={() => setShowConfirmPassword((prev) => !prev)}
-          >
-            {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
-          </button>
-        </div>
+        <input
+          type="password"
+          name="confirmPw"
+          placeholder="비밀번호 확인"
+          value={formData.confirmPw}
+          onChange={handleChange}
+          className="signup-input"
+        />
         {passwordError && (
-          <div
-            className={`signup-error-text ${
-              passwordError.includes('일치하지') ? 'red' : 'green'
-            }`}
-          >
+          <div className={`signup-error-text ${passwordError.includes('일치하지') ? 'red' : 'green'}`}>
             {passwordError}
           </div>
         )}
@@ -262,18 +278,24 @@ function SignUp() {
       </div>
 
       <div className="signup-field-wrapper">
-        <input
-          type="text"
-          name="nickname"
-          placeholder="닉네임"
-          value={formData.nickname}
-          onChange={handleChange}
-          className="signup-input"
-        />
-        <button onClick={checkNicknameDuplicate} className="signup-duplicate-check-button">
-          중복 확인
-        </button>
-      </div>
+  <input
+    type="text"
+    name="nickname"
+    placeholder="닉네임"
+    value={formData.nickname}
+    onChange={handleChange}
+    className="signup-input"
+  />
+  {nicknameMessage && (
+    <div
+      className="signup-nickname-message"
+      style={{ color: nicknameChecked ? 'green' : 'red', fontSize: '0.85rem', marginTop: '4px' }}
+    >
+      {nicknameMessage}
+    </div>
+  )}
+</div>
+
 
       <div className="signup-field-wrapper">
         <input
@@ -287,18 +309,24 @@ function SignUp() {
       </div>
 
       <div className="signup-field-wrapper">
-        <input
-          type="email"
-          name="email"
-          placeholder="이메일 주소"
-          value={formData.email}
-          onChange={handleChange}
-          className="signup-input"
-        />
-        <button onClick={checkEmailDuplicate} className="signup-duplicate-check-button">
-          중복 확인
-        </button>
-      </div>
+  <input
+    type="email"
+    name="email"
+    placeholder="이메일"
+    value={formData.email}
+    onChange={handleChange}
+    className="signup-input"
+  />
+  {emailMessage && (
+    <div
+      className="signup-email-message"
+      style={{ color: emailChecked ? 'green' : 'red', fontSize: '0.85rem', marginTop: '4px' }}
+    >
+      {emailMessage}
+    </div>
+  )}
+</div>
+
 
       <div className="signup-flex-buttons">
         <button className="signup-cancel-button" onClick={() => navigate(-1)}>
