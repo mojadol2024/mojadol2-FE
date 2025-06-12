@@ -19,7 +19,7 @@ html, body {
     margin-top: 50px;
     margin-bottom: 50px;
     text-align: center;
-
+    word-break: keep-all;
   }
   
   /* 상단 제목 및 구매 버튼 */
@@ -516,6 +516,7 @@ html, body {
   /*padding-left: 20px; 
   padding-right: 290px; */
   margin-top: 15%;
+  word-break: keep-all;
 }
 
 /* 결제 취소 버튼 */
@@ -587,8 +588,8 @@ html, body {
       }
 
     .subscription-box {
-        width: 35%; 
-        padding: 10px 15px; 
+        width: auto;
+        padding: 8px 13px; 
         font-size: 14px; 
         flex-shrink: 0; 
     }
