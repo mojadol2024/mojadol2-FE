@@ -1,12 +1,11 @@
 .mypage-content {
     flex-grow: 1;
-  min-height: 100%;
-  width: 100%;
-  box-sizing: border-box; 
-  padding-left: 25px;
-  padding-top: 20px;
-  overflow-y: auto; 
-  
+    min-height: 100%;
+    width: 100%;
+    box-sizing: border-box; 
+    padding-left: 25px;
+    padding-top: 20px;
+    overflow-y: auto; 
 }
 
 .mypage-content h1 {
@@ -214,7 +213,6 @@
 .mypage-withdraw-button:hover {
     color: #777; 
     text-decoration: underline;
-    text-decoration-color: #777; 
     text-underline-offset: 4px; 
 }
 
