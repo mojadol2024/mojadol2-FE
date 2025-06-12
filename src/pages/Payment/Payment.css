@@ -593,8 +593,9 @@ html, body {
     }
 
     .subscription-summary {
+        display: flex; 
         flex-wrap: wrap; 
-        justify-content: center; 
+        justify-content: flex-start; 
         gap: 5px; 
         margin-bottom: 20px;
     }
@@ -605,7 +606,7 @@ html, body {
 
     .subscription-box {
         width: auto;
-        padding: 8px 13px; 
+        padding: auto; 
         font-size: 14px; 
         flex-shrink: 0; 
     }
