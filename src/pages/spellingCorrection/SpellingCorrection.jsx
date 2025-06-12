@@ -166,7 +166,7 @@
         }
 
         if (cleanedText.length > 1200) {
-          alert("자소서는 최대 1200자까지만 저장할 수 있습니다. 내용을 줄여주세요.");
+          alert("자소서는 최대 1200자까지만 저장할 수 있습니다.");
           return;
         }
         const axios = getAxiosInstance();
@@ -183,7 +183,7 @@
 
         const success = await waitForQuestions(savedId);
         if (!success) {
-          alert('질문 생성에 실패했거나 시간이 초과되었습니다. 나중에 다시 시도해주세요.');
+          alert('질문 생성에 실패했습니다. 나중에 다시 시도해주세요.');
           return;
         }
         // 🔽 ✅ 메인 페이지가 새 자소서를 반영하도록 플래그 저장
