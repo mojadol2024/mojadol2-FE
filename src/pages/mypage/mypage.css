@@ -96,7 +96,7 @@
 
 .mypage-password-input-wrapper {
     position: relative;
-    width: 80%; 
+    width: 100%; 
     max-width: 700px; 
 }
 
@@ -406,7 +406,7 @@
     }
     
     .mypage-password-toggle-button {
-        right: 15px; 
+        right: 5%; 
         font-size: 20px; 
     }
 
@@ -432,6 +432,10 @@
     }
     .mypage-modal-actions button:last-child {
         margin-left: 0;
+    }
+
+    .mypage-password-toggle-main{
+        right: 5%;
     }
 
 }
