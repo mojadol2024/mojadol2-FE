@@ -190,6 +190,13 @@
         navigate(`/ResumeQuestionPage?id=${savedId}`);
         
       } catch (error) {
+          if (error.response && error.response.data) {
+            const message = error.response.data.message || '';
+            if (message.includes('free voucher')) {
+              alert("FREE 이용권이 없습니다. GOLD 이용권을 사용하거나 결제해주세요.");
+              return;
+            }
+          }
         alert('자소서 저장에 실패했습니다.');
       } finally {
         setIsLoading(false); // ✅ 로딩 종료
