@@ -161,7 +161,7 @@ function TakeSelect() {
                 Take {takes.length + 1} 녹화 시작
               </button>
               <p className="take-hint-text">
-                녹화 시작 버튼을 누르면 카운트다운 후 <strong>바로 녹화</strong>가 시작됩니다.
+                버튼을 누르면 카운트다운 후 <strong>바로 녹화</strong>가 시작됩니다.
               </p>
             </> 
 
@@ -178,6 +178,9 @@ function TakeSelect() {
               {isUploading ? '업로드 중...' : '영상 저장'}
             </button>
           </div>
+          {selectedTake === null && (
+            <p className="take-select-hint">사진을 클릭하여 업로드할 영상을 선택하세요.</p>
+          )}
         </div>
 
         <div className="take-thumbnails-container">
