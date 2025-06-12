@@ -8,7 +8,6 @@ html, body {
   min-height: 100%;
   width: 100%;
   box-sizing: border-box; 
-  margin-left:25px;
   padding-top: 20px;
   overflow-y: auto; 
 }
@@ -313,14 +312,14 @@ html, body {
 
 @media (max-width: 768px) {
 
-    {/*}.recording-layout {
+    /*}.recording-layout {
         margin: 0;
         padding: 0;
     }
 
     .recording-main {
         padding-top: 10px; 
-    }*/}
+    }*/
 
     .question-title {
         font-size: 18px; 
