@@ -261,7 +261,9 @@ useEffect(() => {
               disabled,
               onChange: (e) => setValue(e.target.value),
             }),
-        msg && h('div', msg)
+        msg && h('div', { 
+            className: msg.includes('사용 가능한') ? 'my-success-message' : 'my-error-message' 
+        }, msg)
       )
     );
 
@@ -299,7 +301,7 @@ useEffect(() => {
     ),
 
     h('div', { className: 'mypage-fixed-withdraw' },
-      h('button', { className: 'mypage-withdraw-button', onClick: handleWithdraw }, '회원 탈퇴') // 클래스 이름 변경
+      h('button', { className: 'mypage-withdraw-button', onClick: handleWithdraw }, '회원 탈퇴') 
     ),
 
     showModal && h('div', { className: 'mypage-modal' },
