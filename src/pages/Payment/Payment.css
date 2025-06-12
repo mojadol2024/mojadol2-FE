@@ -299,7 +299,6 @@ html, body {
 
 .info-popup {
   background-color: white;
-  padding: 20px;
   border-radius: 7px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   text-align: center;
@@ -307,6 +306,9 @@ html, body {
   display: flex;
   flex-direction: column; /* 내부 요소 세로로 배치 */
   animation: fadeInScale 0.3s ease-out forwards; /* 0.3초 동안 부드럽게 나타남 */
+  width: 70%; 
+  max-width: 450px; 
+  padding: 20px 15px; 
 }
 
 .info-popup h2 {
@@ -320,6 +322,8 @@ html, body {
   padding-right: 30px; /* 스크롤바 공간 확보 */
   padding-left: 40px;
   word-break: keep-all;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .info-popup p {
@@ -538,6 +542,7 @@ html, body {
     border-radius: 7px;
     cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease;
+    word-break: keep-all;
 }
 
 .cancel-payment-button:not(:disabled):hover {
@@ -556,6 +561,7 @@ html, body {
 .cancelled-text {
     font-style: italic;
     color: #999;
+    word-break: keep-all;
 }
 
 @media (max-width: 768px) {
