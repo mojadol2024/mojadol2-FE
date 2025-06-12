@@ -217,23 +217,23 @@ function SignUp() {
       <h3 className="signup-title">회원가입</h3>
 
       <div className="signup-field-wrapper">
-        <input
-          type="text"
-          name="userLoginId"
-          placeholder="로그인 아이디(4~12자의 영문,숫자만 가능)"
-          value={formData.userLoginId}
-          onChange={handleChange}
-          className="signup-input"
-        />
-        {idMessage && (
-          <div
-            className="signup-id-message"
-            style={{ color: idChecked ? 'green' : 'red'}}
-          >
-            {idMessage}
-          </div>
-        )}
-      </div>
+  <input
+    type="text"
+    name="userLoginId"
+    placeholder="로그인 아이디(4~12자의 영문,숫자만 가능)"
+    value={formData.userLoginId}
+    onChange={handleChange}
+    className="signup-input"
+  />
+  {idMessage && (
+    <div
+      className={`signup-error-text ${idChecked ? 'green' : 'red'}`}
+    >
+      {idMessage}
+    </div>
+  )}
+</div>
+
 
       {/* --- 변경된 비밀번호 입력 필드 --- */}
       <div className="signup-field-wrapper">
@@ -299,23 +299,21 @@ function SignUp() {
       </div>
 
       <div className="signup-field-wrapper">
-        <input
-          type="text"
-          name="nickname"
-          placeholder="닉네임"
-          value={formData.nickname}
-          onChange={handleChange}
-          className="signup-input"
-        />
-        {nicknameMessage && (
-          <div
-            className="signup-nickname-message"
-            style={{ color: nicknameChecked ? 'green' : 'red' }}
-          >
-            {nicknameMessage}
-          </div>
-        )}
-      </div>
+  <input
+    type="text"
+    name="nickname"
+    placeholder="닉네임"
+    value={formData.nickname}
+    onChange={handleChange}
+    className="signup-input"
+  />
+  {nicknameMessage && (
+    <div className={`signup-error-text ${nicknameChecked ? 'green' : 'red'}`}>
+      {nicknameMessage}
+    </div>
+  )}
+</div>
+
 
       <div className="signup-field-wrapper">
         <input
@@ -327,25 +325,22 @@ function SignUp() {
           className="signup-input"
         />
       </div>
+<div className="signup-field-wrapper">
+  <input
+    type="email"
+    name="email"
+    placeholder="이메일"
+    value={formData.email}
+    onChange={handleChange}
+    className="signup-input"
+  />
+  {emailMessage && (
+    <div className={`signup-error-text ${emailChecked ? 'green' : 'red'}`}>
+      {emailMessage}
+    </div>
+  )}
+</div>
 
-      <div className="signup-field-wrapper">
-        <input
-          type="email"
-          name="email"
-          placeholder="이메일"
-          value={formData.email}
-          onChange={handleChange}
-          className="signup-input"
-        />
-        {emailMessage && (
-          <div
-            className="signup-email-message"
-            style={{ color: emailChecked ? 'green' : 'red'}}
-          >
-            {emailMessage}
-          </div>
-        )}
-      </div>
 
       <div className="signup-flex-buttons">
         <button className="signup-cancel-button" onClick={() => navigate(-1)}>
