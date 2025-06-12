@@ -20,12 +20,12 @@ html, body {
 }
 
 .take-question {
-  width: 100%; 
-  font-size: 24px;
+  font-size: 40px;
   font-weight: bold;
-  text-align: center; 
-  word-break: keep-all;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  color: #333;
+  overflow-wrap: break-word;
+  text-align: center;
 }
 
 .take-actions-container {
@@ -162,7 +162,7 @@ html, body {
         font-size: 18px; 
         padding: 0 10px; 
         margin-bottom: 15px; 
-        word-break: keep-all;
+        overflow-wrap: break-word;
         width: 90%; 
         text-align: center;
     }

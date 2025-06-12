@@ -175,15 +175,14 @@ background-color: #dcdcdc;
     flex-shrink: 1; 
     flex-basis: auto; 
     min-width: 0; 
-    word-break: keep-all;
-    white-space: normal;
+    overflow-wrap: break-word;
 
 }
 
 .play-icon {
     color: #51E0C4;
     margin-right: 8px;
-    font-size: 20px;
+    font-size: 15px;
     flex-shrink: 0; 
 }
 

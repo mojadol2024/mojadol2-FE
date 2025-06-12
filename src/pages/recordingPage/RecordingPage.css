@@ -8,7 +8,7 @@ html, body {
   min-height: 100%;
   width: 100%;
   box-sizing: border-box; 
-
+  margin-left:25px;
   padding-top: 20px;
   overflow-y: auto; 
 }
@@ -108,7 +108,7 @@ html, body {
   font-size: 24px;
   font-weight: bold;
   text-align: center; 
-  word-break: keep-all;
+  overflow-wrap: break-word;
   margin-bottom: 20px; 
 }
 
@@ -197,11 +197,12 @@ html, body {
 }*/
 
 .question-title {
-  font-size: 48px;
+  font-size: 40px;
   font-weight: bold;
   margin-bottom: 50px;
   color: #333;
-  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-align: center; 
 }
 
 .confirm-buttons {
@@ -312,21 +313,21 @@ html, body {
 
 @media (max-width: 768px) {
 
-    .recording-layout {
+    {/*}.recording-layout {
         margin: 0;
         padding: 0;
     }
 
     .recording-main {
         padding-top: 10px; 
-    }
+    }*/}
 
     .question-title {
         font-size: 18px; 
         margin-bottom: 30px; 
         padding: 0 10px;
         text-align: center; 
-        word-break: keep-all;
+        overflow-wrap: break-word;
     }
 
     .confirm-buttons {
@@ -357,11 +358,11 @@ html, body {
     }
 
     .question-text {
-        font-size: 20px; 
+        font-size: 18px; 
         margin-bottom: 15px; 
         padding: 0 10px; 
         text-align: center; 
-        word-break: keep-all; 
+        overflow-wrap: break-word;
         width: 90%; 
     }
 

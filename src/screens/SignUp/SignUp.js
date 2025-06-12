@@ -184,7 +184,7 @@ function SignUp() {
         <input
           type="text"
           name="userLoginId"
-          placeholder="로그인 아이디(4~12자의 영문,숫자만 가능)"
+          placeholder="아이디(4~12자의 영문,숫자만 가능)"
           value={formData.userLoginId}
           onChange={handleChange}
           className="signup-input"

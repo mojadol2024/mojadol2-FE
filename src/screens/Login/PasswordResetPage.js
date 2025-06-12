@@ -116,7 +116,7 @@ function PasswordResetPage() {
 
       <input
         type="text"
-        placeholder="로그인 아이디"
+        placeholder="아이디"
         className="login-input"
         value={userId}
         onChange={e => setUserId(e.target.value)}

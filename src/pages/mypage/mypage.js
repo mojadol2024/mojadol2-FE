@@ -13,6 +13,7 @@ function MyPage() {
   const [isEditable, setIsEditable] = useState(false);
   const [email, setEmail] = useState(''); 
   const [marketingAgreed, setMarketingAgreed] = useState(true);
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
@@ -41,6 +42,7 @@ useEffect(() => {
           setNickname(userData.nickname);
           setOriginalNickname(userData.nickname);
           setEmail(userData.email);
+          setPhoneNumber(userData.phoneNumber);
         } else {
           console.error('응답 실패:', response.data.message);
           alert('사용자 정보를 불러오는 중 오류가 발생했습니다.');
@@ -104,13 +106,15 @@ useEffect(() => {
     return lengthCheck.test(pw) && passedTypes >= 2; 
   };*/}
 
-  const validatePassword = (pw) => { //signup 에서의 비밀번호
+  const validatePassword = (password) => { //signup 에서의 비밀번호
     const lengthCheck = /^.{8,16}$/;
-    const hasUpper = /[A-Z]/.test(pw);
-    const hasLower = /[a-z]/.test(pw);
-    const hasDigit = /[0-9]/.test(pw);
-    const hasSpecial = /[^A-Za-z0-9]/.test(pw);
-    return lengthCheck.test(pw) && hasUpper && hasLower && hasDigit && hasSpecial;
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[^A-Za-z0-9]/.test(password); // 특수문자
+
+    const typeCount = [hasUpper, hasLower, hasNumber].filter(Boolean).length;
+    return lengthCheck.test(password) && hasSpecial && typeCount >= 2;
   };
 
   // 비밀번호 확인 (개인정보 수정 진입 전)
@@ -230,6 +234,17 @@ useEffect(() => {
     }
   };
 
+  function formatPhoneNumber(phone) {
+    if (!phone) return '';
+    const cleaned = phone.replace(/\D/g, ''); // 숫자만 남기기
+    if (cleaned.length === 11) {
+      return `${cleaned.slice(0,3)}-${cleaned.slice(3,7)}-${cleaned.slice(7,11)}`;
+    } else if (cleaned.length === 10) {
+      return `${cleaned.slice(0,3)}-${cleaned.slice(3,6)}-${cleaned.slice(6,10)}`;
+    }
+    return phone; // 그 외는 그대로 반환
+  }
+
   // input 행을 렌더링하는 헬퍼 함수
   const inputRow = (label, value, setValue, type = 'text', disabled = false, msg = '') =>
     h('div', { className: 'mypage-form-row' },
@@ -271,7 +286,8 @@ useEffect(() => {
     h('form', { className: 'mypage-form-table' },
       inputRow('이름', name, setName, 'text', true),
       inputRow('아이디', username, setUsername, 'text', true),
-      inputRow('별명', nickname, setNickname, 'text', !isEditable, nicknameMsg),
+      inputRow('닉네임', nickname, setNickname, 'text', !isEditable, nicknameMsg),
+      inputRow('휴대폰 번호', formatPhoneNumber(phoneNumber), setPhoneNumber, 'text', true), 
       inputRow('이메일', email, setEmail, 'text', true), 
       
       inputRow('비밀번호', password, setPassword, 'password', !isEditable, passwordMsg),
