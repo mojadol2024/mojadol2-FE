@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { getAxiosInstance } from '../../lib/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
+import { getEnv } from '../../lib/getEnv';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+
+const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -14,6 +17,9 @@ function SignUp() {
     phoneNumber: '',
     email: '',
   });
+  const [idMessage, setIdMessage] = useState('');
+  const [nicknameMessage, setNicknameMessage] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [pwFormatError, setPwFormatError] = useState('');
   const [idChecked, setIdChecked] = useState(false);
@@ -21,28 +27,38 @@ function SignUp() {
   const [emailChecked, setEmailChecked] = useState(false);
   const navigate = useNavigate();
 
-    const [showPassword, setShowPassword] = useState(false);
+  // --- 추가된 부분 ---
+  const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  // ---/ 추가된 부분 ---
 
- const isValidPassword = (password) => {
-  const lengthCheck = /^.{8,16}$/;
-  const hasUpper = /[A-Z]/.test(password);
-  const hasLower = /[a-z]/.test(password);
-  const hasNumber = /[0-9]/.test(password);
-  const hasSpecial = /[^A-Za-z0-9]/.test(password); // 
-  const typeCount = [hasUpper, hasLower, hasNumber].filter(Boolean).length;
-  return lengthCheck.test(password) && hasSpecial && typeCount >= 2;
-};
-
-
+  const isValidPassword = (password) => {
+    const lengthCheck = /^.{8,16}$/;
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[^A-Za-z0-9]/.test(password);
+    const typeCount = [hasUpper, hasLower, hasNumber].filter(Boolean).length;
+    return lengthCheck.test(password) && hasSpecial && typeCount >= 2;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    if (name === 'userLoginId') setIdChecked(false);
-    if (name === 'nickname') setNicknameChecked(false);
-    if (name === 'email') setEmailChecked(false);
+    if (name === 'userLoginId') {
+      setIdChecked(false);
+      checkIdDuplicate(value);
+    }
+
+    if (name === 'nickname') {
+      setNicknameChecked(false);
+      checkNicknameDuplicate(value);
+    }
+    if (name === 'email') {
+      setEmailChecked(false);
+      checkEmailDuplicate(value);
+    }
 
     if (name === 'userPw') {
       if (value === '') {
@@ -54,11 +70,9 @@ function SignUp() {
       }
     }
 
-    if (name === 'confirmPw') {
+    if (name === 'confirmPw' || name === 'userPw') { // userPw 변경 시에도 확인 로직 실행
       setPasswordError(
-        value !== formData.userPw
-          ? '비밀번호가 일치하지 않습니다.'
-          : '비밀번호가 일치합니다.'
+        name === 'confirmPw' ? (value !== formData.userPw ? '비밀번호가 일치하지 않습니다.' : '비밀번호가 일치합니다.') : (formData.confirmPw && value !== formData.confirmPw ? '비밀번호가 일치하지 않습니다.' : (formData.confirmPw ? '비밀번호가 일치합니다.' : ''))
       );
     }
   };
@@ -69,7 +83,7 @@ function SignUp() {
       return;
     }
     if (!idChecked || !nicknameChecked || !emailChecked) {
-      alert('아이디, 닉네임, 이메일 중복 확인을 모두 완료해주세요.');
+      alert('아이디, 닉네임, 이메일 중복 확인을 완료해주세요.');
       return;
     }
     if (formData.userPw !== formData.confirmPw) {
@@ -77,27 +91,26 @@ function SignUp() {
       return;
     }
     if (!isValidPassword(formData.userPw)) {
-      alert('비밀번호 조건을 만족하지 않습니다.');
+      alert('비밀번호 형식이 올바르지 않습니다.');
       return;
     }
     if (!formData.email.includes('@') || !formData.email.endsWith('.com')) {
-      alert('유효하지 않은 이메일입니다.');
+      alert('이메일 형식이 올바르지 않습니다.');
       return;
     }
 
     try {
-      const axios = getAxiosInstance(); // 여 바꿈꿈
+      const axios = getAxiosInstance();
+      const res = await axios.post('/mojadol/api/v1/users/sign-up', {
+        userLoginId: formData.userLoginId,
+        userPw: formData.userPw,
+        userName: formData.userName,
+        nickname: formData.nickname,
+        phoneNumber: formData.phoneNumber,
+        email: formData.email,
+      });
 
-    const res = await axios.post('/mojadol/api/v1/users/sign-up', {
-      userLoginId: formData.userLoginId,
-      userPw: formData.userPw,
-      userName: formData.userName,
-      nickname: formData.nickname,
-      phoneNumber: formData.phoneNumber,
-      email: formData.email,
-    });
-
-    navigate('/login');
+      navigate('/login');
     } catch (error) {
       const status = error.response?.status;
       const message = error.response?.data?.message || error.response?.data;
@@ -105,99 +118,128 @@ function SignUp() {
     }
   };
 
-  const checkIdDuplicate = async () => {
-    if (!formData.userLoginId) return alert('아이디를 입력해주세요.');
-    const idRegex = /^[A-Za-z0-9]{4,12}$/;
-    if (!idRegex.test(formData.userLoginId)) {
-      return alert('아이디는 4~12자의 영문 또는 숫자만 사용할 수 있습니다.');
+  const checkIdDuplicate = async (loginId) => {
+    if (!loginId) {
+      setIdMessage('');
+      setIdChecked(false);
+      return;
     }
-    try {
-    const axios = getAxiosInstance();
-    const { data } = await axios.get('/mojadol/api/v1/users/check', {
-      params: { userLoginId: formData.userLoginId }
-    });
 
-    if (data.result === '중복되는 데이터가 없습니다.') {
-      alert('사용 가능한 아이디입니다.');
-      setIdChecked(true);
-    } else {
-      alert('이미 사용 중인 아이디입니다.');
+    const idRegex = /^[A-Za-z0-9]{4,12}$/;
+    if (!idRegex.test(loginId)) {
+      setIdMessage('아이디는 4~12자의 영문 또는 숫자만 가능합니다.');
+      setIdChecked(false);
+      return;
+    }
+
+    try {
+      const axios = getAxiosInstance();
+      const { data } = await axios.get('/mojadol/api/v1/users/check', {
+        params: { userLoginId: loginId },
+      });
+
+      if (data.result === '중복되는 데이터가 없습니다.') {
+        setIdMessage('사용 가능한 아이디입니다.');
+        setIdChecked(true);
+      } else {
+        setIdMessage('이미 사용 중인 아이디입니다.');
+        setIdChecked(false);
+      }
+    } catch {
+      setIdMessage('아이디 중복 확인 중 오류가 발생했습니다.');
       setIdChecked(false);
     }
-  } catch {
-    alert('아이디 중복 확인 중 오류가 발생했습니다.');
-    setIdChecked(false);
-  }
-};
+  };
 
-  const checkNicknameDuplicate = async () => {
-    if (!formData.nickname) return alert('닉네임을 입력해주세요.');
+  const checkNicknameDuplicate = async (nickname) => {
+    if (!nickname) {
+      setNicknameMessage('');
+      setNicknameChecked(false);
+      return;
+    }
+
     try {
-    const axios = getAxiosInstance();
-    const { data } = await axios.get('/mojadol/api/v1/users/check', {
-      params: { nickname: formData.nickname }
-    });
+      const axios = getAxiosInstance();
+      const { data } = await axios.get('/mojadol/api/v1/users/check', {
+        params: { nickname },
+      });
+
       if (data.result === '중복되는 데이터가 없습니다.') {
-        alert('사용 가능한 닉네임입니다.');
+        setNicknameMessage('사용 가능한 닉네임입니다.');
         setNicknameChecked(true);
       } else {
-        alert('이미 사용 중인 닉네임입니다.');
+        setNicknameMessage('이미 사용 중인 닉네임입니다.');
         setNicknameChecked(false);
       }
     } catch {
-      alert('닉네임 중복 확인 중 오류가 발생했습니다.');
+      setNicknameMessage('닉네임 중복 확인 중 오류가 발생했습니다.');
       setNicknameChecked(false);
     }
   };
 
-  const checkEmailDuplicate = async () => {
-    if (!formData.email) return alert('이메일을 입력해주세요.');
-    if (!formData.email.includes('@') || !formData.email.endsWith('.com')) {
-      return alert('유효하지 않은 이메일 형식 입니다.');
+  const checkEmailDuplicate = async (email) => {
+    if (!email) {
+      setEmailMessage('');
+      setEmailChecked(false);
+      return;
     }
+
+    if (!email.includes('@') || !email.endsWith('.com')) {
+      setEmailMessage('유효하지 않은 이메일 형식입니다.');
+      setEmailChecked(false);
+      return;
+    }
+
     try {
-    const axios = getAxiosInstance();
-    const { data } = await axios.get('/mojadol/api/v1/users/check', {
-      params: { email: formData.email }
-    });
+      const axios = getAxiosInstance();
+      const { data } = await axios.get('/mojadol/api/v1/users/check', {
+        params: { email },
+      });
+
       if (data.result === '중복되는 데이터가 없습니다.') {
-        alert('사용 가능한 이메일입니다.');
+        setEmailMessage('사용 가능한 이메일입니다.');
         setEmailChecked(true);
       } else {
-        alert('이미 사용 중인 이메일입니다.');
+        setEmailMessage('이미 사용 중인 이메일입니다.');
         setEmailChecked(false);
       }
     } catch {
-      alert('이메일 중복 확인 중 오류가 발생했습니다.');
+      setEmailMessage('이메일 중복 확인 중 오류가 발생했습니다.');
       setEmailChecked(false);
     }
   };
 
   return (
     <div className="signup-container">
-      <div className="signuplogo" onClick={() => navigate('/homepage')} style={{ cursor: 'pointer' }}>
+      <div className="signuplogo">
         면접의<span className="signuplogoHighlight">정석</span>
       </div>
       <h3 className="signup-title">회원가입</h3>
 
       <div className="signup-field-wrapper">
-        <input
-          type="text"
-          name="userLoginId"
-          placeholder="아이디(4~12자의 영문,숫자만 가능)"
-          value={formData.userLoginId}
-          onChange={handleChange}
-          className="signup-input"
-        />
-        <button onClick={checkIdDuplicate} className="signup-duplicate-check-button">
-          중복 확인
-        </button>
-      </div>
+  <input
+    type="text"
+    name="userLoginId"
+    placeholder="로그인 아이디(4~12자의 영문,숫자만 가능)"
+    value={formData.userLoginId}
+    onChange={handleChange}
+    className="signup-input"
+  />
+  {idMessage && (
+    <div
+      className={`signup-error-text ${idChecked ? 'green' : 'red'}`}
+    >
+      {idMessage}
+    </div>
+  )}
+</div>
 
+
+      {/* --- 변경된 비밀번호 입력 필드 --- */}
       <div className="signup-field-wrapper">
         <div className="signup-password-wrapper">
           <input
-            type={showPassword ? 'text' : 'password'}
+            type={showPassword ? 'text' : 'password'} // 동적으로 타입 변경
             name="userPw"
             placeholder="비밀번호"
             value={formData.userPw}
@@ -216,11 +258,13 @@ function SignUp() {
           <div className="signup-error-text red">{pwFormatError}</div>
         )}
       </div>
+      {/* ---/ 변경된 비밀번호 입력 필드 --- */}
 
+      {/* --- 변경된 비밀번호 확인 필드 --- */}
       <div className="signup-field-wrapper">
         <div className="signup-password-wrapper">
           <input
-            type={showConfirmPassword ? 'text' : 'password'}
+            type={showConfirmPassword ? 'text' : 'password'} // 동적으로 타입 변경
             name="confirmPw"
             placeholder="비밀번호 확인"
             value={formData.confirmPw}
@@ -236,15 +280,12 @@ function SignUp() {
           </button>
         </div>
         {passwordError && (
-          <div
-            className={`signup-error-text ${
-              passwordError.includes('일치하지') ? 'red' : 'green'
-            }`}
-          >
+          <div className={`signup-error-text ${passwordError.includes('일치하지') ? 'red' : 'green'}`}>
             {passwordError}
           </div>
         )}
       </div>
+      {/* ---/ 변경된 비밀번호 확인 필드 --- */}
 
       <div className="signup-field-wrapper">
         <input
@@ -258,18 +299,21 @@ function SignUp() {
       </div>
 
       <div className="signup-field-wrapper">
-        <input
-          type="text"
-          name="nickname"
-          placeholder="닉네임"
-          value={formData.nickname}
-          onChange={handleChange}
-          className="signup-input"
-        />
-        <button onClick={checkNicknameDuplicate} className="signup-duplicate-check-button">
-          중복 확인
-        </button>
-      </div>
+  <input
+    type="text"
+    name="nickname"
+    placeholder="닉네임"
+    value={formData.nickname}
+    onChange={handleChange}
+    className="signup-input"
+  />
+  {nicknameMessage && (
+    <div className={`signup-error-text ${nicknameChecked ? 'green' : 'red'}`}>
+      {nicknameMessage}
+    </div>
+  )}
+</div>
+
 
       <div className="signup-field-wrapper">
         <input
@@ -281,20 +325,22 @@ function SignUp() {
           className="signup-input"
         />
       </div>
+<div className="signup-field-wrapper">
+  <input
+    type="email"
+    name="email"
+    placeholder="이메일"
+    value={formData.email}
+    onChange={handleChange}
+    className="signup-input"
+  />
+  {emailMessage && (
+    <div className={`signup-error-text ${emailChecked ? 'green' : 'red'}`}>
+      {emailMessage}
+    </div>
+  )}
+</div>
 
-      <div className="signup-field-wrapper">
-        <input
-          type="email"
-          name="email"
-          placeholder="이메일 주소"
-          value={formData.email}
-          onChange={handleChange}
-          className="signup-input"
-        />
-        <button onClick={checkEmailDuplicate} className="signup-duplicate-check-button">
-          중복 확인
-        </button>
-      </div>
 
       <div className="signup-flex-buttons">
         <button className="signup-cancel-button" onClick={() => navigate(-1)}>
