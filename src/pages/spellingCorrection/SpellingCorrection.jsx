@@ -6,6 +6,7 @@
   import { useRef } from 'react';
 
   function SelfIntroRegister() {
+    const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [originalText, setOriginalText] = useState('');
     const [correctedText, setCorrectedText] = useState('');
@@ -33,7 +34,6 @@
       fetchVoucherList();
     }, []);
 
-    const navigate = useNavigate();
     const sanitizeText = (text) => {
       return text
         .replace(/\uFEFF/g, '')  // BOM 제거
@@ -130,7 +130,7 @@
         } catch (e) {
           // 무시하고 재시도
         }
-        await new Promise(r => setTimeout(r, 2000)); // 1.5초마다 확인
+        await new Promise(r => setTimeout(r, 1500)); // 1.5초마다 확인
       }
       return false; // 타임아웃
     };
@@ -190,14 +190,24 @@
         navigate(`/ResumeQuestionPage?id=${savedId}`);
         
       } catch (error) {
-          if (error.response && error.response.data) {
-            const message = error.response.data.message || '';
-            if (message.includes('free voucher')) {
-              alert("FREE 이용권이 없습니다. GOLD 이용권을 사용하거나 결제해주세요.");
-              return;
+        if (error.response && error.response.data && !error.response.data.isSuccess) {
+          switch (error.response.data.code) {
+              case 'VOUCHER_NOT_FOUND 4004':
+                  alert('이용권이 없습니다. 결제 페이지로 이동할까요?');
+                  navigate('/payment');
+                  break;
+              case 'QUESTION_NOT_FOUND 4004':
+                  alert('질문을 찾을 수 없습니다.');
+                  break;
+              case 'QUESTION_INTERNAL_SERVER_ERROR 5000':
+                  alert('서버에서 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                  break;
+              default:
+                  alert('자소서 저장에 실패했습니다.');
             }
-          }
-        alert('자소서 저장에 실패했습니다.');
+        } else {
+          alert('자소서 저장 중 알 수 없는 오류가 발생했습니다.');
+        }
       } finally {
         setIsLoading(false); // ✅ 로딩 종료
       }
