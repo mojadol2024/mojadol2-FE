@@ -1,7 +1,6 @@
 import React, { createElement as h, useState, useEffect } from 'react';
 import './mypage.css';
 import { getAxiosInstance } from '../../lib/axiosInstance';
-//import { getEnv } from '../../lib/getEnv';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
@@ -44,13 +43,11 @@ useEffect(() => {
           setEmail(userData.email);
           setPhoneNumber(userData.phoneNumber);
         } else {
-          console.error('응답 실패:', response.data.message);
           alert('사용자 정보를 불러오는 중 오류가 발생했습니다.');
         }
       }
     } catch (error) {
       if (!didCancel) {
-        console.error('API 호출 실패:', error);
         alert('사용자 정보를 불러오는 중 오류가 발생했습니다.');
       }
     }
@@ -88,7 +85,6 @@ useEffect(() => {
           }
 
         } catch (error) {
-          console.error('닉네임 중복 확인 에러:', error);
           setNicknameMsg('닉네임 중복 확인 중 오류가 발생했습니다.'); 
         }
       } else {
@@ -134,14 +130,12 @@ useEffect(() => {
       if (response.data.isSuccess && response.data.result === '비밀번호가 일치합니다.') {
         setIsEditable(true); // 수정 모드 활성화
         setShowModal(false); // 모달 닫기
-        alert('개인정보를 수정할 수 있습니다.');
         setPassword(''); // 비밀번호 확인 후 모달 비밀번호 필드 초기화 (수정 모드 진입 후 새 비밀번호 입력 위함)
       } else {
         alert('비밀번호가 올바르지 않습니다.');
         setPassword('');
       }
     } catch (error) {
-      console.error('비밀번호 확인 에러:', error);
       alert('비밀번호 확인 중 오류가 발생했습니다.');
     }
   };
@@ -181,7 +175,6 @@ useEffect(() => {
       const response = await axios.patch('/mojadol/api/v1/mypage/update-profile', payload);
 
       if (response.data.isSuccess) {
-        alert('개인정보 수정이 완료되었습니다. 다시 로그인해 주세요.');
         setIsEditable(false); 
         setPassword(''); 
         setOriginalNickname(nickname); // 수정 성공하면 originalNickname도 업데이트
@@ -190,7 +183,6 @@ useEffect(() => {
         alert('개인정보 수정 실패: ' + response.data.message);
       }
     } catch (error) {
-      console.error('개인정보 수정 에러:', error);
       alert('개인정보 수정 중 오류가 발생했습니다.');
     }
   };
@@ -202,7 +194,6 @@ useEffect(() => {
       window.location.href = '/homepage'; 
 
     } catch (error) {
-      console.error('로그아웃 에러:', error);
       localStorage.removeItem('accessToken'); 
       window.location.href = '/homepage'; 
     }
@@ -226,7 +217,6 @@ useEffect(() => {
         alert('회원 탈퇴 실패: ' + response.data.message);
       }
     } catch (error) {
-      console.error('회원 탈퇴 에러:', error);
       alert('회원 탈퇴 중 오류가 발생했습니다.');
       // 실패하더라도 일단 토큰 제거 및 리다이렉트 시도
       localStorage.removeItem('accessToken'); 
