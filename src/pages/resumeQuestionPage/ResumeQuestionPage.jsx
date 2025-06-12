@@ -112,7 +112,7 @@ function ResumeQuestionPage() {
   return (
     <main className="resume-question-main">
       <div className="resume-header">
-        <input className="resume-title" value={title} disabled />
+        <div className="resume-title">{title}</div>
         <div className="button-group-r">
           <button
             className="btn-view-data"

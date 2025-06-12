@@ -11,6 +11,7 @@ html, body {
   width: 100%;
   box-sizing: border-box; 
   padding-left: 25px;
+  padding-right: 10px;
   padding-top: 20px;
   overflow-y: auto;
 }
@@ -42,15 +43,22 @@ html, body {
     overflow: hidden; 
     line-height: 1.5; 
     height: auto; 
-    white-space: pre-wrap; 
+    
+    white-space: normal; 
+    overflow: visible;     
+    text-overflow: initial; 
+    word-break: break-word; 
+    width: 100%;
+    min-width: 0;
 }
 
 .button-group-r {
     display: flex;
     gap: 10px; 
     flex-shrink: 0; 
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     margin-right:10px;
+    margin-left: auto; 
 }
 
 /* 일반 버튼 스타일 (이전과 동일) */
@@ -258,9 +266,19 @@ background-color: #dcdcdc;
 }
 
 @media (max-width: 768px) {
-    .resume-question-main {
-        padding-left: 0px;
+
+  .resume-question-main {
+    padding-left: 10px;
     }
+    .resume-title {
+    white-space: normal; 
+    overflow: visible;     
+    text-overflow: initial; 
+    word-break: break-word; 
+    width: 100%;
+    min-width: 0;
+    font-size: 18px; 
+  }
 
     .button-group-r {
         flex-direction: column;
