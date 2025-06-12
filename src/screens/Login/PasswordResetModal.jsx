@@ -73,7 +73,7 @@ function PasswordResetModal({ onClose }) {
         <h3 className="login-title">비밀번호 찾기</h3>
           <input
             type="text"
-            placeholder="로그인 아이디"
+            placeholder="아이디"
             className="login-input"
             value={userId}
             onChange={e => setUserId(e.target.value)}

@@ -22,7 +22,7 @@
 /* 상단 버튼 섹션 */
 .mypage-top-buttons {
     text-align: right;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .mypage-edit-button,
@@ -45,8 +45,7 @@
 
 /* 폼 테이블 스타일 */
 .mypage-form-table {
-    margin-top: 10px;
-
+    margin-top: 5px;
     width: 100%;
     max-width: 800px;    
     margin-left: auto;
@@ -57,9 +56,9 @@
 .mypage-form-row {
     display: flex;
     align-items: center;
-    padding: 15px 0;
-
+    padding: 10px 0;
     width: 100%; 
+
 }
 
 .mypage-form-label { /*이름이메일이런이름*/
@@ -97,7 +96,7 @@
 
 .mypage-password-input-wrapper {
     position: relative;
-    width: 80%; 
+    width: 100%; 
     max-width: 700px; 
 }
 
@@ -251,7 +250,7 @@
 }
 
 .mypage-modal-content input[type="password"] {
-    width: calc(100% - 20px);
+    width: 100%;
     padding: 10px;
 
     border: 1px solid #ddd;
@@ -295,7 +294,7 @@
 }
 
 .mypage-password-input {
-  width: calc(100% - 20px);
+  width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 7px;
@@ -367,7 +366,7 @@
     .mypage-form-row {
         flex-direction: column; 
         align-items: flex-start;
-        padding: 10px 0; 
+        padding: 4px 0; 
     }
 
     .mypage-form-label {
