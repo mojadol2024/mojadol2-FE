@@ -9,26 +9,35 @@ function Sidebar({ onToggle }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
 
-  const handleLogout = async () => {
-    const confirmLogout = window.confirm('정말 로그아웃하시겠습니까?');
-    if (!confirmLogout) return;
+const handleLogout = async () => {
+  const confirmLogout = window.confirm('정말 로그아웃하시겠습니까?');
+  if (!confirmLogout) return;
 
-    try {
-      const axios = getAxiosInstance();
-      const response = await axios.post('/mojadol/api/v1/auth/logout', {});
+  try {
+    const axios = getAxiosInstance();
+    const response = await axios.post('/mojadol/api/v1/auth/logout', {});
 
-      if (response.data.isSuccess) {
-        alert('로그아웃 성공!');
-        localStorage.removeItem('accessToken');
-        window.location.href = '/homepage';
-      } else {
-        alert('로그아웃 실패: ' + response.data.message);
-      }
-    } catch (error) {
-      console.error('로그아웃 중 에러 발생:', error);
-      alert('로그아웃 실패');
+    if (response.data.isSuccess) {
+      alert('로그아웃 성공!');
+      localStorage.removeItem('accessToken');
+      window.location.href = '/homepage';
+    } else {
+      alert('로그아웃 실패: ' + response.data.message);
+      console.error('백엔드 로그아웃 실패:', response.data.message);
+      localStorage.removeItem('accessToken');
+      window.location.href = '/homepage';
     }
-  };
+  } catch (error) {
+    console.error('로그아웃 중 에러 발생:', error);
+    if (error.response?.data?.message) {
+      alert('로그아웃 실패: ' + error.response.data.message);
+    } else {
+      alert('로그아웃 실패: 네트워크 오류 또는 알 수 없는 오류가 발생했습니다.');
+    }
+    localStorage.removeItem('accessToken');
+    window.location.href = '/homepage';
+  }
+};
 
   const toggleSidebar = () => {
     const newState = !isOpen;
