@@ -1,13 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAxiosInstance } from '../../lib/axiosInstance';
-import { getEnv } from '../../lib/getEnv';
 
 import './homepage.css';
 import logo from '../../assets/logo_h.png'; 
-
-//const API_BASE_URL = getEnv('BASE_URL');
-//const AUTH_LOGOUT_URL = getEnv('AUTH_LOGOUT_URL') || '/mojadol/api/v1/auth/logout';
 
 function HomePage() {
   const navigate = useNavigate();
@@ -36,16 +32,11 @@ function HomePage() {
       const response = await axios.post('/mojadol/api/v1/auth/logout', {});
 
       if (response.data.isSuccess) {
-        alert('로그아웃 성공!');
         localStorage.removeItem('accessToken');
         setIsLoggedIn(false);
         navigate('/HomePage');
-      } else {
-        alert('로그아웃 실패: ' + response.data.message);
-        console.error('백엔드 로그아웃 실패:', response.data.message);
       }
     } catch (error) {
-      console.error('로그아웃 중 에러 발생:', error);
       if (error.response && error.response.data && error.response.data.message) {
         alert('로그아웃 실패: ' + error.response.data.message);
       } else {

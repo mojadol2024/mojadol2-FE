@@ -126,7 +126,6 @@ function RecordingPage() {
           if (videoRef.current) videoRef.current.srcObject = userStream;
         }, 100);
       } catch (err) {
-        console.error('getUserMedia 실패:', err);
         showAlertOnce('deviceAccess', '카메라 또는 마이크에 접근할 수 없습니다.', () => {
           navigate(-1);
         });
@@ -164,7 +163,6 @@ function RecordingPage() {
       };
 
       video.onerror = () => {
-        console.error("❌ 썸네일 생성 실패");
         resolve(null);
       };
     });

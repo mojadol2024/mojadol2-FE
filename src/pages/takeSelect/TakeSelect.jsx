@@ -28,10 +28,7 @@ function TakeSelect() {
       const key = `videoTakes_${coverLetterId}_${questionIndex}`;
       const restored = JSON.parse(localStorage.getItem(key) || '[]');
       if (restored.length > 0) {
-        console.log("📦 localStorage에서 takes 복원:", restored);
         setTakes(restored);
-      } else {
-        console.warn("📭 takes를 복원할 수 없습니다.");
       }
     }
 
@@ -54,8 +51,6 @@ function TakeSelect() {
           });
         }
       }
-    } else {
-      console.warn("❌ 질문 리스트 없음 (state도 localStorage도 실패)");
     }
   }, [coverLetterId, questionIndex]);
 
@@ -93,7 +88,6 @@ function TakeSelect() {
       const response = await axios.post('/mojadol/api/v1/interview/upload', formData);
       return response.data.result?.interviewId || null;
     } catch (error) {
-      console.error('❌ 업로드 실패:', error.response || error);
       alert('영상 업로드에 실패했습니다.');
       return null;
     }
@@ -105,7 +99,6 @@ function TakeSelect() {
       const res = await axios.get(`/mojadol/api/v1/letter/detail/${coverLetterId}`);
       return res.data.result.analysisResults || {};
     } catch (err) {
-      console.error("❌ 분석 결과 갱신 실패", err);
       return {};
     }
   };

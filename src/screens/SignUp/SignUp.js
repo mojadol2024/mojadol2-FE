@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import { getAxiosInstance } from '../../lib/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
-import { getEnv } from '../../lib/getEnv';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-
-const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -100,7 +97,6 @@ function SignUp() {
       email: formData.email,
     });
 
-    alert('회원가입 성공!');
     navigate('/login');
     } catch (error) {
       const status = error.response?.status;

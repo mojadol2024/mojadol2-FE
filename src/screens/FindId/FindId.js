@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { getAxiosInstance } from '../../lib/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import './FindId.css';
-import { getEnv } from '../../lib/getEnv';
-const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function FindId() {
   const [email, setEmail] = useState('');
@@ -24,7 +22,7 @@ function FindId() {
     }
 
     setLoading(true);
-     try {
+    try {
     const axios = getAxiosInstance(); // ✅ axios 인스턴스 선언
     const response = await axios.post('/mojadol/api/v1/mail/find-user-id', {
       email,
@@ -37,7 +35,7 @@ function FindId() {
         `메일 발송에 실패했습니다. (status: ${err.response?.status})`
       );
     } finally {
-       setLoading(false);
+      setLoading(false);
     }
   };
 

@@ -59,7 +59,6 @@ function PasswordResetPage() {
       email,
       code: authCode,
     });
-    alert('인증 성공!');
       setVerified(true);
     } catch (err) {
       alert(err.response?.data?.message || '인증 실패');

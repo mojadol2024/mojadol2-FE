@@ -3,7 +3,6 @@ import { getAxiosInstance } from '../../lib/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import PasswordResetModal from './PasswordResetModal';
-import { getEnv } from '../../lib/getEnv';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 function Login() {
@@ -33,7 +32,6 @@ function Login() {
 
       const accessToken = token.startsWith('Bearer ') ? token.slice(7) : token;
       localStorage.setItem('accessToken', accessToken);
-      alert('로그인 성공!');
 
       const redirectPath = localStorage.getItem('redirectAfterLogin');
       localStorage.removeItem('redirectAfterLogin');

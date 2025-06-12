@@ -10,8 +10,7 @@ import { getEnv } from '../../lib/getEnv';
 //const BOOTPAY_WEB_APPLICATION_ID = getEnv('BOOTPAY_WEB_APPLICATION_ID');
 
 async function fetchAllPaymentData(size = 1000) {
-  const axios = getAxiosInstance();
-  
+    const axios = getAxiosInstance();
 
     try {
         const response = await axios.get(`/mojadol/api/v1/payment/list?page=0&size=${size}`);
@@ -72,7 +71,7 @@ async function requestPaymentCancelToBackend(paymentId) {
 
 async function fetchUserProfile() {
     const axios = getAxiosInstance();
-     const apiUrl = '/mojadol/api/v1/mypage/profile';
+    const apiUrl = '/mojadol/api/v1/mypage/profile';
     try {
         const response = await axios.get(apiUrl);
         return response.data.result;

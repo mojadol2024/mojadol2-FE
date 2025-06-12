@@ -12,9 +12,6 @@ function PdfView() {
 
   useEffect(() => {
     const fetchPdf = async () => {
-      console.log('📦 accessToken:', localStorage.getItem('accessToken'));
-      console.log("📌 coverLetterId:", coverLetterId);
-
       try {
         setLoading(true);
           const axios = getAxiosInstance();
@@ -30,11 +27,9 @@ function PdfView() {
         const storageKey = `pdfGenerated_${coverLetterId}`;
         if (!localStorage.getItem(storageKey)) {
           localStorage.setItem(storageKey, 'true');
-          console.log('✅ 결과지 생성 상태 저장 완료:', storageKey);
         }
         
       } catch (error) {
-        console.error('PDF 불러오기 실패:', error);
         const status = error.response?.status;
         if (status === 400 || status === 404) {
           alert('결과지가 아직 생성되지 않았습니다.');

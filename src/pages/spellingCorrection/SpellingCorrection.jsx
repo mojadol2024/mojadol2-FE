@@ -112,7 +112,6 @@
         setCorrectedText(response.data.result.notag_html); // 저장용 텍스트도 별도 보관
         setShowCorrection(true);
       } catch (error) {
-        console.error('맞춤법 검사 오류:', error);
         alert('맞춤법 검사에 실패했습니다.');
       } finally {
         setIsLoadingS(false);
@@ -179,8 +178,6 @@
           }
         );
         const savedId = response.data.result.coverLetterId; // ✅ 이렇게 수정
-        alert('자소서가 저장되었습니다.'); // 나중에 자소서가 저장됨과 동시에 뜨는 거라 애매하네..
-
         const success = await waitForQuestions(savedId);
         if (!success) {
           alert('질문 생성에 실패했습니다. 나중에 다시 시도해주세요.');
@@ -193,7 +190,6 @@
         navigate(`/ResumeQuestionPage?id=${savedId}`);
         
       } catch (error) {
-        console.error('자소서 저장 오류:', error);
         alert('자소서 저장에 실패했습니다.');
       } finally {
         setIsLoading(false); // ✅ 로딩 종료
