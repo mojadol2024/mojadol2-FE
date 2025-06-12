@@ -8,6 +8,21 @@ import logo from '../../assets/logo_h.png';
 function HomePage() {
   const navigate = useNavigate();
 
+  useEffect(() => {
+  const handleScroll = () => {
+    const header = document.querySelector('.homepage-header');
+    if (window.scrollY > 50) {
+      header.classList.add('shrink');
+    } else {
+      header.classList.remove('shrink');
+    }
+  };
+
+  window.addEventListener('scroll', handleScroll);
+  return () => window.removeEventListener('scroll', handleScroll);
+}, []);
+
+
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return !!localStorage.getItem('accessToken');
   });

@@ -431,8 +431,10 @@ function Payment() {
                     <div className="subscription-box free">FREE 이용권<span className="subscription-count">&nbsp;&nbsp;{freeSubscriptionsCount}</span></div>
                     <div className="subscription-box paid">GOLD 이용권<span className="subscription-count">&nbsp;&nbsp;{paidSubscriptionsCount}</span></div>
                 </div>
+                
                 {availableVouchers.length > 0 ? (
                     <div className="table-responsive"> 
+                    <div className="ppp">현재 유효한 GOLD 이용권 </div>
                     <table className="subscription-table">
                         <thead>
                             <tr>
@@ -452,10 +454,10 @@ function Payment() {
                                 </tr>
                             ))}
                         </tbody>
-                    </table>
+                    </table> 
                     </div>
                 ) : (
-                    <p>현재 사용 가능한 이용권이 없습니다.</p>
+                    <p>현재 사용 가능한 GOLD 이용권이 없습니다.</p>
                 )}
             </div>
 

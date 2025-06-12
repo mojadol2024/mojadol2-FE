@@ -21,6 +21,17 @@ html, body {
     text-align: center;
     word-break: keep-all;
   }
+
+  .ppp { /*현재 유효한 이용권이라는 문구*/
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #666;
+    margin-top: 15px;;
+    margin-bottom: 5px;
+  }
   
   /* 상단 제목 및 구매 버튼 */
 

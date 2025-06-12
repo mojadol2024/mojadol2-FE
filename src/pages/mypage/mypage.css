@@ -134,7 +134,7 @@
     display: inline-block;
     width: 60px;
     height: 34px;
-    margin-top: 5px; 
+    margin-top: 0px; 
 }
 
 .mypage-toggle-switch input {
@@ -338,6 +338,13 @@
     margin-bottom: -3px;
 }
 
+my-info-message {
+    font-size: 14px;
+    margin-top: 5px;
+    color: #666;
+    margin-bottom: -3px;
+}
+
 @media (max-width: 768px) {
 
     .mypage-top-buttons{
@@ -379,7 +386,7 @@
     .mypage-form-label {
         width: 100%; 
         flex: none; 
-        margin-bottom: 8px;
+        margin-bottom: 5px;
         font-size: 1.1em; 
         text-align: left; 
     }
