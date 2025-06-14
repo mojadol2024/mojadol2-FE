@@ -219,3 +219,7 @@
     z-index: 20; 
   }
 }
+
+.sidebar-menu-item.active {        /* 강조 텍스트 */
+  color: #51E0C4;            /* 강조 텍스트 색상 */
+}
