@@ -57,7 +57,7 @@ function Login() {
 
       <input
         type="email"
-        placeholder="예) 1234@gmail.com"
+        placeholder="아이디"
         value={userLoginId}
         onChange={e => setUserLoginId(e.target.value)}
         onKeyDown={e => e.key === 'Enter' && handleLogin()}

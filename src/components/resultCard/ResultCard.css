@@ -79,8 +79,13 @@
 }
 
 .interview-btn.disabled {
-  background-color: #ccc;
+  /*background-color: #ccc;
   border: 2px solid #ccc;
+  cursor: not-allowed; 비활성버튼들스타일맞추기*/
+
+  background-color: #e0e0e0;
+  border: 2px solid #e0e0e0;
+  color: #999;
   cursor: not-allowed;
 }
 

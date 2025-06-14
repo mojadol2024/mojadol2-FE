@@ -171,7 +171,7 @@ function PasswordResetPage() {
         </button>
         </div>
         {pwFormatError && (
-        <div style={{ color: 'red', fontSize: '13px', marginBottom: '5px' }}>
+        <div style={{ color: 'red', fontSize: '13px', marginBottom: '10px', marginTop: '-5px' }}>
             {pwFormatError}
         </div>
         )}
@@ -197,7 +197,8 @@ function PasswordResetPage() {
         <div
             style={{
             marginBottom: '10px',
-            fontSize: '14px',
+            marginTop: '-5px',
+            fontSize: '13px',
             color: newPw === confirmPw ? 'green' : 'red',
             }}
         >

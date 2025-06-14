@@ -285,3 +285,13 @@ textarea {
         box-sizing: border-box; 
     }
 }
+
+.button-section-s button:disabled {
+  background-color: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.button-section-s button:disabled:hover {
+  background-color: #e0e0e0;
+}
