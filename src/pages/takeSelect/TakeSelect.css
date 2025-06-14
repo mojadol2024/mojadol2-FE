@@ -84,12 +84,13 @@ html, body {
   height: auto;
   aspect-ratio: 16 / 9;
   background-color: #ddd;
-  border-radius: 8px;
-  object-fit: cover;
+  border-radius: 7px;
+  object-fit: cover; 
   cursor: pointer;
   transition: box-shadow 0.2s ease, outline 0.2s ease; 
   border: none; 
   outline: 3px solid transparent; 
+  object-position: bottom;
 }
 
 .take-image:hover {

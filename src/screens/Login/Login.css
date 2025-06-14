@@ -22,7 +22,7 @@
 }
 
 .login-title {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   font-size: 24px;
   font-weight: bold;
   margin-top: 3%;
@@ -37,7 +37,7 @@
   border: 1px solid #ccc;
   font-size: 16px;
   box-sizing: border-box;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   line-height: 45px;
 }
 
@@ -88,7 +88,7 @@
   border: none;
   border-radius: 7px;
   cursor: pointer;
-  margin-bottom: 12px;
+  margin-top: 5px;
 }
 
 .login-button:hover {
@@ -99,10 +99,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 16px;
   width: 100%;
   max-width: 500px;
   font-size: 14px;
+  margin-top: 10px;
 }
 
 .login-link {
