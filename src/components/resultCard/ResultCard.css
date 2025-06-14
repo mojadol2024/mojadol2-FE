@@ -60,16 +60,16 @@
 }
 
 .question-btn {
-  background-color: #E0FFF5;
-  border: 2px solid #E0FFF5; 
-  color: #777;
+  background-color: #cdf6ee;
+  border: 2px solid #cdf6ee;
+  color: #81aaa2;
   
 }
 
 .question-btn:hover {
-  background-color: #b5e3d8;
-  border: 2px solid #b5e3d8;
-  color: #666;
+  background-color: #7ad7c5;
+  border: 2px solid #7ad7c5;
+  color: #fff;
 }
 
 .interview-btn {
